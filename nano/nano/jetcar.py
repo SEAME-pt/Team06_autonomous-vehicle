@@ -3,10 +3,38 @@ import time
 from inputs import get_gamepad
 import math
 import threading
+import Jetson.GPIO as GPIO
+from canvas import Canvas
+
+
+# Set up GPIO 
+SENSOR_PIN = 17  # GPIO pin connected to the LM393 output 
+pulsos = 0
+ultimo_tempo = time.time()
+RODA_DIAMETRO = 0.065  # Diâmetro da roda em metros
+FUROS = 36
+
+
+ 
+def pulso_detectado(channel):
+   global pulsos
+   pulsos += 1
+def calcular_velocidade(pulsos, tempo):
+   voltas = pulsos / FUROS
+   distancia = voltas * (RODA_DIAMETRO * 3.14159)  # Distância em metros
+   velocidade_ms = distancia / tempo
+   velocidade_kmh = velocidade_ms * 3.6
+   return velocidade_kmh
+
+#GPIO.add_event_detect(SENSOR_PIN, GPIO.RISING, callback=pulso_detectado) 
+
 
 class JetCar:
     def __init__(self, servo_addr=0x40, motor_addr=0x60):
         # Servo setup
+
+        self.canvas = Canvas()
+
         self.servo_bus = smbus2.SMBus(1)
         self.SERVO_ADDR = servo_addr
         self.STEERING_CHANNEL = 0
@@ -172,6 +200,7 @@ class JetCar:
             self.set_motor_pwm(0, pwm_value)  # IN1
             self.set_motor_pwm(1, 0)          # IN2
             self.set_motor_pwm(2, pwm_value)  # ENA
+
             self.set_motor_pwm(5, pwm_value)  # IN3
             self.set_motor_pwm(6, 0)          # IN4
             self.set_motor_pwm(7, pwm_value)  # ENB
@@ -179,6 +208,7 @@ class JetCar:
             self.set_motor_pwm(0, pwm_value)  # IN1
             self.set_motor_pwm(1, pwm_value)  # IN2
             self.set_motor_pwm(2, 0)          # ENA
+
             self.set_motor_pwm(6, pwm_value)  # IN3
             self.set_motor_pwm(7, pwm_value)  # IN4
             self.set_motor_pwm(8, 0)          # ENB
@@ -187,16 +217,28 @@ class JetCar:
                 self.set_motor_pwm(channel, 0)
         
         self.current_speed = speed
+    def process(self):
+        global ultimo_tempo
+        global pulsos 
+        if time.time() - ultimo_tempo >= 1:
+            kmh = calcular_velocidade(pulsos, 1)
+            print(f"Velocidade {kmh:.2f} km/h")
+            pulsos = 0
+            ultimo_tempo = time.time()
+            self.canvas.clear()
+            self.canvas.draw_text(1,2,f" {kmh:.2f} km/h",1)
+            
+        return self.running
 
     def process_joystick(self):
         print("Gamepad control started")
         print("Left stick: steering")
         print("RT: forward, LT: reverse")
         print("START/SELECT: exit")
-        
         while self.running:
             try:
                 events = get_gamepad()
+                self.process()
                 for event in events:
                     #print(event.code)
                     if event.code == 'ABS_X':
@@ -220,6 +262,7 @@ class JetCar:
                     elif event.code in ['BTN_START', 'BTN_SELECT'] and event.state == 1:
                         self.running = False
                         break
+                
             except KeyboardInterrupt:
                 self.running = False
                 break
@@ -242,6 +285,7 @@ class JetCar:
         self.set_steering(0)
         self.servo_bus.close()
         self.motor_bus.close()
+        GPIO.cleanup()
 
 
 # car = None
@@ -256,14 +300,89 @@ class JetCar:
 # car.servo_bus.close()
 # car.motor_bus.close()
 
+# pulsos = 0
+# ultimo_tempo = time.time()
+
+
+# pulsos = 0
+# ultimo_tempo = time.time()
+
+
+# RODA_DIAMETRO = 0.065  # Diâmetro da roda em metros
+# FUROS = 36
+
+# pulsos = 0
+# ultimo_tempo = time.time()
+
+# def pulso_detectado(channel):
+#    global pulsos
+#    pulsos += 1
+
+# def calcular_velocidade(pulsos, tempo):
+#    voltas = pulsos / FUROS
+#    distancia = voltas * (RODA_DIAMETRO * 3.14159)  # Distância em metros
+#    velocidade_ms = distancia / tempo
+#    velocidade_kmh = velocidade_ms * 3.6
+#    return velocidade_kmh
+
+
 try:
     car = JetCar()
-    car.start()
-    while car.running:
+    canvas = Canvas()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(17, GPIO.IN)  # DO pin
+
+
+    GPIO.add_event_detect(17, GPIO.RISING, callback=pulso_detectado)
+
+    car.set_speed(100)
+    velocidade_maxima=1
+    kmh =0
+    while True:
+        canvas.clear()
+        if time.time() - ultimo_tempo >= 1:
+           kmh = calcular_velocidade(pulsos, 1)
+           if kmh > velocidade_maxima:
+               velocidade_maxima = kmh
+           print(f"Velocidade {kmh:.2f} km/h")
+           pulsos = 0
+           ultimo_tempo = time.time()
+
+        canvas.draw_text(1,1,f" {kmh:.2f} km/h",1)
+        canvas.draw_text(1,10,f" {velocidade_maxima:.2f} km/h Maximo",1)
+        
+        filled = int((kmh / velocidade_maxima) * 100)
+        canvas.draw_rect(2,25,filled,8,True)
+        canvas.update()
         time.sleep(0.1)
+
+    #car.start()
+    #3while car.running:
+    #    time.sleep(0.1)
 except Exception as e:
     print(f"Error: {e}")
 finally:
-    if 'car' in locals():
-        car.stop()
+    car.stop()
+    canvas.clear()
+    canvas.update()
+    GPIO.cleanup()
     print("Program ended") 
+
+
+
+# car = None
+
+# try:
+#     car = JetCar()
+#     car.start()
+
+#     while car.running:
+#          time.sleep(0.001)
+
+# except Exception as e:
+#     print(f"Error: {e}")
+# finally:
+#     car.stop()
+
+
+print("Program ended") 

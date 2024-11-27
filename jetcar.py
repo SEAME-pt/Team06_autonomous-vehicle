@@ -244,26 +244,24 @@ class JetCar:
         self.motor_bus.close()
 
 
-# car = None
-
-# car = JetCar()
-# #car.set_speed(-100)
-# #car.set_steering(-180)
-# car.set_angle(30)
-# time.sleep(2)
-# car.set_speed(0)
-# car.set_steering(0)
-# car.servo_bus.close()
-# car.motor_bus.close()
-
-try:
-    car = JetCar()
-    car.start()
-    while car.running:
-        time.sleep(0.1)
-except Exception as e:
-    print(f"Error: {e}")
-finally:
-    if 'car' in locals():
-        car.stop()
-    print("Program ended") 
+car = None
+car = JetCar()
+car.set_speed(-100)
+#car.set_steering(-180)
+car.set_angle(30)
+time.sleep(2)
+car.set_speed(0)
+car.set_steering(0)
+car.servo_bus.close()
+car.motor_bus.close()
+#try:
+#    car = JetCar()
+#    car.start()
+#    while car.running:
+#        time.sleep(0.1)
+#except Exception as e:
+#    print(f"Error: {e}")
+#finally:
+#    if 'car' in locals():
+#        car.stop()
+#    print("Program ended") 

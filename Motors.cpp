@@ -34,23 +34,23 @@ Motors::~Motors(){
 bool Motors::init_servo(){
 	try{
 		    // Reset PCA9685
-            write_byte_data(_fdServo, 0x00, 0x06);
+            writeByteData(_fdServo, 0x00, 0x06);
             usleep(100000); // Aguarda 100 ms
             
             // Setup servo control
-            write_byte_data(_fdServo, 0x00, 0x10);
+            writeByteData(_fdServo, 0x00, 0x10);
             usleep(100000);
 
             // Set frequency (~50Hz)
-            write_byte_data(_fdServo, 0xFE, 0x79);
+            writeByteData(_fdServo, 0xFE, 0x79);
             usleep(100000);
 
             // Configure MODE2
-            write_byte_data(_fdServo, 0x01, 0x04);
+            writeByteData(_fdServo, 0x01, 0x04);
             usleep(100000);
 
             // Enable auto-increment
-            write_byte_data(_fdServo, 0x00, 0x20);
+            writeByteData(_fdServo, 0x00, 0x20);
             usleep(100000);
 		return true;
 	}
@@ -66,10 +66,10 @@ bool Motors::setServoPwm(const int channel, int on_value, int off_value){
         int base_reg = 0x06 + (channel * 4);
 
         // Escreve os valores de "on" e "off" nos registradores
-        write_byte_data(_fdServo, base_reg, on_value & 0xFF);         // Escreve o byte baixo de "on_value"
-        write_byte_data(_fdServo, base_reg + 1, on_value >> 8);       // Escreve o byte alto de "on_value"
-        write_byte_data(_fdServo, base_reg + 2, off_value & 0xFF);    // Escreve o byte baixo de "off_value"
-        write_byte_data(_fdServo, base_reg + 3, off_value >> 8);      // Escreve o byte alto de "off_value"
+        writeByteData(_fdServo, base_reg, on_value & 0xFF);         // Escreve o byte baixo de "on_value"
+        writeByteData(_fdServo, base_reg + 1, on_value >> 8);       // Escreve o byte alto de "on_value"
+        writeByteData(_fdServo, base_reg + 2, off_value & 0xFF);    // Escreve o byte baixo de "off_value"
+        writeByteData(_fdServo, base_reg + 3, off_value >> 8);      // Escreve o byte alto de "off_value"
 		return(true);
 	}
 	catch ( const std::exception &e){
@@ -79,7 +79,51 @@ bool Motors::setServoPwm(const int channel, int on_value, int off_value){
 }
 
 
-//void Motors::init_motors(){}
+bool Motors::init_motors(){
+	try{
+		// Configure motor controller
+		writeByteData(_fdMotor, 0x00, 0x20);
+
+		// Set frequency to 60Hz
+		int 	preScale;
+		uint8_t oldMode, newMode;
+
+		preScale = static_cast<int>(std::floor(25000000.0 / 4096.0 / 60 - 1));
+		oldMode = readByteData(_fdMotor, 0x00);
+		newMode = (oldMode & 0x7F) | 0x10;
+
+		 // Configurar o novo modo e frequência
+		writeByteData(_fdMotor, 0x00, newMode);
+		writeByteData(_fdMotor, 0xFE, preScale);
+		writeByteData(_fdMotor, 0x00, oldMode);
+
+		usleep(5000);
+
+		// Ativar auto-incremento
+		writeByteData(_fdMotor, 0x00, oldMode | 0xa1);
+		return true;
+	}
+	catch(const std::exception &e){
+		std::cerr << "Erro na inicialização dos motores: " << e.what() << std::endl;
+		return false;
+	}
+}
+
+bool Motors::setMotorPwm(const int channel, int value){
+	value = std::min(std::max(value, 0), 4095);
+	try{
+		writeByteData(_fdMotor, 0x06 + 4 * channel, 0);
+		writeByteData(_fdMotor, 0x07 + 4 * channel, 0);
+		writeByteData(_fdMotor, 0x08 + 4 * channel, value & 0xFF);
+		writeByteData(_fdMotor, 0x09 + 4 * channel, value >> 8);
+		return true;
+
+	}
+	catch(const std::exception &e){
+		std::cerr << "Erro PWM dos motores: " << e.what() << std::endl;
+		return false;
+	}
+}
 
 void Motors::set_steering(int angle){
     /* """Set steering angle (-90 to +90 degrees)""" */
@@ -100,8 +144,46 @@ void Motors::set_steering(int angle){
 	_currentAngle = angle;
 }
 
+void Motors::setSpeed(int speed){
+	int pwmValue;
+	speed = std::max(-100, std::min(100, speed));
+	pwmValue = static_cast<int>(std::abs(speed) / 100.0 * 4095);
 
-void Motors::write_byte_data(int fd, uint8_t reg, uint8_t value) {
+	if (speed > 0){ //forward
+		setMotorPwm(0, pwmValue); //IN1
+		setMotorPwm(1, 0);        //IN2
+		setMotorPwm(2, pwmValue); //ENA
+		setMotorPwm(5, pwmValue); //IN3
+		setMotorPwm(6, 0);		  //IN4
+		setMotorPwm(7, pwmValue); //ENB
+	}
+	else if (speed < 0){ //backward
+		setMotorPwm(0, pwmValue); //IN1
+		setMotorPwm(1, pwmValue);        //IN2
+		setMotorPwm(2, 0); //ENA
+		setMotorPwm(6, pwmValue); //IN3
+		setMotorPwm(7, pwmValue); //IN4
+		setMotorPwm(8, 0); //ENB
+	}
+	else{
+		for (int channel = 0; channel < 9; ++channel) {
+                setMotorPwm(channel, 0);
+            }
+	}
+	_currentSpeed = speed;
+}
+
+uint8_t Motors::readByteData(int fd, uint8_t reg){
+	if(write(fd, &reg, 1) != 1)
+		throw std::runtime_error("Erro ao enviar o registrador ao dispositivo I2C.");
+	uint8_t value;
+	if (read(fd, &value, 1) != 1)
+		throw std::runtime_error("Erro ao ler o registrador ao dispositivo I2C.");
+	return value;
+}
+
+
+void Motors::writeByteData(int fd, uint8_t reg, uint8_t value) {
     uint8_t buffer[2] = {reg, value};
     if (write(fd, buffer, 2) != 2) {
         throw std::runtime_error("Erro ao escrever no dispositivo I2C.");
@@ -110,20 +192,60 @@ void Motors::write_byte_data(int fd, uint8_t reg, uint8_t value) {
 
 int main() {
     try {
-        Motors car;
-        if (car.init_servo()) {
-            std::cout << "Servo inicializado com sucesso!" << std::endl;
-			car.setServoPwm(0, 0, 300);
-			usleep(1000);
-			car.set_steering(0);
-			usleep(1000);
+        // Cria uma instância da classe Motors
+        Motors jetCar;
 
-		} else {
-            std::cerr << "Falha na inicialização do servo." << std::endl;
+        // Inicializa os servos e motores
+        if (!jetCar.init_servo()) {
+            std::cerr << "Falha na inicialização dos servos." << std::endl;
+            return 1;
+        }
+        if (!jetCar.init_motors()) {
+            std::cerr << "Falha na inicialização dos motores." << std::endl;
+            return 1;
         }
 
+        std::cout << "Sistema inicializado com sucesso!" << std::endl;
+
+        // Teste de controle do servo (direção)
+        //std::cout << "Girando o volante para a esquerda (-45 graus)..." << std::endl;
+        //jetCar.set_steering(-45);
+        //usleep(1000000); // Aguarda 1 segundo
+//
+        //std::cout << "Girando o volante para o centro (0 graus)..." << std::endl;
+        //jetCar.set_steering(0);
+        //usleep(1000000);
+//
+        //std::cout << "Girando o volante para a direita (+45 graus)..." << std::endl;
+        //jetCar.set_steering(45);
+        //usleep(1000000);
+//
+		//std::cout << "Girando o volante para o centro (0 graus)..." << std::endl;
+        //jetCar.set_steering(0);
+        //usleep(1000000);
+
+        // Teste de controle dos motores (velocidade)
+        std::cout << "Acelerando para frente (50%)..." << std::endl;
+        jetCar.setSpeed(100);
+        usleep(2000000); // Aguarda 2 segundos
+
+        std::cout << "Reduzindo para 0 (parando)..." << std::endl;
+        jetCar.setSpeed(0);
+        usleep(1000000);
+
+        std::cout << "Recuo (marcha ré, 30%)..." << std::endl;
+        jetCar.setSpeed(-100);
+        usleep(2000000);
+
+        std::cout << "Parando o veículo..." << std::endl;
+        jetCar.setSpeed(0);
+
+        std::cout << "Teste concluído com sucesso!" << std::endl;
+
     } catch (const std::exception& e) {
-        std::cerr << "Erro fatal: " << e.what() << std::endl;
+        // Lida com qualquer exceção lançada pela classe Motors
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return 1;
     }
 
     return 0;

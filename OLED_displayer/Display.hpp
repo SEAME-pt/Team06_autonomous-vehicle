@@ -85,7 +85,7 @@ class	Display
 		void	updateDisplay(void);
 
 
-		void	invert(void); //temp
+		//void	invert(void); //temp
 };
 
 #endif

@@ -5,9 +5,8 @@ int	main(void)
     try
     {
         Display	dp;
-        dp.putText("TEAM 06", 120, 8);
+        dp.putText("IP: 10.21.221.56", 0, 16);
         dp.updateDisplay();
-        dp.invert();
     }
     
     catch (const std::exception& e)

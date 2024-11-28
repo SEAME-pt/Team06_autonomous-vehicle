@@ -12,7 +12,6 @@
 #include <sys/ioctl.h>
 
 # ifdef SKIP_DEPENDENCY
-#  include <vector> // test
 # else
 #  include <linux/i2c-dev.h>
 # endif
@@ -47,6 +46,7 @@
 class	Display
 {
 	private:
+		// Constant resources
 		enum
 		{
 			HORIZONTAL,
@@ -54,6 +54,7 @@ class	Display
 			PAGE,
 			INVALID
 		};
+		
 		//Attributes
 		int		_fd;
 		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
@@ -72,10 +73,13 @@ class	Display
 	
 	public:
 		Display();
+		Display(std::string testConstructor);
 		~Display();
 
 		void	setPixel(int x, int y);
 		void	unsetPixel(int x, int y);
+		void	putText(std::string text, int x, int y);
+		void	putChar(char c, int x, int y);
 		void	updateDisplay(void);
 };
 

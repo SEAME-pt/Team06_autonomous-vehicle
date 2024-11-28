@@ -13,8 +13,12 @@ Display::Display()
 		throw (std::exception());
 	
 
-	//_fd = STDOUT_FILENO; // TEST
+	_initDisplay();
+}
 
+Display::Display(std::string _testConstructor)
+{
+	_fd = STDOUT_FILENO;
 	_initDisplay();
 }
 Display::Display(const Display& other): _fd(other._fd), _buffer(other._buffer) {}
@@ -60,10 +64,7 @@ void	Display::_initDisplay(void)
 	_writeCmd(0x8D);
 	_writeCmd(0x14);
 
-	_writeCmd(SET_PAGE_NO | 0);
-	_writeCmd(0x00);
-	_writeCmd(0x10);
-
+	_resetPrintPos();
 	_initBuffer();
 	updateDisplay();
 	
@@ -103,3 +104,13 @@ void	Display::_writeCmd(unsigned char data) const
 
 void	Display::setPixel(int x, int y) {_buffer[y/8*WIDTH+x+1] |= 1<<(y%8);}
 void	Display::unsetPixel(int x, int y) {_buffer[y/8*WIDTH+x+1] &= ~(1<<(y%8));}
+
+void	Display::putText(std::string text, int x, int y)
+{
+	for (int i=0; i<text.size(); i++)
+		putChar(text[i], (i*8)+x, y);
+}
+void	Display::putChar(char c, int x, int y)
+{
+	
+}

@@ -3,7 +3,6 @@
 
 Display::Display()
 {
-	/*
 	std::cout << "Opening connection I2C..." << std::endl;
 	_fd = open("/dev/i2c-1", O_RDWR);
 	if (_fd < 0)
@@ -12,11 +11,21 @@ Display::Display()
 	std::cout << "Configuring display address.." << std::endl;
 	if (ioctl(_fd, I2C_SLAVE, DISPLAY_ADDR) < 0)
 		throw (std::exception());
-	*/
+	
 
-	_fd = STDOUT_FILENO; // TEST
+	//_fd = STDOUT_FILENO; // TEST
 
 	_initDisplay();
+}
+Display::Display(const Display& other): _fd(other._fd), _buffer(other._buffer) {}
+Display&	Display::operator=(const Display& other)
+{
+	if (this != &other)
+	{
+		_fd = other._fd;
+		_buffer = other._buffer;
+	}
+	return (*this);
 }
 
 Display::~Display()
@@ -24,6 +33,7 @@ Display::~Display()
 	if (_fd > 0)
 		close(_fd);
 }
+
 
 void	Display::_initDisplay(void)
 {
@@ -59,13 +69,28 @@ void	Display::_initDisplay(void)
 	
 	_writeCmd(NORMAL_DISPLAY);
 	_writeCmd(DISPLAY_ON);
+
 }
 
-void	Display::_initBuffer(void) {_buffer[0] = PXL_ADD;}
-
-void	Display::updateDisplay(void) const
+void	Display::_initBuffer(void)
 {
+	_buffer[0] = PXL_ADD;
+	_clearBuffer();
+}
+void	Display::_clearBuffer(void) {std::fill(_buffer.begin() + 1, _buffer.end(), 0);}
+void	Display::_fillBuffer(void) {std::fill(_buffer.begin() + 1, _buffer.end(), 0xFF);}
+void	Display::_resetPrintPos(void)
+{
+	_writeCmd(SET_PAGE_NO | 0);
+	_writeCmd(0x00);
+	_writeCmd(0x10);
+}
+
+void	Display::updateDisplay(void)
+{
+	_resetPrintPos();
 	write(_fd, _buffer.data(), _buffer.size());
+	std::cout << "Display updated!!" << std::endl;
 }
 
 void	Display::_writeCmd(unsigned char data) const

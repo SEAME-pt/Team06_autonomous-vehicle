@@ -5,10 +5,7 @@ int	main(void)
     try
     {
         Display	dp;
-        dp.setPixel(0, 0);
-        dp.setPixel(127, 0);
-        dp.setPixel(0, 31);
-        dp.setPixel(127, 31);
+        dp.updateDisplay();
     }
     
     catch (const std::exception& e)

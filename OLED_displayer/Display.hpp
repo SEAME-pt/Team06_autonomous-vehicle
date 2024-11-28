@@ -2,6 +2,7 @@
 # define DISPLAY_HPP
 
 #include <array>
+#include <algorithm>
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +14,7 @@
 # ifdef SKIP_DEPENDENCY
 #  include <vector> // test
 # else
-#  include <linux/i2c-dev.ih>
+#  include <linux/i2c-dev.h>
 # endif
 
 
@@ -63,6 +64,10 @@ class	Display
 
 		void	_initDisplay(void);
 		void	_initBuffer(void);
+		void	_clearBuffer(void);
+		void	_fillBuffer(void);
+		void	_resetPrintPos(void);
+		
 		void	_writeCmd(unsigned char data) const;
 	
 	public:
@@ -71,7 +76,7 @@ class	Display
 
 		void	setPixel(int x, int y);
 		void	unsetPixel(int x, int y);
-		void	updateDisplay(void) const;
+		void	updateDisplay(void);
 };
 
 #endif

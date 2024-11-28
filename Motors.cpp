@@ -1,5 +1,10 @@
 #include "Motors.hpp"
 
+std::atomic<int> Motors::_pulsos(0);
+std::chrono::steady_clock::time_point Motors::_ultimoTempo = std::chrono::steady_clock::now();
+// Variável global para sinalizar quando o programa deve terminar
+std::atomic<bool> running(true);
+
 Motors::Motors(){
 	i2c_device = "/dev/i2c-1";
 	_fdServo = open(i2c_device.c_str(), O_RDWR);
@@ -27,8 +32,10 @@ Motors::Motors(){
 }
 
 Motors::~Motors(){
+	setSpeed(0);
 	close(_fdMotor);
 	close(_fdServo);
+    std::cout << "destructor call\n";
 }
 
 bool Motors::init_servo(){
@@ -190,22 +197,184 @@ void Motors::writeByteData(int fd, uint8_t reg, uint8_t value) {
     }
 }
 
-int main() {
+// Função de callback chamada em interrupções
+void Motors::pulsoDetectado(struct gpiod_line_event event) {
+    if (event.event_type == GPIOD_LINE_EVENT_RISING_EDGE) { // Detecta borda de subida
+        _pulsos++;
+    }
+	std::cout << "pulso:  " << _pulsos << "\n";
+}
+
+// Calcula a velocidade com base nos pulsos e no tempo decorrido
+double Motors::calcularVelocidade(int pulsos, double tempo) {
+    double voltas = static_cast<double>(pulsos) / FUROS;
+    double distancia = voltas * (RODA_DIAMETRO * M_PI); // Distância percorrida
+    double velocidade_ms = distancia / tempo;           // Velocidade em m/s
+    return velocidade_ms * 3.6;                         // Converte para km/h
+}
+
+// Thread para monitorar GPIO e processar interrupções
+void Motors::monitorGPIO(struct gpiod_line *line) {
+    struct timespec timeout;
+    timeout.tv_sec = 1; // Tempo de espera em segundos
+    timeout.tv_nsec = 0; // Tempo de espera em nanosegundos
+
+    while (running.load()) { // Usa .load() para ler de forma atômica
+        int ret = gpiod_line_event_wait(line, &timeout); // Aguarda por um evento ou timeout
+        std::cout << "ret:  " << ret << "\n";
+        if (ret > 0) {
+            struct gpiod_line_event event;
+            gpiod_line_event_read(line, &event); // Lê o evento
+            pulsoDetectado(event);
+        } else if (ret < 0) {
+            std::cerr << "Erro ao esperar por eventos GPIO!" << std::endl;
+            break;
+        } else {
+            // Se ret == 0, isso significa que houve um timeout
+            std::cout << "Timeout atingido na espera do evento GPIO.\n";
+        }
+    }
+    std::cout << "Thread monitorGPIO closed.\n";
+}
+
+void Motors::updateVol(){
+  while (true) {
+	    auto agora = std::chrono::steady_clock::now();
+        double tempo_decorrido = std::chrono::duration<double>(agora - _ultimoTempo).count();
+
+        if (tempo_decorrido >= 1.0) { // Atualiza a cada 1 segundo
+            int pulsosAtual = _pulsos.exchange(0); // Reseta contador de pulsos
+            double velocidade = calcularVelocidade(pulsosAtual, tempo_decorrido);
+
+            std::cout << "Velocidade: " << velocidade << " km/h" << std::endl;
+            _ultimoTempo = agora;
+        }
+        if (running == false){
+            std::cout << "Thread do updateVol closed\n";
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Pausa para reduzir uso da CPU
+	}
+}
+
+// Função de tratamento de sinal para interromper o programa com Ctrl+C
+void signalHandler(int signum) {
+	(void)signum;
+    std::cout << "\nInterrupção recebida, parando os motores..." << std::endl;
+    running = false;
+}
+
+/* int main() {
+    // Configura o manipulador de sinal para capturar Ctrl+C (SIGINT)
+    std::signal(SIGINT, signalHandler);
+
     try {
-        // Cria uma instância da classe Motors
+        // Inicializa a classe Motors
         Motors jetCar;
 
-        // Inicializa os servos e motores
+        // Inicializa o servo e os motores
         if (!jetCar.init_servo()) {
-            std::cerr << "Falha na inicialização dos servos." << std::endl;
+            std::cerr << "Erro ao inicializar o servo." << std::endl;
             return 1;
         }
         if (!jetCar.init_motors()) {
-            std::cerr << "Falha na inicialização dos motores." << std::endl;
+            std::cerr << "Erro ao inicializar os motores." << std::endl;
             return 1;
         }
 
         std::cout << "Sistema inicializado com sucesso!" << std::endl;
+
+        // Configura GPIO para a leitura do sensor de velocidade
+        struct gpiod_chip *chip = gpiod_chip_open("/dev/gpiochip0");
+        if (!chip) {
+            std::cerr << "Erro ao abrir o chip GPIO!" << std::endl;
+            return 1;
+        }
+
+        struct gpiod_line *line = gpiod_chip_get_line(chip, 17); // Substitua pelo número do pino correto
+        if (!line) {
+            std::cerr << "Erro ao obter a linha GPIO!" << std::endl;
+            gpiod_chip_close(chip);
+            return 1;
+        }
+
+        // Configura a linha para detectar bordas de subida e queda
+        if (gpiod_line_request_both_edges_events(line, "sensor_velocidade") < 0) {
+            std::cerr << "Erro ao configurar GPIO para eventos!" << std::endl;
+            gpiod_chip_close(chip);
+            return 1;
+        }
+
+        // Cria threads para monitorar a velocidade e controlar o movimento
+        std::thread monitoramentoThread(&Motors::monitorGPIO, &jetCar, line);
+        std::thread velocidadeThread(&Motors::updateVol, &jetCar);
+
+        // Define a velocidade dos motores para iniciar o movimento
+        jetCar.setSpeed(-10); // Ajuste a velocidade conforme necessário
+
+        // Enquanto o programa estiver rodando, mantém o loop ativo
+        while (running) {
+            std::this_thread::sleep_for(std::chrono::seconds(1)); // Simples pausa para reduzir uso da CPU
+        }
+
+        // Para encerrar, interrompe as threads e fecha recursos
+        std::cout << "Parando os motores..." << std::endl;
+        running.store(false); // Alteração atômica para sinalizar que as threads devem parar
+        monitoramentoThread.join();
+        velocidadeThread.join();
+        jetCar.setSpeed(0); // Para de os motores
+
+
+        gpiod_line_release(line);
+        gpiod_chip_close(chip);
+
+        return 1;
+    } catch (const std::exception &e) {
+        std::cerr << "Erro: " << e.what() << std::endl;
+        return 1;
+    }
+    return 0;
+}
+ */
+
+
+int main() {
+    struct gpiod_chip *chip = gpiod_chip_open("/dev/gpiochip0");
+    if (!chip) {
+        std::cerr << "Erro ao abrir o chip GPIO!" << std::endl;
+        return 1;
+    }
+
+    struct gpiod_line *line = gpiod_chip_get_line(chip, 17); // Número do pino do sensor
+    if (!line) {
+        std::cerr << "Erro ao obter a linha GPIO!" << std::endl;
+        gpiod_chip_close(chip);
+        return 1;
+    }
+
+    // Configura a linha para detectar bordas de subida e descida
+    if (gpiod_line_request_both_edges_events(line, "teste") < 0) {
+        std::cerr << "Erro ao configurar a linha para eventos!" << std::endl;
+        gpiod_chip_close(chip);
+        return 1;
+    }
+
+    struct gpiod_line_event event;
+    while (true) {
+        int ret = gpiod_line_event_wait(line, nullptr); // Espera indefinidamente por um evento
+        if (ret > 0) {
+            gpiod_line_event_read(line, &event);
+            std::cout << "Evento detectado: " << event.event_type << std::endl;
+        } else if (ret < 0) {
+            std::cerr << "Erro ao esperar por eventos GPIO!" << std::endl;
+            break;
+        }
+    }
+
+    gpiod_chip_close(chip);
+    return 0;
+}
+
 
         // Teste de controle do servo (direção)
         //std::cout << "Girando o volante para a esquerda (-45 graus)..." << std::endl;
@@ -225,28 +394,19 @@ int main() {
         //usleep(1000000);
 
         // Teste de controle dos motores (velocidade)
-        std::cout << "Acelerando para frente (50%)..." << std::endl;
-        jetCar.setSpeed(100);
-        usleep(2000000); // Aguarda 2 segundos
-
-        std::cout << "Reduzindo para 0 (parando)..." << std::endl;
-        jetCar.setSpeed(0);
-        usleep(1000000);
-
-        std::cout << "Recuo (marcha ré, 30%)..." << std::endl;
-        jetCar.setSpeed(-100);
-        usleep(2000000);
-
-        std::cout << "Parando o veículo..." << std::endl;
-        jetCar.setSpeed(0);
-
-        std::cout << "Teste concluído com sucesso!" << std::endl;
-
-    } catch (const std::exception& e) {
-        // Lida com qualquer exceção lançada pela classe Motors
-        std::cerr << "Erro: " << e.what() << std::endl;
-        return 1;
-    }
-
-    return 0;
-}
+      //  std::cout << "Acelerando para frente (50%)..." << std::endl;
+      //  jetCar.setSpeed(100);
+      //  usleep(2000000); // Aguarda 2 segundos
+//
+      //  std::cout << "Reduzindo para 0 (parando)..." << std::endl;
+      //  jetCar.setSpeed(0);
+      //  usleep(1000000);
+//
+      //  std::cout << "Recuo (marcha ré, 30%)..." << std::endl;
+      //  jetCar.setSpeed(-100);
+      //  usleep(2000000);
+//
+      //  std::cout << "Parando o veículo..." << std::endl;
+      //  jetCar.setSpeed(0);
+//
+      //  std::cout << "Teste concluído com sucesso!" << std::endl;

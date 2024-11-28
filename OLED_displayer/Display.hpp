@@ -1,12 +1,22 @@
 #ifndef DISPLAY_HPP
 # define DISPLAY_HPP
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <linux/i2c-dev.ih>
-# include <sys/ioctl.h> //TODO: Must check if any of these libraries can be converted to c++
+
+#include <array>
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <sys/ioctl.h>
+
+# ifdef SKIP_DEPENDENCY
+#  include <vector> // test
+# else
+#  include <linux/i2c-dev.ih>
+# endif
+
+
 
 # define DISPLAY_ADDR 0x3C
 # define WIDTH 128
@@ -14,7 +24,7 @@
 # define PAGE_AM 4
 
 // Addresses to write data in
-# define COMM_ADD 0x00
+# define CMD_ADD 0x00
 # define PXL_ADD 0x40
 
 // Commands
@@ -36,13 +46,32 @@
 class	Display
 {
 	private:
+		enum
+		{
+			HORIZONTAL,
+			VERTICAL,
+			PAGE,
+			INVALID
+		};
+		//Attributes
 		int		_fd;
-		unsigned char	_buffer[HEIGHT][WIDTH];
+		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
+
+		//Functions
 		Display(const Display& other);
 		Display&	operator=(const Display& other);
+
+		void	_initDisplay(void);
+		void	_initBuffer(void);
+		void	_writeCmd(unsigned char data) const;
+	
 	public:
 		Display();
 		~Display();
-}
+
+		void	setPixel(int x, int y);
+		void	unsetPixel(int x, int y);
+		void	updateDisplay(void) const;
+};
 
 #endif

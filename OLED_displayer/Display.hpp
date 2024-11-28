@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <iostream>
+#include <iomanip>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -82,6 +83,9 @@ class	Display
 		void	putText(std::string text, int x, int y);
 		void	putChar(const char c, int x, int y);
 		void	updateDisplay(void);
+
+
+		void	invert(void); //temp
 };
 
 #endif

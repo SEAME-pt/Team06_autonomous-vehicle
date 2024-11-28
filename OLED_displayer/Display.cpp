@@ -161,3 +161,34 @@ void	Display::putChar(char c, int x, int y)
 	for (int i=0; i<8; i++)
 		_buffer[y/8*WIDTH+x+i+1] = bitmap[i];
 }
+
+void	Display::invert(void)
+{
+	std::map<char, std::array<unsigned char, 8> >::iterator	it1;
+	for (it1=_charBitmaps.begin(); it1!=_charBitmaps.end(); it1++)
+	{
+		std::cout << "'" << it1->first << "', {";
+
+		for (int i=0; i<8; i++)
+		{
+			unsigned char	byte = 0;
+			std::array<unsigned char, 8>::reverse_iterator	it2;
+			for (it2=it1->second.rbegin(); it2!=it1->second.rend(); it2++)
+			{
+				if (it1->first == '!')
+					std::cout << "Current hex: " << std::hex << static_cast<int>(*it2) << std::endl;
+				int	i2 = it2 - it1->second.rbegin();
+				//std::cout << i2 << std::endl;
+				if ((1<<(7-i2)) & *it2)
+				{
+					if (it1->first == '!')
+						std::cout << "on!" << std::endl;
+					byte |= 1<<(7 - i2);
+				}
+			}
+			std::cout << "0x" << std::hex << std::setfill ('0') << std::setw (2) << static_cast<int>(byte) << ", ";
+
+		}
+		std::cout << "}," << std::endl;
+	}
+}

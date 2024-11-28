@@ -5,7 +5,7 @@ int	main(void)
     try
     {
         Display	dp;
-        dp.putText(1, 1);
+        dp.putText("AAAA", 1, 1);
         dp.updateDisplay();
     }
     

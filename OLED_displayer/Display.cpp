@@ -1,6 +1,10 @@
 
 #include "Display.hpp"
 
+std::map<char, std::array<unsigned char, 8> > Display::_charBitmaps = {
+	 {'A', {0x30, 0x78, 0xCC, 0xCC, 0xFC, 0xCC, 0xCC, 0x00}}
+};
+
 Display::Display()
 {
 	std::cout << "Opening connection I2C..." << std::endl;
@@ -112,5 +116,7 @@ void	Display::putText(std::string text, int x, int y)
 }
 void	Display::putChar(char c, int x, int y)
 {
-	
+	std::array<unsigned char, 8>	bitmap = Display::_charBitmaps[c];
+	for (int i=0; i<8; i++)
+		_buffer[y/8*WIDTH+x+i+1] = bitmap[i];
 }

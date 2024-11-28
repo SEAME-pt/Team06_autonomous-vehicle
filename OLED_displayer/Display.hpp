@@ -2,6 +2,7 @@
 # define DISPLAY_HPP
 
 #include <array>
+#include <map>
 #include <algorithm>
 #include <iostream>
 #include <stdio.h>
@@ -54,7 +55,7 @@ class	Display
 			PAGE,
 			INVALID
 		};
-		
+		static std::map<char, std::array<unsigned char, 8> > _charBitmaps;
 		//Attributes
 		int		_fd;
 		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
@@ -79,7 +80,7 @@ class	Display
 		void	setPixel(int x, int y);
 		void	unsetPixel(int x, int y);
 		void	putText(std::string text, int x, int y);
-		void	putChar(char c, int x, int y);
+		void	putChar(const char c, int x, int y);
 		void	updateDisplay(void);
 };
 

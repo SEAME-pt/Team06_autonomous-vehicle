@@ -9,7 +9,7 @@ int	main(void)
         dp.updateDisplay();
     }
     
-    catch (const std::exception& e)
-    {std::cerr << "Exception cought" << std::endl;}
+    catch (const Display::DisplayException& e)
+    {std::cerr << e.what() << std::endl;}
 
 }

@@ -52,11 +52,11 @@ Display::Display()
 	std::cout << "Opening connection I2C..." << std::endl;
 	_fd = open("/dev/i2c-1", O_RDWR);
 	if (_fd < 0)
-		throw (std::exception());
+		throw (DisplayException("Error opening I2C connection."));
 
 	std::cout << "Configuring display address.." << std::endl;
 	if (ioctl(_fd, I2C_SLAVE, DISPLAY_ADDR) < 0)
-		throw (std::exception());
+		throw (DisplayException("Error configuring display address."));
 	
 
 	_initDisplay();
@@ -161,6 +161,13 @@ void	Display::putChar(char c, int x, int y)
 	for (int i=0; i<8; i++)
 		_buffer[y/8*WIDTH+x+i+1] = bitmap[i];
 }
+
+
+Display::DisplayException::DisplayException(std::string message)
+: _message(message) {}
+Display::DisplayException::~DisplayException(){}
+const char* Display::DisplayException::what() const throw()
+{return (_message.c_str());}
 
 /*void	Display::invert(void)
 {

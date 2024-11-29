@@ -85,6 +85,16 @@ class	Display
 		void	updateDisplay(void);
 
 
+
+		class DisplayException: public std::exception
+		{
+			private:
+				std::string	_message;
+			public:
+				DisplayException(std::string message);
+				~DisplayException();
+				const char*	what() const throw();
+		};
 		//void	invert(void); //temp
 };
 

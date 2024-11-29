@@ -6,6 +6,7 @@ int	main(void)
     {
         Display	dp;
         dp.putText("IP: 10.21.221.56", 0, 16);
+        dp.putImage(16, 48, 16);
         dp.updateDisplay();
     }
     

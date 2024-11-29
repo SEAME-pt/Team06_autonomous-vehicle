@@ -57,6 +57,7 @@ class	Display
 			INVALID
 		};
 		static std::map<char, std::array<unsigned char, 8> > _charBitmaps;
+		static unsigned char	_faceBitmaps[16][16];
 		//Attributes
 		int		_fd;
 		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
@@ -85,6 +86,7 @@ class	Display
 		void	updateDisplay(void);
 
 
+		void	putImage(int size, int x, int y);
 
 		class DisplayException: public std::exception
 		{
@@ -95,6 +97,7 @@ class	Display
 				~DisplayException();
 				const char*	what() const throw();
 		};
+
 		//void	invert(void); //temp
 };
 

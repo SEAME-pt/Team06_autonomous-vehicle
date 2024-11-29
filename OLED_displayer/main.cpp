@@ -5,7 +5,7 @@ int	main(void)
     try
     {
         Display	dp;
-        dp.putText("IP: 10.21.221.56", 0, 16);
+        dp.putText("IP: 10.21.221.56", 0, 0);
         dp.putImage(16, 48, 16);
         dp.updateDisplay();
     }

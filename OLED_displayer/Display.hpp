@@ -56,11 +56,11 @@ class	Display
 			PAGE,
 			INVALID
 		};
-		static std::map<char, std::array<unsigned char, 8> > _charBitmaps;
-		static unsigned char	_faceBitmaps0[16][16];
-		static unsigned char    _faceBitmaps1[16][16];
+		static std::map<char, std::array<unsigned char, 8> >	_charBitmaps;
+		static std::array<std::array<unsigned char, 16>, 16>	_faceBitmaps0;
+		static std::array<std::array<unsigned char, 16>, 16>	_faceBitmaps1;
 
-		std::array<unsigned char[16][16], 2>	_faces; 
+		//std::array<unsigned char[16][16], 2>	_faces; 
 		//Attributes
 		int		_fd;
 		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
@@ -78,6 +78,8 @@ class	Display
 		void	_writeCmd(unsigned char data) const;
 	
 	public:
+		std::array<std::array<std::array<unsigned char, 16>, 16>, 2>	faces;
+
 		Display();
 		Display(std::string testConstructor);
 		~Display();
@@ -89,7 +91,7 @@ class	Display
 		void	updateDisplay(void);
 
 
-		void	putImage(unsigned char img[16][16], int size, int x, int y);
+		void	putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y);
 
 		class DisplayException: public std::exception
 		{

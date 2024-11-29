@@ -47,8 +47,8 @@ std::map<char, std::array<unsigned char, 8> > Display::_charBitmaps = {
 	{'Z', {0x67, 0x73, 0x59, 0x4d, 0x67, 0x73, 0x00, 0x00, }},
 };
 
-unsigned char	Display::_faceBitmaps0[16][16] = 
-{	
+std::array<std::array<unsigned char, 16>, 16>	Display::_faceBitmaps0 = 
+{{	
 	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
 	{0,0,1,1,0,1,0,0,0,0,1,0,1,1,0,0},
 	{0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0},
@@ -65,10 +65,10 @@ unsigned char	Display::_faceBitmaps0[16][16] =
 	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
 	{0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
 	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0}
-};
+}};
 
-unsigned char   Display::_faceBitmaps1[16][16] =
-{
+std::array<std::array<unsigned char, 16>, 16>   Display::_faceBitmaps1 =
+{{
         {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
         {0,0,1,1,0,1,0,0,0,0,1,0,1,1,0,0},
         {0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0},
@@ -85,9 +85,9 @@ unsigned char   Display::_faceBitmaps1[16][16] =
         {0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
         {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-};
+}};
 
-Display::Display():
+Display::Display(): faces{Display::_faceBitmaps0, Display::_faceBitmaps1}
 {
 	std::cout << "Opening connection I2C..." << std::endl;
 	_fd = open("/dev/i2c-1", O_RDWR);
@@ -202,7 +202,7 @@ void	Display::putChar(char c, int x, int y)
 		_buffer[y/8*WIDTH+x+i+1] = bitmap[i];
 }
 
-void	Display::putImage(unsigned char img[16][16], int size, int x, int y)
+void	Display::putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y)
 {
 	for (int i=0; i<size; i++)
 	{
@@ -210,6 +210,8 @@ void	Display::putImage(unsigned char img[16][16], int size, int x, int y)
 		{
 			if (img[i][j])
 				setPixel(x+j, y+i);
+			else
+				unsetPixel(x+j, y+i);
 		}
 	}
 }

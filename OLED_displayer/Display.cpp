@@ -1,7 +1,8 @@
 
 #include "Display.hpp"
 
-std::map<char, std::array<unsigned char, 8> > Display::_charBitmaps = {
+// BITMAPS FOR LETTERS
+const std::map<char, std::array<unsigned char, 8> > Display::_charBitmaps = {
 	{' ', {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, }},
 	{'!', {0x00, 0x00, 0x5f, 0x5f, 0x00, 0x00, 0x00, 0x00, }},
 	{',', {0x00, 0x00, 0xe0, 0x60, 0x00, 0x00, 0x00, 0x00, }},
@@ -47,64 +48,16 @@ std::map<char, std::array<unsigned char, 8> > Display::_charBitmaps = {
 	{'Z', {0x67, 0x73, 0x59, 0x4d, 0x67, 0x73, 0x00, 0x00, }},
 };
 
-std::array<std::array<unsigned char, 16>, 16>	Display::_faceBitmaps0 = 
-{{	
-	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-	{0,0,1,1,0,1,0,0,0,0,1,0,1,1,0,0},
-	{0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-	{1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
-	{0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-	{0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0},
-	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-	{0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0},
-	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-	{0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
-	{0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0}
-}};
-
-std::array<std::array<unsigned char, 16>, 16>   Display::_faceBitmaps1 =
-{{
-        {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-        {0,0,1,1,0,1,0,0,0,0,1,0,1,1,0,0},
-        {0,1,0,0,0,0,1,0,0,1,0,0,0,0,1,0},
-        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {1,0,0,0,1,1,0,0,0,0,1,1,0,0,0,1},
-        {1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1},
-        {0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-        {0,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0},
-        {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-        {0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0},
-        {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-        {0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0},
-        {0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
-}};
-
-Display::Display(): faces{Display::_faceBitmaps0, Display::_faceBitmaps1}
+// CANONICAL
+Display::Display()
 {
 	std::cout << "Opening connection I2C..." << std::endl;
 	_fd = open("/dev/i2c-1", O_RDWR);
 	if (_fd < 0)
 		throw (DisplayException("Error opening I2C connection."));
-
 	std::cout << "Configuring display address.." << std::endl;
 	if (ioctl(_fd, I2C_SLAVE, DISPLAY_ADDR) < 0)
 		throw (DisplayException("Error configuring display address."));
-	
-
-	_initDisplay();
-}
-
-Display::Display(std::string _testConstructor)
-{
-	_fd = STDOUT_FILENO;
 	_initDisplay();
 }
 Display::Display(const Display& other): _fd(other._fd), _buffer(other._buffer) {}
@@ -117,44 +70,43 @@ Display&	Display::operator=(const Display& other)
 	}
 	return (*this);
 }
-
 Display::~Display()
 {
 	if (_fd > 0)
 		close(_fd);
 }
 
-
+// PRIVATE MEMBERS
 void	Display::_initDisplay(void)
 {
 	_writeCmd(DISPLAY_OFF);
 	_writeCmd(SET_CONTRAST);
-	_writeCmd(0xFF);
+	_writeCmd(0xFF); // Maximum contrast
 
-	_writeCmd(SET_MULTIPLEX_RATIO);
+	_writeCmd(SET_MULTIPLEX_RATIO); // Allows for correct pixel-to-bit mapping in a 32pxl-height display
 	_writeCmd(31);
 
-	_writeCmd(SET_MEM_ADDR_MODE);
-	_writeCmd(HORIZONTAL);
+	_writeCmd(SET_MEM_ADDR_MODE); 
+	_writeCmd(HORIZONTAL); // Writes from left to right, moves to lower page when at the end
 
-	_writeCmd(DISPLAY_START_LINE);
+	_writeCmd(DISPLAY_START_LINE); // More orientation setup
 	_writeCmd(SEG_REMAP_RIGHT);
 	_writeCmd(COM_SCAN_DOWN);
 
-	_writeCmd(COM_PINS_CONFIG);
+	_writeCmd(COM_PINS_CONFIG); // Necessary to set correct orientation
 	_writeCmd(0x02);
 
-	_writeCmd(0xD5);
-	_writeCmd(0x80);
+	_writeCmd(CLOCK_FREQUENCY); // Impacts refresh rate
+	_writeCmd(0x80); // Default recommended
 
-	_writeCmd(0x8D);
-	_writeCmd(0x14);
+	_writeCmd(CHARGE_PUMP); // Necessary power for display to work
+	_writeCmd(0x14); // Enable
 
-	_resetPrintPos();
-	_initBuffer();
-	updateDisplay();
+	_resetPrintPos(); // Puts our "cursor" at the top left corner
+	_initBuffer(); // Prepares buffer for writing
+	updateDisplay(); // Writes the clean buffer to the display
 	
-	_writeCmd(NORMAL_DISPLAY);
+	_writeCmd(INVERSE_DISPLAY); // "1" means pixel on, "0" means off
 	_writeCmd(DISPLAY_ON);
 
 }
@@ -172,13 +124,15 @@ void	Display::_resetPrintPos(void)
 	_writeCmd(0x00);
 	_writeCmd(0x10);
 }
-
-void	Display::updateDisplay(void)
+void	Display::_putChar(char c, int x, int line) //line goes from 0 to 3
 {
-	_resetPrintPos();
-	write(_fd, _buffer.data(), _buffer.size());
+	const std::array<unsigned char, 8>	bitmap = Display::_charBitmaps.at(c);
+	int	byte_i = line*WIDTH+x+7+1;
+	if (byte_i >= _buffer.size())
+		throw DisplayException("Value out of range");
+	for (int i=0; i<8; i++)
+		_buffer[line*WIDTH+x+i+1] = bitmap[i];
 }
-
 void	Display::_writeCmd(unsigned char data) const
 {
 	unsigned char	buffer[2];
@@ -187,22 +141,40 @@ void	Display::_writeCmd(unsigned char data) const
 	write(_fd, buffer, 2);
 }
 
-void	Display::setPixel(int x, int y) {_buffer[y/8*WIDTH+x+1] |= 1<<(y%8);}
-void	Display::unsetPixel(int x, int y) {_buffer[y/8*WIDTH+x+1] &= ~(1<<(y%8));}
-
-void	Display::putText(std::string text, int x, int y)
+//PUBLIC FUNCTIONS
+void	Display::updateDisplay(void)
+{
+	_resetPrintPos();
+	write(_fd, _buffer.data(), _buffer.size());
+}
+void	Display::setPixel(int x, int y) 
+{
+	if (y < 0 || y > HEIGHT - 1 || x < 0 || x > WIDTH - 1)
+		throw DisplayException("Value out of range");
+	_buffer[y/8*WIDTH+x+1] |= 1<<(y%8);
+}
+void	Display::unsetPixel(int x, int y)
+{
+	if (y < 0 || y > HEIGHT - 1 || x < 0 || x > WIDTH - 1)
+		throw DisplayException("Value out of range");
+	_buffer[y/8*WIDTH+x+1] &= ~(1<<(y%8));
+}
+void	Display::putText(std::string text, int x, int line)
 {
 	for (int i=0; i<text.size(); i++)
-		putChar(text[i], (i*8)+x, y);
-}
-void	Display::putChar(char c, int x, int y)
-{
-	std::array<unsigned char, 8>	bitmap = Display::_charBitmaps[c];
-	for (int i=0; i<8; i++)
-		_buffer[y/8*WIDTH+x+i+1] = bitmap[i];
+		_putChar(text[i], (i*8)+x, line);
+	updateDisplay();
 }
 
-void	Display::putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y)
+// EXCEPTION CLASS
+Display::DisplayException::DisplayException(std::string message)
+: _message(message) {}
+Display::DisplayException::~DisplayException(){}
+const char* Display::DisplayException::what() const throw()
+{return (_message.c_str());}
+
+// FUNCTION TO PUT 16x16 IMAGES (minimally tested only)
+/*void	Display::putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y)
 {
 	for (int i=0; i<size; i++)
 	{
@@ -214,15 +186,10 @@ void	Display::putImage(std::array<std::array<unsigned char, 16>, 16> img, int si
 				unsetPixel(x+j, y+i);
 		}
 	}
-}
+	updateDisplay();
+}*/
 
-
-Display::DisplayException::DisplayException(std::string message)
-: _message(message) {}
-Display::DisplayException::~DisplayException(){}
-const char* Display::DisplayException::what() const throw()
-{return (_message.c_str());}
-
+// FUNCTION TO ROTATE 90 DEGREES CLOCKWISE A BITMAP
 /*void	Display::invert(void)
 {
 	std::map<char, std::array<unsigned char, 8> >::iterator	it1;

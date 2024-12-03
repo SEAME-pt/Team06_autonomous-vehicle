@@ -41,6 +41,8 @@
 # define COM_SCAN_UP 0xC0
 # define COM_SCAN_DOWN 0xC8
 # define COM_PINS_CONFIG 0xDA
+# define CLOCK_FREQUENCY 0xD5
+# define CHARGE_PUMP 0x8D
 # define SET_PAGE_NO 0xB0
 # define NORMAL_DISPLAY 0xA6
 # define INVERSE_DISPLAY 0xA7
@@ -48,24 +50,21 @@
 class	Display
 {
 	private:
-		// Constant resources
-		enum
+		// CONST CLASS RESOURCES
+		enum MEM_ADD_MODE
 		{
 			HORIZONTAL,
 			VERTICAL,
 			PAGE,
 			INVALID
 		};
-		static std::map<char, std::array<unsigned char, 8> >	_charBitmaps;
-		static std::array<std::array<unsigned char, 16>, 16>	_faceBitmaps0;
-		static std::array<std::array<unsigned char, 16>, 16>	_faceBitmaps1;
+		static const std::map<char, std::array<unsigned char, 8> >	_charBitmaps;
 
-		//std::array<unsigned char[16][16], 2>	_faces; 
-		//Attributes
+		//ATTRIBUTES
 		int		_fd;
 		std::array<unsigned char, PAGE_AM*WIDTH + 1>	_buffer;
 
-		//Functions
+		//MEMBER FUNCTIONS
 		Display(const Display& other);
 		Display&	operator=(const Display& other);
 
@@ -74,24 +73,19 @@ class	Display
 		void	_clearBuffer(void);
 		void	_fillBuffer(void);
 		void	_resetPrintPos(void);
-		
+		void	_putChar(const char c, int x, int line);
 		void	_writeCmd(unsigned char data) const;
 	
 	public:
-		std::array<std::array<std::array<unsigned char, 16>, 16>, 2>	faces;
 
 		Display();
-		Display(std::string testConstructor);
 		~Display();
 
 		void	setPixel(int x, int y);
 		void	unsetPixel(int x, int y);
-		void	putText(std::string text, int x, int y);
-		void	putChar(const char c, int x, int y);
+		void	putText(std::string text, int x, int line);
 		void	updateDisplay(void);
-
-
-		void	putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y);
+		//void	putImage(std::array<std::array<unsigned char, 16>, 16> img, int size, int x, int y);
 
 		class DisplayException: public std::exception
 		{

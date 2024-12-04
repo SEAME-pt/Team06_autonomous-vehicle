@@ -1,15 +1,22 @@
 #pragma once
 
+#include <fstream>
+#include <iostream>
+#include <stdexcept>
+#include <thread>
+#include <atomic>
+#include <mutex>
+#include <unistd.h>
+#include <cmath>
+#include <string>
+#include <chrono>
+
 #include <atomic>
 #include <thread>
 #include <functional>
 #include <string>
 #include <fstream>
-#include <iostream>
-#include <stdexcept>
-#include <unistd.h>
 #include <csignal>
-#include <cmath>
 
 class SpeedSensor {
 private:
@@ -17,8 +24,9 @@ private:
     double _rodaDiametro = 0.065;          			// Diâmetro da roda
     int		_furos = 36;                    			// Número de furos no disco
     std::atomic<int> _pulseCount;  			// Contador de pulsos
-    bool running_;                 			// Indicador de execução
-    std::thread monitorThread_;    			// Thread para monitorar GPIO
+    bool _running;                 			// Indicador de execução
+    std::thread _monitorThread;    			// Thread para monitorar GPIO
+    std::mutex _mutex;
 
     void setupGPIO();              			// Configurar GPIO
     void cleanupGPIO();            			// Limpar GPIO

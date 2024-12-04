@@ -2,7 +2,7 @@
 
 
 SpeedSensor::SpeedSensor()
-    : _pulseCount(0), running_(false) {
+    : _pulseCount(0), _running(false) {
     setupGPIO();
 }
 
@@ -55,11 +55,12 @@ int SpeedSensor::readGPIO(int pin) {
     }
     int value;
     valueFile >> value;
+    std::cout << "Valor lido do GPIO " << pin << ": " << value << std::endl;
     return value;
 }
 
 void SpeedSensor::monitorPulses() {
-    while (running_) {
+    while (_running) {
         if (readGPIO(_sensorPin) == 1) {
             _pulseCount++;
             usleep(10000); // Debounce de 10ms
@@ -68,19 +69,19 @@ void SpeedSensor::monitorPulses() {
 }
 
 void SpeedSensor::start() {
-    running_ = true;
-    monitorThread_ = std::thread(&SpeedSensor::monitorPulses, this);
+    _running = true;
+    _monitorThread = std::thread(&SpeedSensor::monitorPulses, this);
 }
 
 void SpeedSensor::stop() {
-    running_ = false;
-    if (monitorThread_.joinable()) {
-        monitorThread_.join();
+    _running = false;
+    if (_monitorThread.joinable()) {
+        _monitorThread.join();
     }
 }
 
 double SpeedSensor::getSpeedKmh() {
-    if (!running_) return 0.0;
+    if (!_running) return 0.0;
 
     int pulses = _pulseCount;
     double tempoSegundos = 1.0; // Simulando leitura por 1 segundo

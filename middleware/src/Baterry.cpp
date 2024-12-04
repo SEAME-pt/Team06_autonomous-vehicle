@@ -53,8 +53,6 @@ float Battery::getPercentage() {
     if (percentage < 0.0f) percentage = 0.0f;
     if (percentage > 100.0f) percentage = 100.0f;
 	return percentage;
-	
-	//return std::clamp(percentage, 0.0f, 100.0f);
 }
 
 std::string Battery::getStatus(float voltage) {

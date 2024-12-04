@@ -1,0 +1,14 @@
+
+sudo sfdisk -d /dev/mmcblk0 > /path/to/backup/partition_table_backup.txt
+
+sudo partclone.ext4 -c -s /dev/mmcblk0p1 -o /path/to/backup/image.img
+
+Restore the System to a New microSD Card
+
+    Restore the Partition Table Use sfdisk to recreate the partition table on the target microSD card:
+
+sudo sfdisk /dev/mmcblk0 < partition_table.txt
+
+Restore Each Partition Restore the backed-up images using partclone or dd:
+
+sudo partclone.ext4 -r -s partition1.img -o /dev/mmcblk0p1

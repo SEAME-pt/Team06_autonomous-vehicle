@@ -32,6 +32,7 @@ public:
 	SpeedSensor();
     ~SpeedSensor();
 
+	int getPulses();
     void start();                  // Inicia o monitoramento do sensor
     void stop();                   // Para o monitoramento do sensor
     double getSpeedKmh();          // Retorna a velocidade em km/h

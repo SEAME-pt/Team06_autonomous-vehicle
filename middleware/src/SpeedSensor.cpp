@@ -20,6 +20,10 @@ void SpeedSensor::cleanupGPIO() {
     unexportGPIO(_sensorPin);
 }
 
+int SpeedSensor::getPulses() {
+	return _pulseCount;
+}
+
 void SpeedSensor::exportGPIO(int pin) {
     std::ofstream exportFile("/sys/class/gpio/export");
     if (!exportFile) {
@@ -108,7 +112,7 @@ int main() {
         std::cout << "Monitor de Velocidade iniciado. Pressione Ctrl+C para sair.\n";
 
         while (running) {
-            double velocidade = sensor.getSpeedKmh();
+            double velocidade = sensor.getPulses();
             std::cout << "Velocidade: " << velocidade << " km/h\n";
             sensor.resetPulses();
             std::this_thread::sleep_for(std::chrono::seconds(1));

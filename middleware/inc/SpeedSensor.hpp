@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <unistd.h>
 #include <csignal>
+#include <cmath>
 
 class SpeedSensor {
 private:

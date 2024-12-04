@@ -94,6 +94,7 @@ void SpeedSensor::resetPulses() {
 bool running = true;
 
 void handleSignal(int signal) {
+    (void)signal;
     running = false;
 }
 

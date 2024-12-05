@@ -1,128 +1,56 @@
-#include "../inc/SpeedSensor.hpp"
+#include <wiringPi.h>
+#include <iostream>
+#include <chrono>
+#include <thread>
 
+// Configurações
+const int SENSOR_PIN = 0;  // Pin 17 na Raspberry Pi corresponde ao 0 no wiringPi
+const double RODA_DIAMETRO = 0.065;  // Diâmetro da roda em metros
+const int FUROS = 36;
 
-SpeedSensor::SpeedSensor()
-    : _pulseCount(0), _running(false) {
-    setupGPIO();
+// Variáveis globais
+volatile int pulsos = 0;
+auto ultimo_tempo = std::chrono::steady_clock::now();
+
+// Função de callback para detectar o pulso
+void pulso_detectado() {
+    pulsos++;
 }
 
-SpeedSensor::~SpeedSensor() {
-    stop();
-    cleanupGPIO();
-}
-
-void SpeedSensor::setupGPIO() {
-    exportGPIO(_sensorPin);
-    setDirection(_sensorPin, "in");
-}
-
-void SpeedSensor::cleanupGPIO() {
-    unexportGPIO(_sensorPin);
-}
-
-int SpeedSensor::getPulses() {
-	return _pulseCount;
-}
-
-void SpeedSensor::exportGPIO(int pin) {
-    std::ofstream exportFile("/sys/class/gpio/export");
-    if (!exportFile) {
-        throw std::runtime_error("Erro ao exportar GPIO");
-    }
-    exportFile << pin;
-}
-
-void SpeedSensor::unexportGPIO(int pin) {
-    std::ofstream unexportFile("/sys/class/gpio/unexport");
-    if (!unexportFile) {
-        throw std::runtime_error("Erro ao desexportar GPIO");
-    }
-    unexportFile << pin;
-}
-
-void SpeedSensor::setDirection(int pin, const std::string& direction) {
-    std::ofstream directionFile("/sys/class/gpio/gpio" + std::to_string(pin) + "/direction");
-    if (!directionFile) {
-        throw std::runtime_error("Erro ao configurar direção do GPIO");
-    }
-    directionFile << direction;
-}
-
-int SpeedSensor::readGPIO(int pin) {
-    std::ifstream valueFile("/sys/class/gpio/gpio" + std::to_string(pin) + "/value");
-    if (!valueFile) {
-        throw std::runtime_error("Erro ao ler valor do GPIO");
-    }
-    int value;
-    valueFile >> value;
-    std::cout << "Valor lido do GPIO " << pin << ": " << value << std::endl;
-    return value;
-}
-
-void SpeedSensor::monitorPulses() {
-    while (_running) {
-        if (readGPIO(_sensorPin) == 1) {
-            _pulseCount++;
-            usleep(10000); // Debounce de 10ms
-        }
-    }
-}
-
-void SpeedSensor::start() {
-    _running = true;
-    _monitorThread = std::thread(&SpeedSensor::monitorPulses, this);
-}
-
-void SpeedSensor::stop() {
-    _running = false;
-    if (_monitorThread.joinable()) {
-        _monitorThread.join();
-    }
-}
-
-double SpeedSensor::getSpeedKmh() {
-    if (!_running) return 0.0;
-
-    int pulses = _pulseCount;
-    double tempoSegundos = 1.0; // Simulando leitura por 1 segundo
-    double voltas = static_cast<double>(pulses) / _furos;
-    double distancia = voltas * (_rodaDiametro * M_PI); // Distância em metros
-    double velocidadeMs = distancia / tempoSegundos;    // Velocidade em m/s
-    return velocidadeMs * 3.6;                          // Converter para km/h
-}
-
-void SpeedSensor::resetPulses() {
-    _pulseCount = 0;
-}
-
-
-bool running = true;
-
-void handleSignal(int signal) {
-    (void)signal;
-    running = false;
+// Função para calcular a velocidade
+double calcular_velocidade(int pulsos, double tempo) {
+    double voltas = static_cast<double>(pulsos) / FUROS;
+    double distancia = voltas * (RODA_DIAMETRO * 3.14159);  // Distância em metros
+    double velocidade_ms = distancia / tempo;
+    double velocidade_kmh = velocidade_ms * 3.6;
+    return velocidade_kmh;
 }
 
 int main() {
-    signal(SIGINT, handleSignal);
+    // Inicializa a biblioteca wiringPi
+    wiringPiSetup();
 
-    try {
-        SpeedSensor sensor;
-        sensor.start();
+    // Configura o pino do sensor como entrada com pull-up interno
+    pinMode(SENSOR_PIN, INPUT);
+    pullUpDnControl(SENSOR_PIN, PUD_UP);
 
-        std::cout << "Monitor de Velocidade iniciado. Pressione Ctrl+C para sair.\n";
+    // Configura a interrupção para detectar a borda de subida
+    wiringPiISR(SENSOR_PIN, INT_EDGE_RISING, &pulso_detectado);
 
-        while (running) {
-            double velocidade = sensor.getPulses();
-            std::cout << "Velocidade: " << velocidade << " km/h\n";
-            sensor.resetPulses();
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "Aguardando leitura de velocidade. Pressione Ctrl+C para encerrar." << std::endl;
+
+    while (true) {
+        auto tempo_atual = std::chrono::steady_clock::now();
+        double duracao = std::chrono::duration_cast<std::chrono::seconds>(tempo_atual - ultimo_tempo).count();
+
+        if (duracao >= 1) {
+            double kmh = calcular_velocidade(pulsos, 1);
+            std::cout << "Velocidade: " << kmh << " km/h" << std::endl;
+            pulsos = 0;
+            ultimo_tempo = tempo_atual;
         }
 
-        sensor.stop();
-        std::cout << "Encerrando monitoramento.\n";
-    } catch (const std::exception& e) {
-        std::cerr << "Erro: " << e.what() << "\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));  // Reduz o uso da CPU
     }
 
     return 0;

@@ -42,7 +42,9 @@ jobs:
           ldd test
         "
 
-    - name: ssh to jetson
+    - name: install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: ssh to jetson and copy binary
       run: |
         sshpass -p "${{ secrets.JETSON_PASSWORD }}" scp -r bin/ team06@10.21.221.56:/home/team06/
-

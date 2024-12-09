@@ -2,6 +2,7 @@
 name: lab build
 
 on:
+    push:
     workflow_dispatch:
       inputs:
         environment:

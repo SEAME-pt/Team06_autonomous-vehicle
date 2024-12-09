@@ -42,7 +42,7 @@ jobs:
         "
 
     - name: upload build artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: test-artifact
         path: bin/test
@@ -50,13 +50,17 @@ jobs:
   deploy:
     runs-on: [ARM64]
     needs: [build]
+    env:
+      ACTIONS_ALLOW_UNSECURE_NODE_VERSION: true
 
     steps:
     - name: ensure directory exists
       run: mkdir -p ./team06/bin
 
+
+
     - name: download build artifacts
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4
       with:
         name: test-artifact
         path: ./team06/bin

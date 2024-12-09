@@ -14,5 +14,5 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Add the executable
-add_executable(xctest ${SOURCES})
+add_executable(test ${SOURCES})
 

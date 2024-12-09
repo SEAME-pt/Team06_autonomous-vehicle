@@ -42,7 +42,7 @@ jobs:
         "
 
     - name: upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: test-artifact
         path: bin/test
@@ -56,7 +56,7 @@ jobs:
       run: mkdir -p ./team06/bin
 
     - name: download build artifacts
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v2
       with:
         name: test-artifact
         path: ./team06/bin

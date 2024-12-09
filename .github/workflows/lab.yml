@@ -2,6 +2,7 @@
 name: lab build
 
 on:
+    push: #needed for testing on this branch
     workflow_dispatch:
       inputs:
         environment:

@@ -1,6 +1,6 @@
 #include <iostream>
 
 int main() {
-    std::cout << "Olá do ARM64!" << std::endl;
+    std::cout << "Hello, World!" << std::endl;
     return 0;
 }

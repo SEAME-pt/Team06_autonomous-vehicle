@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Project name and version
-project(convert VERSION 1.0)
+project(Jetson VERSION 1.0)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 11)
@@ -14,5 +14,5 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Add the executable
-add_executable(test ${SOURCES})
+add_executable(jetson06 ${SOURCES})
 

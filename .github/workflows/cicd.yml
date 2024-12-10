@@ -58,9 +58,6 @@ jobs:
         name: test-artifact
         path: ./team06/bin
 
-    - name: install sshpass
-      run: sudo apt-get install -y sshpass
-
     # - name: ssh to jetson and copy binary
     #   run: |
     #     sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
@@ -71,5 +68,6 @@ jobs:
     - name: ssh to jetson and copy binary
       run: |
         sshpass -p "${{ secrets.TEST_PW }}" \
-        scp -r /home/team06/bin/test \
+        scp -r ./team06/bin/test \
         team06@10.21.221.56:C:\users\amart
+

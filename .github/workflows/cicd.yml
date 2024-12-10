@@ -59,10 +59,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
-          path: ./team06/bin
+          path: ./bin
 
       - name: SSH to Jetson and copy binary
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          scp -r ./team06/bin \
+          scp -r ./bin \
           team06@10.21.221.56:/home/team06/

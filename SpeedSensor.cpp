@@ -23,7 +23,7 @@ double calcularVelocidade(int pulsos, double tempoSegundos) {
     return velocidade_kmh;
 }
 
-int main() {
+/* int main() {
     try {
         // Abre o chip GPIO
         gpiod_chip* chip = gpiod_chip_open("/dev/gpiochip0");
@@ -95,4 +95,4 @@ int main() {
 
     std::cout << "Encerrando programa..." << std::endl;
     return 0;
-}
+} */

@@ -32,13 +32,13 @@ jobs:
             -v ${{ github.workspace }}:/repo \
             -w /repo jmoreiraseame/jetson-nano-ubuntu:1.0 \
             /bin/bash -c "
-              mkdir -p /repo/build && \
-              cd /repo/build && \
-              cmake .. && \
-              make && \
-              mkdir -p /repo/bin && \
-              cp jetson06 /repo/bin/ && \
-              ldd jetson06
+            mkdir -p /repo/build && \
+            cd /repo/build && \
+            cmake .. && \
+            make && \
+            mkdir -p /repo/bin && \
+            cp jetson06 /repo/bin/ && \
+            ldd jetson06
             "
 
       - name: Upload build artifacts
@@ -66,3 +66,8 @@ jobs:
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
           team06@10.21.221.56:/home/team06/
+
+      - name: SSH to Jetson and run binary
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/jetson06 && /home/team06/bin/jetson06'

@@ -1,0 +1,75 @@
+# github hosted runner w/ qemu + docker buildx run docker custom arm64 image to compile repo and uploads binary to self hosted runner on seame laptop that will deploy to jetson nano
+name: cicd
+
+on:
+    push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v4
+
+    - name: setup docker qemu
+      uses: docker/setup-qemu-action@v3
+
+    - name: setup docker buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: pull jetson nano ubuntu docker image
+      run: docker pull jmoreiraseame/jetson-nano-ubuntu:1.0
+
+    - name: build project
+      run: |
+        docker run --rm --platform linux/arm64 \
+          -v ${{ github.workspace }}:/repo \
+          -w /repo jmoreiraseame/jetson-nano-ubuntu:1.0 \
+          /bin/bash -c "
+            echo 'Contents of /repo:' && \
+            ls -la /repo && \
+            mkdir -p /repo/xc/xctest/build && \
+            cd /repo/xc/xctest/build && \
+            cmake .. && \
+            make && \
+            mkdir -p /repo/bin && \
+            cp test /repo/bin/ && \
+            ldd test
+          "
+
+    - name: upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifact
+        path: bin/test
+
+  deploy:
+    runs-on: [X64]
+    needs: [build]
+
+    steps:
+    - name: ensure directory exists
+      run: mkdir -p ./team06/bin
+
+    - name: download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: test-artifact
+        path: ./team06/bin
+
+    - name: install sshpass
+      run: sudo apt-get install -y sshpass
+
+    # - name: ssh to jetson and copy binary
+    #   run: |
+    #     sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+    #     scp -r ./team06/bin/test \
+    #     team06@10.21.221.56:/home/team06/
+
+    # home test
+    - name: ssh to jetson and copy binary
+      run: |
+        sshpass -p "${{ secrets.TEST_PW }}" \
+        scp -r /home/team06/bin/test \
+        team06@10.21.221.56:C:\users\amart

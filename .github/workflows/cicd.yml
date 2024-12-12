@@ -5,9 +5,13 @@
 name: CI/CD
 
 on:
-  push:
-    # branches:
-    #   - main
+  pull_request:
+    branches:
+      - main
+# for testing purposes, uncomment the following line
+#   push:
+#     branches:
+#         - '**'
 
 jobs:
   build:
@@ -48,7 +52,7 @@ jobs:
           path: bin/jetson06
 
   deploy:
-    runs-on: [seame]
+    runs-on: [seame] # change delivery runner flag here
     needs: build
 
     steps:

@@ -91,7 +91,7 @@ std::map<std::string, float> Battery::get_battery_info() {
 
 ////------------MAIN
 
-int main() {
+/* int main() {
     try {
         Battery battery;
         std::cout << "Monitor de Bateria 18650 3S\n";
@@ -112,4 +112,4 @@ int main() {
         std::cerr << "Erro: " << e.what() << std::endl;
     }
     return 0;
-}
+} */

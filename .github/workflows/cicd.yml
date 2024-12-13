@@ -8,7 +8,7 @@ on:
   pull_request:
     branches:
       - main
-# for testing purposes, uncomment the following line
+# for testing
   push:
     branches:
         - '**'

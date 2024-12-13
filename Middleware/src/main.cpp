@@ -19,6 +19,7 @@ int main() {
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::cout << "Battery Level: " << middleware.getBatteryLevel() << std::endl;
     }
     middleware.stop();
 

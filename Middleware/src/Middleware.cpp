@@ -42,7 +42,6 @@ void Middleware::run() {
             float batteryValue = sensors["Battery"]->getValue();
             batteryLevel.store(batteryValue);
         }
-
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }

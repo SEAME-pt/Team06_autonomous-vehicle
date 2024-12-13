@@ -91,3 +91,19 @@ void BackMotors::setSpeed(int speed){
 			}
 	}
 }
+
+void BackMotors::writeByteData(int fd, uint8_t reg, uint8_t value) {
+    uint8_t buffer[2] = {reg, value};
+    if (write(fd, buffer, 2) != 2) {
+        throw std::runtime_error("Erro ao escrever no dispositivo I2C.");
+    }
+}
+
+uint8_t BackMotors::readByteData(int fd, uint8_t reg){
+	if(write(fd, &reg, 1) != 1)
+		throw std::runtime_error("Erro ao enviar o registrador ao dispositivo I2C.");
+	uint8_t value;
+	if (read(fd, &value, 1) != 1)
+		throw std::runtime_error("Erro ao ler o registrador ao dispositivo I2C.");
+	return value;
+}

@@ -12,7 +12,6 @@
 
 #include <csignal> // Biblioteca para manipulação de sinais
 
-#include <gpiod.h> // Biblioteca libgpiod
 #include <atomic>
 #include <chrono> // Para cálculos de tempo
 #include <csignal> // Biblioteca para manipulação de sinais
@@ -34,7 +33,9 @@ public:
 	~FServo();
 	bool init_servo();
 	bool setServoPwm(const int channel, int on_value, int off_value);
+	void set_steering(int angle);
+
 
 	void writeByteData(int fd, uint8_t reg, uint8_t value);
-	uint8_t readByteData(int addr, uint8_t reg);
+	uint8_t readByteData(int fd, uint8_t reg);
 };

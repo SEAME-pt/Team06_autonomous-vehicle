@@ -16,5 +16,6 @@ include_directories(${PROJECT_SOURCE_DIR}/Middleware/inc)
 # Add an executable
 add_executable(jetson06 ${SOURCES})
 
-# Link any libraries if needed in the future
-# target_link_libraries(${PROJECT_NAME} <library_name>)
+find_package(Threads REQUIRED)
+target_link_libraries(your_target_name PRIVATE Threads::Threads)
+

@@ -10,12 +10,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Set the source directory for your project
 file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/Middleware/src/*.cpp)
 
-# Include directories (headers)
-include_directories(${PROJECT_SOURCE_DIR}/Middleware/inc)
-
 # Add an executable
 add_executable(jetson06 ${SOURCES})
 
-find_package(Threads REQUIRED)
-target_link_libraries(your_target_name PRIVATE Threads::Threads)
+# Include directories (headers)
+target_include_directories(jetson06 PRIVATE ${PROJECT_SOURCE_DIR}/Middleware/inc)
 
+# Find and link pthread
+find_package(Threads REQUIRED)
+target_link_libraries(jetson06 PRIVATE Threads::Threads)

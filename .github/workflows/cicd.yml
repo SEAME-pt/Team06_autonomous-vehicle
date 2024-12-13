@@ -9,9 +9,9 @@ on:
     branches:
       - main
 # for testing purposes, uncomment the following line
-#   push:
-#     branches:
-#         - '**'
+  push:
+    branches:
+        - '**'
 
 jobs:
   build:

@@ -6,7 +6,7 @@
 class ISensor {
 public:
     virtual std::string getName() const = 0;
-    virtual float getValue() const = 0;
+    virtual float getValue() = 0;
     virtual ~ISensor() = default;
 };
 

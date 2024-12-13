@@ -34,7 +34,7 @@ private:
 
 public:
 
-	Battery();
+	Battery(const std::string& name);
 	~Battery();
 
 	int	read_adc();
@@ -43,6 +43,6 @@ public:
 	std::string getStatus(float voltage);
 	std::vector<float> get_cell_voltages(float total_voltage); // Estimates cell voltages
 	std::map<std::string, float> get_battery_info(); // Returns all battery info as a map
-    std::string getName() const;
-    float getValue() const;
+    std::string getName() const override;
+    float getValue() override;
 };

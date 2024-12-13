@@ -17,7 +17,7 @@ public:
     void start();
     void stop();
 
-    float getSpeed() const;
+    // float getSpeed() const;
     float getBatteryLevel() const;
 
 private:
@@ -26,7 +26,7 @@ private:
     std::atomic<bool> running;
     std::thread workerThread;
 
-    std::atomic<float> speed;
+    // std::atomic<float> speed;
     std::atomic<float> batteryLevel;
 
     void run();

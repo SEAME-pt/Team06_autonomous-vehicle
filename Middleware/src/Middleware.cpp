@@ -2,7 +2,7 @@
 #include <iostream>
 #include <chrono>
 
-Middleware::Middleware() : running(false), speed(0.0), batteryLevel(0.0) {}
+Middleware::Middleware() : running(false),/*speed(0.0),v*/ batteryLevel(0.0) {}
 
 Middleware::~Middleware() {
     stop();
@@ -24,20 +24,20 @@ void Middleware::stop() {
     }
 }
 
-double Middleware::getSpeed() const {
-    return speed.load();
-}
+// float Middleware::getSpeed() const {
+//     return speed.load();
+// }
 
-double Middleware::getBatteryLevel() const {
+float Middleware::getBatteryLevel() const {
     return batteryLevel.load();
 }
 
 void Middleware::run() {
     while (running) {
-        if (sensors.find("Speed") != sensors.end()) {
-            float speedValue = sensors["Speed"]->getValue();
-            speed.store(speedValue);
-        }
+        // if (sensors.find("Speed") != sensors.end()) {
+        //     float speedValue = sensors["Speed"]->getValue();
+        //     speed.store(speedValue);
+        // }
         if (sensors.find("Battery") != sensors.end()) {
             float batteryValue = sensors["Battery"]->getValue();
             batteryLevel.store(batteryValue);

@@ -1,6 +1,6 @@
-#include "../inc/Baterry.hpp"
+#include "../inc/Battery.hpp"
 
-Battery::Battery() {
+Battery::Battery(const std::string& name) : _name(name) {
 	// Use pre-initialized i2c_bus and adc_address
 	std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
 	i2c_fd = open(i2c_device.c_str(), O_RDWR);
@@ -89,7 +89,7 @@ std::map<std::string, float> Battery::get_battery_info() {
     return info;
 }
 
-float Battery::getValue() const {
+float Battery::getValue() {
     return getPercentage();
 }
 

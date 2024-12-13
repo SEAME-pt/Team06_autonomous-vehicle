@@ -25,7 +25,7 @@ int main() {
         std::cout << "Tensão Total: " << info["voltage"] << "V\n";
         std::cout << "Tensão por célula: " << info["cell_voltages"] << "V\n";
         std::cout << "Bateria: " << info["percentage"] << "%\n";
-        std::cout << "Status: " << battery.getStatus(info["voltage"]) << "\n";
+        std::cout << "Status: " << batterySensor.getStatus(info["voltage"]) << "\n";
         std::cout << "--------------------\n";
     }
     middleware.stop();

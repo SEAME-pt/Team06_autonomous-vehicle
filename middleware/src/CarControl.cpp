@@ -1,4 +1,4 @@
-#include "CarControl.hpp"
+#include "../inc/CarControl.hpp"
 
 CarControl::CarControl() : _running(false), _currenntGear(0), _currentSpeed(0)  {
 
@@ -18,6 +18,10 @@ void CarControl::processJoystick() {
 
 	while (_running) {
 		ssize_t n = read(joy_fd, &js, sizeof(js));
+		std::cout << "n:		" << n << "\n";
+		std::cout << "Type:		" <<  static_cast<int>(js.type) << "\n";
+		std::cout << "Number:	" <<  static_cast<int>(js.number) << "\n";
+
 		if (n == sizeof(js)) {
 			js.type &= ~JS_EVENT_INIT; // Ignora eventos de inicialização
 			if (js.type == JS_EVENT_BUTTON){

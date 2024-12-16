@@ -1,4 +1,4 @@
-#include "FServo.hpp"
+#include "../inc/FServo.hpp"
 
 FServo::FServo(){
 	i2c_device = "/dev/i2c-1";

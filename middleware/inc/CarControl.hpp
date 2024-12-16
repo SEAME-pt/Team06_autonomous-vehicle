@@ -1,11 +1,9 @@
 #pragma once
 
 #include <linux/joystick.h>
+#include "BackMotors.hpp"
+#include "FServo.hpp"
 
-
-
-class BackMotors;
-class FServo;
 
 class CarControl {
 private:
@@ -30,6 +28,3 @@ public:
 	void start();
 	void stop();
 };
-
-#include "BackMotors.hpp"
-#include "FServo.hpp"

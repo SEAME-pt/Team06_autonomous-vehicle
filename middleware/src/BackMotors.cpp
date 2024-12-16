@@ -1,4 +1,4 @@
-#include "BackMotors.hpp"
+#include "../inc/BackMotors.hpp"
 
 BackMotors::BackMotors(){
 	i2c_device = "/dev/i2c-1";

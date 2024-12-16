@@ -1,22 +1,33 @@
-#include "BackMotors.hpp"
-#include "FServo.hpp"
-#include "CarControl.hpp"
+#include "../inc/BackMotors.hpp"
+#include "../inc/FServo.hpp"
+#include "../inc/CarControl.hpp"
 
-// Variável para capturar o sinal de interrupção (Ctrl+C)
+
+// Variáveis globais
+CarControl carControl;  // Instância do CarControl
+
+// Função de manipulador de SIGINT
 void signalHandler(int signum) {
-    std::cout << "\nSinal recebido: " << signum << ". Encerrando o programa...\n";
+    std::cout << "Recebido sinal de interrupção (CTRL+C). Finalizando..." << std::endl;
+    carControl.stop();  // Parar o carro de forma segura
+    exit(signum);  // Finalizar o programa
 }
 
 int main() {
-    // Conectar o manipulador de sinal ao SIGINT
+    // Registra o manipulador de sinal para SIGINT (CTRL+C)
     signal(SIGINT, signalHandler);
+    try{
+        carControl.start();
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));  // Espera sem fazer nada (simula o programa rodando)
+        }
 
-    CarControl car;
-    car.start();
+    }
+    catch (const std::exception &e) {
+        std::cerr << "Erro: " << e.what() << "\n";
+        return 1;
+    }
 
-    std::this_thread::sleep_for(std::chrono::seconds(10)); // Exemplo de execução
-
-    car.stop();
     return 0;
 }
 

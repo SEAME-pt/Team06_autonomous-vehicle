@@ -14,7 +14,6 @@
 
 #include <atomic>
 #include <chrono> // Para cálculos de tempo
-#include <csignal> // Biblioteca para manipulação de sinais
 
 class FServo{
 private:

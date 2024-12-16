@@ -1,5 +1,6 @@
 #include "BackMotors.hpp"
 #include "FServo.hpp"
+#include "CarControl.hpp"
 
 // Variável para capturar o sinal de interrupção (Ctrl+C)
 void signalHandler(int signum) {
@@ -7,6 +8,19 @@ void signalHandler(int signum) {
 }
 
 int main() {
+    // Conectar o manipulador de sinal ao SIGINT
+    signal(SIGINT, signalHandler);
+
+    CarControl car;
+    car.start();
+
+    std::this_thread::sleep_for(std::chrono::seconds(10)); // Exemplo de execução
+
+    car.stop();
+    return 0;
+}
+
+/* int main() {
     // Conectar o manipulador de sinal ao SIGINT
     signal(SIGINT, signalHandler);
 
@@ -59,4 +73,4 @@ int main() {
     }
 
     return 0;
-}
+} */

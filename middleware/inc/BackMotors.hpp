@@ -8,13 +8,11 @@
 #include <unistd.h>    // Para close(), usleep()
 #include <fcntl.h>     // Para open()
 #include <sys/ioctl.h> 
-#include <linux/i2c-dev.h>// Interface padrão do Linux para I2C
-
 #include <csignal> // Biblioteca para manipulação de sinais
-
 #include <atomic>
 #include <chrono> // Para cálculos de tempo
-#include <csignal> // Biblioteca para manipulação de sinais
+#include <linux/i2c-dev.h>// Interface padrão do Linux para I2C
+
 
 class BackMotors{
 private:

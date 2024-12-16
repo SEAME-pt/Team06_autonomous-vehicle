@@ -11,11 +11,7 @@
 #include <string>
 #include <chrono>
 
-#include <atomic>
-#include <thread>
 #include <functional>
-#include <string>
-#include <fstream>
 #include <csignal>
 
 class SpeedSensor {

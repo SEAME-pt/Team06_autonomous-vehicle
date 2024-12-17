@@ -23,6 +23,4 @@ private:
 public:
 	ControlAssembly();
 	~ControlAssembly();
-
-
 };

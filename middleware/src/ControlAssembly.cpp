@@ -18,8 +18,8 @@ ControlAssembly::ControlAssembly()
 		return;
 	}
 
-	auto last_update = std::chrono::steady_clock::now();
-	const auto update_interval = std::chrono::milliseconds(16); // ~60fps
+	//auto last_update = std::chrono::steady_clock::now();
+	//const auto update_interval = std::chrono::milliseconds(16); // ~60fps
 
 	while (true){
 		_onClick = false;

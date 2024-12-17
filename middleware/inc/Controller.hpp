@@ -33,7 +33,7 @@ class FServo;
 
 class Controller {
 private:
-	const std::string &device = "/dev/input/js0";
+	const std::string	_device = "/dev/input/js0";
 	int 				_joyFd = -1;
 	char 				_name[128] = "Team06";
 	bool				_quit = false;

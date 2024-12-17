@@ -1,14 +1,13 @@
-#include "Controller.hpp"
+#include "../inc/Controller.hpp"
 
-Controller::Controller()
-{
+Controller::Controller(){
 	memset(_rawAxes, 0, sizeof(_rawAxes));
 	memset(_normalizedAxes, 0, sizeof(_normalizedAxes));
 	memset(_buttons, 0, sizeof(_buttons));
 
-	_joyFd = open(device.c_str(), O_RDONLY);
+	_joyFd = open(_device.c_str(), O_RDONLY);
 	if (_joyFd == -1){
-		std::cerr << "Erro ao abrir o dispositivo: " << device << std::endl;
+		std::cerr << "Erro ao abrir o dispositivo: " << _device << std::endl;
 		return;
 	}
 

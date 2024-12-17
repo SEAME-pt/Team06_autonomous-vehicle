@@ -70,20 +70,22 @@ void BackMotors::setSpeed(int speed){
 	pwmValue = static_cast<int>(std::abs(speed) / 100.0 * 4095);
 
 	if (speed > 0){ //forward
-		setMotorPwm(0, pwmValue); //IN1
-		setMotorPwm(1, 0);        //IN2
-		setMotorPwm(2, pwmValue); //ENA
-		setMotorPwm(5, pwmValue); //IN3
-		setMotorPwm(6, 0);		  //IN4
-		setMotorPwm(7, pwmValue); //ENB
+		setMotorPwm(0, pwmValue);	//IN1
+		setMotorPwm(1, 0);			//IN2
+		setMotorPwm(2, pwmValue);	//ENA
+
+		setMotorPwm(5, pwmValue);	//IN3
+		setMotorPwm(6, 0);			//IN4
+		setMotorPwm(7, pwmValue);	//ENB
 	}
 	else if (speed < 0){ //backward
-		setMotorPwm(0, pwmValue); //IN1
-		setMotorPwm(1, pwmValue);        //IN2
-		setMotorPwm(2, 0); //ENA
-		setMotorPwm(6, pwmValue); //IN3
-		setMotorPwm(7, pwmValue); //IN4
-		setMotorPwm(8, 0); //ENB
+		setMotorPwm(0, pwmValue);	//IN1
+		setMotorPwm(1, pwmValue);	//IN2
+		setMotorPwm(2, 0);			//ENA
+
+		setMotorPwm(5, 0);			//IN3
+		setMotorPwm(6, pwmValue);	//IN4
+		setMotorPwm(7, pwmValue);	//ENB
 	}
 	else{
 		for (int channel = 0; channel < 9; ++channel) {

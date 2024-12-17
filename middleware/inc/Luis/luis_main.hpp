@@ -69,7 +69,6 @@ int main()
             break;
         }
        
-     
         if (joystick.getButton(X_BUTTON))
         {
             // std::cout << "X_BUTTON" << std::endl;
@@ -96,11 +95,8 @@ int main()
         }
         if (joystick.getButton(RIGHT_BUTTON_TWO))
         {
-            car.set_left_speed(-100);
-         
-    
+            car.set_left_speed(-100);    
         }
-        
 
         if (joystick.getButton(SELECT_BUTTON))
         {

@@ -1,0 +1,3 @@
+[console_scripts]
+vspec=vss_tools.vspec.cli:cli
+

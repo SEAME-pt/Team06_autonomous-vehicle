@@ -19,7 +19,7 @@ private:
 	int i2c_bus = 1;
 	uint8_t adc_address = 0x41;
 
-	const float ADC_REF = 3.3f; // Reference voltage of ADC = 3.3V
+	const float ADC_REF = 3.3f; // Reference voltage of ADC = 3.3V (ADC --Analog-to-Digital Converter-- )
 	const uint16_t ADC_MAX = 65535; // Maximum value of ADC = 2^16-1(16-bit)
 	const float VOLTAGE_DIVIDER =  17.0f;  // Ajustado para bateria 3S 18650 (12.6V máx)
 	

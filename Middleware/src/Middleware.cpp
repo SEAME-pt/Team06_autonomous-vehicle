@@ -1,13 +1,13 @@
 #include "Middleware.hpp"
 #include <iostream>
 
-Middleware::Middleware(int update_interval_ms, const std::string& zmq_address)
+Middleware::Middleware(int update_interval_ms/*, const std::string& zmq_address*/)
     : update_interval_ms(update_interval_ms),
-      stop_flag(false),
+      stop_flag(false)/*,
       zmq_context(1),
       zmq_publisher(zmq_context, zmq::socket_type::pub),
-      zmq_address(zmq_address) {
-    zmq_publisher.bind(zmq_address); // E.g., "tcp://*:5555"
+      zmq_address(zmq_address)*/ {
+    // zmq_publisher.bind(zmq_address);
 }
 
 Middleware::~Middleware() {
@@ -33,19 +33,19 @@ void Middleware::stop() {
     }
 }
 
-void Middleware::publishSensorData(const SensorData& data) {
-    nlohmann::json json_data = {
-        {"name", data.name},
-        {"unit", data.unit},
-        {"value", data.value},
-        {"type", data.type},
-        {"timestamp", data.timestamp}
-    };
+// void Middleware::publishSensorData(const SensorData& data) {
+//     nlohmann::json json_data = {
+//         {"name", data.name},
+//         {"unit", data.unit},
+//         {"value", data.value},
+//         {"type", data.type},
+//         {"timestamp", data.timestamp}
+//     };
 
-    std::string json_str = json_data.dump();
-    zmq::message_t message(json_str.begin(), json_str.end());
-    zmq_publisher.send(message, zmq::send_flags::none);
-}
+//     std::string json_str = json_data.dump();
+//     zmq::message_t message(json_str.begin(), json_str.end());
+//     zmq_publisher.send(message, zmq::send_flags::none);
+// }
 
 void Middleware::updateLoop() {
     while (!stop_flag) {
@@ -55,12 +55,11 @@ void Middleware::updateLoop() {
                     std::lock_guard<std::mutex> lock(sensor_mutex);
                     sensor->updateSensorData();
                     SensorData data = sensor->getSensorData();
-                    publishSensorData(data);
+                    // publishSensorData(data);
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating sensor " << name << ": " << e.what() << std::endl;
                 }
             }
         }
-        std::unique_lock<std::mutex> lock(sensor_mutex);
     }
 }

@@ -1,3 +1,0 @@
-/home/dimoj/Team06-SEAME-DES_Instrument-Cluster/Middleware/build/CMakeFiles/Middleware.dir
-/home/dimoj/Team06-SEAME-DES_Instrument-Cluster/Middleware/build/CMakeFiles/edit_cache.dir
-/home/dimoj/Team06-SEAME-DES_Instrument-Cluster/Middleware/build/CMakeFiles/rebuild_cache.dir

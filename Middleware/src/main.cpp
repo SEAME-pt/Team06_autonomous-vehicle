@@ -1,33 +1,26 @@
 #include "Middleware.hpp"
 #include "Battery.hpp"
-#include <iostream>
 #include <thread>
 #include <chrono>
 
 int main() {
-    Middleware middleware;
+    int update_interval_ms = 100; // 0.1 second
+    std::string zmq_address = "tcp://*:5555";
 
-    // CanSensor canSensor("Speed");
-    Battery batterySensor("Battery");
+    // Create Middleware
+    Middleware middleware(update_interval_ms, zmq_address);
 
-    // middleware.addSensor(&canSensor);
-    middleware.addSensor(&batterySensor);
+    // Create and add sensors
+    Battery battery("Main Battery");
+    middleware.addSensor("battery", &battery);
 
+    // Start Middleware
     middleware.start();
 
-    std::cout << "Middleware started... running indefinitely while the Jetson Racer is on.\n";
+    // Allow it to run for 10 seconds
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 
-    while (true) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        auto info = batterySensor.get_battery_info();
-        std::cout << "Valor ADC: " << info["raw_adc"] << "\n";
-        std::cout << "Tensão ADC: " << info["adc_voltage"] << "V\n";
-        std::cout << "Tensão Total: " << info["voltage"] << "V\n";
-        std::cout << "Tensão por célula: " << info["cell_voltages"] << "V\n";
-        std::cout << "Bateria: " << info["percentage"] << "%\n";
-        std::cout << "Status: " << batterySensor.getStatus(info["voltage"]) << "\n";
-        std::cout << "--------------------\n";
-    }
+    // Stop Middleware
     middleware.stop();
 
     return 0;

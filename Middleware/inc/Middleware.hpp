@@ -1,35 +1,39 @@
 #ifndef MIDDLEWARE_HPP
 #define MIDDLEWARE_HPP
 
-#include "ISensor.hpp"
 #include <unordered_map>
-#include <thread>
-#include <atomic>
 #include <string>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <atomic>
+#include <zmq.hpp>
+#include <nlohmann/json.hpp>
+#include "ISensor.hpp"
 
 class Middleware {
 public:
-    Middleware();
+    Middleware(int update_interval_ms, const std::string& zmq_address);
     ~Middleware();
 
-    void addSensor(ISensor* sensor);
-
+    void addSensor(const std::string& name, ISensor* sensor);
     void start();
     void stop();
 
-    // float getSpeed() const;
-    float getBatteryLevel() const;
-
 private:
-    std::unordered_map<std::string, ISensor*> sensors;
+    std::unordered_map<std::string, ISensor*> sensors; // Stores sensors
+    std::thread updater_thread;                        // Thread for updating sensors
+    std::mutex sensor_mutex;                           // Protects the sensor map
+    std::condition_variable cv;                        // Synchronizes the update loop
+    std::atomic<bool> stop_flag;                       // Controls the stop condition
+    int update_interval_ms;                            // Update interval in milliseconds
 
-    std::atomic<bool> running;
-    std::thread workerThread;
+    zmq::context_t zmq_context;                        // ZeroMQ context
+    zmq::socket_t zmq_publisher;                       // ZeroMQ publisher socket
+    std::string zmq_address;                           // Address to publish data
 
-    // std::atomic<float> speed;
-    std::atomic<float> batteryLevel;
-
-    void run();
+    void updateLoop();                                 // Periodically updates sensors
+    void publishSensorData(const SensorData& data);    // Publishes SensorData over ZeroMQ
 };
 
-#endif
+#endif // MIDDLEWARE_HPP

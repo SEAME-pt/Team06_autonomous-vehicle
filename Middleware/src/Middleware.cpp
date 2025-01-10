@@ -1,47 +1,66 @@
 #include "Middleware.hpp"
 #include <iostream>
-#include <chrono>
 
-Middleware::Middleware() : running(false),/*speed(0.0),v*/ batteryLevel(0.0) {}
+Middleware::Middleware(int update_interval_ms, const std::string& zmq_address)
+    : update_interval_ms(update_interval_ms),
+      stop_flag(false),
+      zmq_context(1),
+      zmq_publisher(zmq_context, zmq::socket_type::pub),
+      zmq_address(zmq_address) {
+    zmq_publisher.bind(zmq_address); // E.g., "tcp://*:5555"
+}
 
 Middleware::~Middleware() {
     stop();
 }
 
-void Middleware::addSensor(ISensor* sensor) {
-    sensors[sensor->getName()] = sensor;
+void Middleware::addSensor(const std::string& name, ISensor* sensor) {
+    std::lock_guard<std::mutex> lock(sensor_mutex);
+    sensors[name] = sensor;
 }
 
 void Middleware::start() {
-    running = true;
-    workerThread = std::thread(&Middleware::run, this);
+    stop_flag = false;
+    updater_thread = std::thread(&Middleware::updateLoop, this);
 }
 
 void Middleware::stop() {
-    running = false;
-    if (workerThread.joinable()) {
-        workerThread.join();
+    if (!stop_flag.exchange(true)) {
+        cv.notify_all();
+        if (updater_thread.joinable()) {
+            updater_thread.join();
+        }
     }
 }
 
-// float Middleware::getSpeed() const {
-//     return speed.load();
-// }
+void Middleware::publishSensorData(const SensorData& data) {
+    nlohmann::json json_data = {
+        {"name", data.name},
+        {"unit", data.unit},
+        {"value", data.value},
+        {"type", data.type},
+        {"timestamp", data.timestamp}
+    };
 
-float Middleware::getBatteryLevel() const {
-    return batteryLevel.load();
+    std::string json_str = json_data.dump();
+    zmq::message_t message(json_str.begin(), json_str.end());
+    zmq_publisher.send(message, zmq::send_flags::none);
 }
 
-void Middleware::run() {
-    while (running) {
-        // if (sensors.find("Speed") != sensors.end()) {
-        //     float speedValue = sensors["Speed"]->getValue();
-        //     speed.store(speedValue);
-        // }
-        if (sensors.find("Battery") != sensors.end()) {
-            float batteryValue = sensors["Battery"]->getValue();
-            batteryLevel.store(batteryValue);
+void Middleware::updateLoop() {
+    while (!stop_flag) {
+        {
+            for (auto& [name, sensor] : sensors) {
+                try {
+                    std::lock_guard<std::mutex> lock(sensor_mutex);
+                    sensor->updateSensorData();
+                    SensorData data = sensor->getSensorData();
+                    publishSensorData(data);
+                } catch (const std::exception& e) {
+                    std::cerr << "Error updating sensor " << name << ": " << e.what() << std::endl;
+                }
+            }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::unique_lock<std::mutex> lock(sensor_mutex);
     }
 }

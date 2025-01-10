@@ -50,16 +50,17 @@ void Middleware::stop() {
 void Middleware::updateLoop() {
     while (!stop_flag) {
         {
-            for (auto& [name, sensor] : sensors) {
+            for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     std::lock_guard<std::mutex> lock(sensor_mutex);
-                    sensor->updateSensorData();
-                    SensorData data = sensor->getSensorData();
+                    it->second->updateSensorData();
+                    SensorData data = it->second->getSensorData();
                     // publishSensorData(data);
                 } catch (const std::exception& e) {
-                    std::cerr << "Error updating sensor " << name << ": " << e.what() << std::endl;
+                    std::cerr << "Error updating sensor " << it->first << ": " << e.what() << std::endl;
                 }
             }
         }
     }
 }
+

@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Middleware.dir/src/Battery.cpp.o CMakeFiles/Middleware.dir/src/Middleware.cpp.o CMakeFiles/Middleware.dir/src/main.cpp.o -o Middleware  -lstdc++ 

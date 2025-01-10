@@ -8,9 +8,6 @@
 #include <sys/ioctl.h>
 #include <linux/spi/spidev.h>
 #include <string.h>
-
-
-
 #define CANSTAT      0x0E
 #define CANCTRL      0x0F
 #define BFPCTRL      0x0C

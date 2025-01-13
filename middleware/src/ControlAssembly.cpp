@@ -39,7 +39,13 @@ ControlAssembly::ControlAssembly()
 			std::cout << "HOME_BUTTON" << std::endl;
 		}
 		_accelaration *= 0.99;
-		_turn *= 0.99;
+		//_turn *= 0.99;
+		if (std::abs(_turn) < 0.1) {
+    		_turn = 0;
+		} else {
+		    _turn -= _turn * 0.15; // Retorno proporcional
+		}
+
 		float force = _controller.getAxis(3);
 		if (force != 0){
 			_accelaration -= (force * 0.55f);

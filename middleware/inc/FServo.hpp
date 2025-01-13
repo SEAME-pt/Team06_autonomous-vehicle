@@ -21,8 +21,8 @@ private:
 	const int _servoAddr = 0x40;
 	const int _maxAngle = 90;
 	const int _servoCenterPwm = 320;
-	const int _servoLeftPwm = 320 - 200;
-	const int _servoRightPwm = 320 + 200;
+	const int _servoLeftPwm = 320 - 150;
+	const int _servoRightPwm = 320 + 150;
 	const int _sterringChannel = 0;
 
 	int _fdServo;

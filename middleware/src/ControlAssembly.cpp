@@ -52,17 +52,30 @@ ControlAssembly::ControlAssembly()
 		}
 		_backMotors.setSpeed(static_cast<int>(_accelaration * 1));
 		float gear = _controller.getAxis(0);
-		if (gear != 0){
-			_turn = (gear * 0.095f) / 0.02f;
-			if (_turn <= -4.5){
-				_turn = -4.5;
-			}
-			else if (_turn >= 4.5){
-				_turn = 4.5;
-			}
-			LOG_INFO("Gear %f", _turn);
+		if (std::abs(gear) > 0.1f) { // Zona morta
+		    // Maior sensibilidade com ajuste exponencial
+		    _turn = (gear > 0 ? 1 : -1) * std::pow(std::abs(gear), 1.5f) * 5.0f;
+		    if (_turn < -4.5f) _turn = -4.5f;
+		    if (_turn > 4.5f) _turn = 4.5f;
+		} else {
+		    _turn = 0;
 		}
-		_fServo.set_steering(static_cast<int>(_turn * 25));
+		LOG_INFO("Gear %f", _turn);
+		_fServo.set_steering(static_cast<int>(_turn * 30)); // Multiplicador ajustado
+
+		
+		//float gear = _controller.getAxis(0);
+		//if (gear != 0){
+		//	_turn = (gear * 0.15f) / 0.02f;
+		//	if (_turn <= -4.5){
+		//		_turn = -4.5;
+		//	}
+		//	else if (_turn >= 4.5){
+		//		_turn = 4.5;
+		//	}
+		//	LOG_INFO("Gear %f", _turn);
+		//}
+		//_fServo.set_steering(static_cast<int>(_turn * 25));
 	}
 	_backMotors.setSpeed(0);
 	_fServo.set_steering(0);

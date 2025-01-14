@@ -1,0 +1,26 @@
+{
+	"BUILD_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen",
+	"CMAKE_BINARY_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster",
+	"CMAKE_SOURCE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster",
+	"INCLUDE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/ui/speedometer/Speedometer.qml",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/ui/SimpleBar.qml",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/ui/BatteryIndicator.qml",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/ui/InfoBar.qml",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/main.qml"
+	],
+	"LOCK_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "qml" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_qml.cpp",
+	"RCC_EXECUTABLE" : "/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/bin/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay_autogen.dir/AutoRcc_qml_EWIEGA46WW_Used.txt",
+	"SOURCE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/qml.qrc",
+	"VERBOSITY" : 0
+}

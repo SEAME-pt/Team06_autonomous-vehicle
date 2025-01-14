@@ -1,0 +1,222 @@
+{
+	"BUILD_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen",
+	"CMAKE_BINARY_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster",
+	"CMAKE_EXECUTABLE" : "/usr/bin/cmake",
+	"CMAKE_LIST_FILES" : 
+	[
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/CMakeLists.txt",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/3.22.1/CMakeSystem.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/3.22.1/CMakeCXXCompiler.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeGenericSystem.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake",
+		"/usr/share/cmake-3.22/Modules/Platform/Linux.cmake",
+		"/usr/share/cmake-3.22/Modules/Platform/UnixPaths.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeFindCodeBlocks.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeExtraGeneratorDetermineCompilerMacrosAndIncludeDirs.cmake",
+		"/usr/share/cmake-3.22/Modules/ProcessorCount.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeCXXInformation.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake",
+		"/usr/share/cmake-3.22/Modules/Compiler/GNU-CXX.cmake",
+		"/usr/share/cmake-3.22/Modules/Compiler/GNU.cmake",
+		"/usr/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake",
+		"/usr/share/cmake-3.22/Modules/Platform/Linux-GNU-CXX.cmake",
+		"/usr/share/cmake-3.22/Modules/Platform/Linux-GNU.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5/Qt5ConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5/Qt5Config.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5/Qt5ModuleLocation.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfig.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigExtras.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Core/Qt5CoreConfigExtrasMkspecDir.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Core/Qt5CoreMacros.cmake",
+		"/usr/share/cmake-3.22/Modules/CMakeParseArguments.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Quick/Qt5QuickConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Quick/Qt5QuickConfig.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5QmlConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5QmlConfig.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Network/Qt5Network_QConnmanEnginePlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Network/Qt5Network_QNetworkManagerEnginePlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5QmlConfigExtras.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QDebugMessageServiceFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QLocalClientConnectionFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlDebugServerFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlDebuggerServiceFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlInspectorServiceFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlNativeDebugConnectorFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlNativeDebugServiceFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQmlProfilerServiceFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QQuickProfilerAdapterFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Qml/Qt5Qml_QTcpServerConnectionFactory.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5GuiConfigVersion.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5GuiConfig.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QComposePlatformInputContextPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEglFSEmulatorIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEglFSIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEglFSKmsEglDeviceIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEglFSX11IntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEvdevKeyboardPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEvdevMousePlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEvdevTabletPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QEvdevTouchScreenPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QGifPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QGtk3ThemePlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QICNSPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QICOPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QIbusPlatformInputContextPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QJpegPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QLinuxFbIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalEglIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QMinimalIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QOffscreenIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QTgaPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QTiffPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QTuioTouchPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QVirtualKeyboardPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QVncIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QWbmpPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QWebpPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QXcbEglIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QXcbGlxIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5Gui_QXcbIntegrationPlugin.cmake",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/lib/cmake/Qt5Gui/Qt5GuiConfigExtras.cmake",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/qml.qrc"
+	],
+	"CMAKE_SOURCE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster",
+	"DEP_FILE" : "",
+	"DEP_FILE_RULE_NAME" : "",
+	"HEADERS" : 
+	[
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc/BatteryIconObj.hpp",
+			"Mu",
+			"DIG64O274K/moc_BatteryIconObj.cpp",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc/QtSubscriber.hpp",
+			"Mu",
+			"DIG64O274K/moc_QtSubscriber.cpp",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc/SpeedometerObj.hpp",
+			"Mu",
+			"DIG64O274K/moc_SpeedometerObj.cpp",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc/TestBattery.hpp",
+			"Mu",
+			"DIG64O274K/moc_TestBattery.cpp",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc/TestSpeedSensor.hpp",
+			"Mu",
+			"DIG64O274K/moc_TestSpeedSensor.cpp",
+			null
+		]
+	],
+	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+	"INCLUDE_DIR" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen/include",
+	"MOC_COMPILATION_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen/mocs_compilation.cpp",
+	"MOC_DEFINITIONS" : 
+	[
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_NETWORK_LIB",
+		"QT_QML_LIB",
+		"QT_QUICK_LIB"
+	],
+	"MOC_DEPEND_FILTERS" : 
+	[
+		[
+			"Q_PLUGIN_METADATA",
+			"[\n][ \t]*Q_PLUGIN_METADATA[ \t]*\\([^\\)]*FILE[ \t]*\"([^\"]+)\""
+		]
+	],
+	"MOC_INCLUDES" : 
+	[
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster",
+		"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/inc",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include/QtCore",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/mkspecs/linux-g++",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include/QtQuick",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include/QtQml",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include/QtNetwork",
+		"/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/include/QtGui",
+		"/usr/include",
+		"/usr/include/c++/11",
+		"/usr/include/x86_64-linux-gnu/c++/11",
+		"/usr/include/c++/11/backward",
+		"/usr/lib/gcc/x86_64-linux-gnu/11/include",
+		"/usr/local/include",
+		"/usr/include/x86_64-linux-gnu"
+	],
+	"MOC_MACRO_NAMES" : [ "Q_OBJECT", "Q_GADGET", "Q_NAMESPACE", "Q_NAMESPACE_EXPORT" ],
+	"MOC_OPTIONS" : [],
+	"MOC_PATH_PREFIX" : false,
+	"MOC_PREDEFS_CMD" : 
+	[
+		"/usr/bin/x86_64-linux-gnu-g++-11",
+		"-dM",
+		"-E",
+		"-c",
+		"/usr/share/cmake-3.22/Modules/CMakeCXXCompilerABI.cpp"
+	],
+	"MOC_PREDEFS_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/ClusterDisplay_autogen/moc_predefs.h",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : [],
+	"MULTI_CONFIG" : false,
+	"PARALLEL" : 24,
+	"PARSE_CACHE_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay_autogen.dir/ParseCache.txt",
+	"QT_MOC_EXECUTABLE" : "/home/ndo-vale/Qt5.9.9/5.9.9/gcc_64/bin/moc",
+	"QT_UIC_EXECUTABLE" : "",
+	"QT_VERSION_MAJOR" : 5,
+	"QT_VERSION_MINOR" : 9,
+	"SETTINGS_FILE" : "/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay_autogen.dir/AutogenUsed.txt",
+	"SOURCES" : 
+	[
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/main.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/src/BatteryIconObj.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/src/QtSubscriber.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/src/SpeedometerObj.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/src/TestBattery.cpp",
+			"Mu",
+			null
+		],
+		[
+			"/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/Cluster/src/TestSpeedSensor.cpp",
+			"Mu",
+			null
+		]
+	],
+	"VERBOSITY" : 0
+}

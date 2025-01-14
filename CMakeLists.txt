@@ -8,10 +8,10 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Specify include directories
-include_directories(${PROJECT_SOURCE_DIR}/middleware/inc)
+include_directories(${PROJECT_SOURCE_DIR}/inc)
 
 # Collect all source files
-file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/middleware/src/*.cpp)
+file(GLOB SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 # Add the executable
 add_executable(jetson06 ${SOURCES})

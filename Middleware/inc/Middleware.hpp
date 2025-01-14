@@ -7,7 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-#include <zmq.hpp>
+// #include <zmq.hpp>
 // #include <nlohmann/json.hpp>
 #include "ISensor.hpp"
 

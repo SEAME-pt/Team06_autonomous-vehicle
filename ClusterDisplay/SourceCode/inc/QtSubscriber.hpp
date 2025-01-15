@@ -16,7 +16,7 @@ public:
 
     void    startUpdating(void);
 
-private slots:
+public slots:
     void    checkForMessages();
 private:
     zmq::context_t  _zmqContext;

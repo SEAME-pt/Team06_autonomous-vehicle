@@ -13,19 +13,19 @@
 
 int main(int argc, char *argv[])
 {
-    QtSubscriber    subscriber;
+    //QtSubscriber    subscriber;
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
+    QGuiApplication app(argc, argv);
 
 
     TestBattery     tb;
     BatteryIconObj  bio(nullptr, &tb);
     TestSpeedSensor tss;
-    SpeedometerObj  so(nullptr, &tss);
+    SpeedometerObj  so(nullptr);
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
-    QGuiApplication app(argc, argv);
-
+std::cout << "FUCK ME" << std::endl;
     QQmlApplicationEngine engine;
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     if (engine.rootObjects().isEmpty())
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     context->setContextProperty("speedometerObj", &so); //Should be taken out
 
     bio.startUpdating();
-    so.startUpdating();
-    subscriber.startUpdating();
+    //subscriber.startUpdating();
+
     return app.exec();
 }

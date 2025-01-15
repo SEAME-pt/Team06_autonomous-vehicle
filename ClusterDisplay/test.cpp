@@ -1,22 +1,41 @@
-#include <string.h>
-#include "zenoh.h"
+#include <zmq.hpp>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <iostream>
+#include <unistd.h>
+#if (defined (WIN32))
+#include <zhelpers.hpp>
+#endif
 
-int main(int argc, char **argv) {
-    z_owned_config_t config;
-    z_config_default(&config);
-    z_owned_session_t s;
-    if (z_open(&s, z_move(config)) != 0) {
-        printf("Failed to open Zenoh session\n");
-        exit(-1);
+#define within(num) (int) ((float) num * random () / (RAND_MAX + 1.0))
+
+int main () {
+
+    //  Prepare our context and publisher
+    zmq::context_t context (1);
+    zmq::socket_t publisher (context, zmq::socket_type::pub);
+    publisher.bind("tcp://*:5556");
+    publisher.bind("ipc://weather.ipc");				// Not usable on Windows.
+
+    //  Initialize random number generator
+    srandom ((unsigned) time (NULL));
+    while (1) {
+
+        int zipcode, temperature, relhumidity;
+
+        //  Get values that will fool the boss
+        zipcode     = within (100000);
+        temperature = within (215) - 80;
+        relhumidity = within (50) + 10;
+
+        //  Send message to all subscribers
+        zmq::message_t message(20);
+	std::cout << std::string((char*)message.data()) << std::endl;
+        snprintf ((char *) message.data(), 20 ,
+        	"%05d %d %d", zipcode, temperature, relhumidity);
+        publisher.send(message, zmq::send_flags::none);
+	//usleep(1500000);
     }
-
-    z_owned_bytes_t payload;
-    z_bytes_from_static_str(&payload, "value");
-    z_view_keyexpr_t key_expr;
-    z_view_keyexpr_from_string(&key_expr, "key/expression");
-
-    z_put(z_loan(s), z_loan(key_expr), z_move(payload), NULL);
-
-    z_drop(z_move(s));
     return 0;
 }

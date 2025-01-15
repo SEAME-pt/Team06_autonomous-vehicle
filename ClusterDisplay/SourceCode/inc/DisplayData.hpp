@@ -1,0 +1,4 @@
+#ifndef DISPLAYDATA_HPP
+#define DISPLAYDATA_HPP
+
+#endif // DISPLAYDATA_HPP

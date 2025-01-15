@@ -1,11 +1,11 @@
 #include "SpeedometerObj.hpp"
-#include <QTimer>
+#include <iostream>
 
-SpeedometerObj::SpeedometerObj(QObject *parent, TestSpeedSensor* speedSensor)
-    : QObject{parent}, m_speed{0}, _speedSensor{speedSensor}
+SpeedometerObj::SpeedometerObj(QObject *parent)
+    : ZmqSubscriber(ADDRESS, parent), m_speed{0}
 {
     //qDebug("SpeedometerObj Constructor called.");
-    _fetchSpeed();
+    setSpeed(0);
 }
 
 SpeedometerObj::~SpeedometerObj()
@@ -21,6 +21,7 @@ double SpeedometerObj::speed(void) const
 
 void    SpeedometerObj::setSpeed(int newSpeed)
 {
+    std::cout<<"FINALY: " << newSpeed << std::endl;
     //qDebug("Speed setter was called with value %i", newSpeed);
     if (newSpeed == m_speed)
         return ;
@@ -28,17 +29,7 @@ void    SpeedometerObj::setSpeed(int newSpeed)
     emit speedChanged(newSpeed);
 }
 
-void    SpeedometerObj::startUpdating(void)
+void    SpeedometerObj::_handleMsg(QString &message)
 {
-    QTimer* timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &SpeedometerObj::_fetchSpeed);
-    timer->start(SPEED_UPDATE_RATE);
-}
-
-void    SpeedometerObj::_fetchSpeed(void)
-{
-    double newSpeed = 0;
-    if (_speedSensor)
-        newSpeed = static_cast<double>(_speedSensor->getSpeed());
-    setSpeed(newSpeed);
+    setSpeed(message.toInt());
 }

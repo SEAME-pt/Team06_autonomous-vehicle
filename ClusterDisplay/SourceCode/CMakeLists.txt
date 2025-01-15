@@ -11,6 +11,8 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 include_directories(inc)
 
 add_executable(${PROJECT_NAME} main.cpp
+    src/ZmqSubscriber.cpp inc/ZmqSubscriber.hpp
+
     src/QtSubscriber.cpp inc/QtSubscriber.hpp
     src/BatteryIconObj.cpp inc/BatteryIconObj.hpp
     src/TestBattery.cpp inc/TestBattery.hpp

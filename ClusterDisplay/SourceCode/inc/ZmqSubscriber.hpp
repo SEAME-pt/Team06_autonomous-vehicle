@@ -4,9 +4,7 @@
 # include <QObject>
 # include <QSocketNotifier>
 # include <zmq.hpp>
-# include <memory>
-
-#include <iostream>
+# include <memory> // For unique poiner
 
 class ZmqSubscriber : public QObject
 {
@@ -20,8 +18,11 @@ public slots:
 protected:
     virtual void    _handleMsg(QString& message) = 0;
 private:
+    // The context of the socket. Manages thread amount nder the hood.
     zmq::context_t  _context;
+    // The socket itself, through which the values will be received from the publisher.
     zmq::socket_t   _socket;
+    // The notifier which will manage the socket and send activates the slot which manages the incoming messages.
     std::unique_ptr<QSocketNotifier> _notifier;
 };
 

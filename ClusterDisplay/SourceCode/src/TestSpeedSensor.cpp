@@ -15,7 +15,7 @@ TestSpeedSensor::TestSpeedSensor(): m_speed(0.0)
         std::this_thread::sleep_for(std::chrono::seconds(2));
         while (getSpeed() < 19.0)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             _increaseSpeed(1.5);
             int len = getSpeed() < 10.0 ? 1 : 2;
             zmq::message_t message(len);

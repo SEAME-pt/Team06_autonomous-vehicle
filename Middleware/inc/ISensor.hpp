@@ -13,6 +13,7 @@ struct SensorData {
     std::string type;
     std::time_t timestamp;
     bool critical;
+    bool updated;
 };
 
 class ISensor {

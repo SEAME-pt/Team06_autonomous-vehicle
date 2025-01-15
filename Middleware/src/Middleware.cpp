@@ -46,16 +46,18 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(bool critical, const SensorData& data) {
-    nlohmann::json json_data = {
-        {"name", data.name},
-        {"unit", data.unit},
-        {"value", data.value},
-        {"type", data.type},
-        {"timestamp", data.timestamp}
-    };
+    // nlohmann::json json_data = {
+    //     {"name", data.name},
+    //     {"unit", data.unit},
+    //     {"value", data.value},
+    //     {"type", data.type},
+    //     {"timestamp", data.timestamp}
+    // };
 
-    std::string json_str = json_data.dump();
-    zmq::message_t message(json_str.begin(), json_str.end());
+    // std::string json_str = json_data.dump();
+    // zmq::message_t message(json_str.begin(), json_str.end());
+    std::string msg = "99";
+    zmq::message_t message(msg, sizeof(msg));
     if (critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
@@ -71,8 +73,10 @@ void Middleware::updateNonCritical() {
                     if (!it->second->getCritical()) {
                         it->second->updateSensorData();
                         SensorData data = it->second->getSensorData();
-                        std::lock_guard<std::mutex> lock(it->second->getMutex());
-                        publishSensorData(false, data);
+                        if data.updated) {
+                            std::lock_guard<std::mutex> lock(it->second->getMutex());
+                            publishSensorData(false, data);
+                        }
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating non critical sensor " << it->first << ": " << e.what() << std::endl;
@@ -107,8 +111,10 @@ void Middleware::updateCritical() {
                 try {
                     if (it->second->getCritical()) {
                         SensorData data = it->second->getSensorData();
-                        std::lock_guard<std::mutex> lock(it->second->getMutex());
-                        publishSensorData(true, data);
+                        if (data.updated) {
+                            std::lock_guard<std::mutex> lock(it->second->getMutex());
+                            publishSensorData(true, data);
+                        }
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating critical sensor " << it->first << ": " << e.what() << std::endl;

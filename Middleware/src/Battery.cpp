@@ -9,6 +9,7 @@ Battery::Battery(const std::string& name) {
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
     sensorData.critical = false;
+    sensorData.updated = true;
 
     // Open the I2C bus
     std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
@@ -36,9 +37,15 @@ SensorData Battery::getSensorData() {
 
 
 void Battery::updateSensorData() {
+    float tmp = sensorData.value;
     std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
+    if (tmp != sensorData.value) {
+        sensorData.updated = true;
+    } else {
+        sensorData.updated = false;
+    }
 }
 
 

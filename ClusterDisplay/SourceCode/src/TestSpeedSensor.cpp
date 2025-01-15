@@ -8,7 +8,6 @@
 
 TestSpeedSensor::TestSpeedSensor(): m_speed(0.0)
 {
-    //qDebug("TestSpeedSensor constructor called");
     m_timer =  std::thread([this]() {
         zmq::context_t context (1);
         zmq::socket_t publisher (context, zmq::socket_type::pub);
@@ -33,7 +32,6 @@ TestSpeedSensor::TestSpeedSensor(): m_speed(0.0)
             snprintf ((char *) message.data(), len+1 , "%d", static_cast<int>(m_speed));
             publisher.send(message, zmq::send_flags::none);
         }
-        //std::cout << "Done from Speed thread." << std::endl;
     });
 }
 TestSpeedSensor::~TestSpeedSensor()
@@ -52,6 +50,5 @@ void    TestSpeedSensor::_increaseSpeed(double increase)
 {
     std::lock_guard<std::mutex>   guard(speedMutex);
     m_speed += increase;
-    std::cout << "from sensor: " << m_speed << std::endl;
 }
 

@@ -30,5 +30,3 @@ target_link_libraries(Middleware PRIVATE Threads::Threads)
 # Add the library path for ZeroMQ (if it's in /usr/local/lib)
 link_directories(/usr/local/lib)
 
-find_package(nlohmann_json REQUIRED)
-target_link_libraries(Middleware PRIVATE nlohmann_json::nlohmann_json)

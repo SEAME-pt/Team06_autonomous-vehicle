@@ -9,7 +9,7 @@
 #include <atomic>
 #include <chrono>
 #include <zmq.hpp>
-#include <nlohmann/json.hpp>
+#include "json.hpp" // nlohmann/json
 #include "ISensor.hpp"
 
 class Middleware {

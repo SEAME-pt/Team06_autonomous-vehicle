@@ -32,3 +32,6 @@ link_directories(/usr/local/lib)
 # Find and link pthread
 find_package(Threads REQUIRED)
 target_link_libraries(Middleware PRIVATE Threads::Threads)
+
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(Middleware PRIVATE nlohmann_json::nlohmann_json)

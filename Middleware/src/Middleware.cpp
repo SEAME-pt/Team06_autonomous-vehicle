@@ -57,9 +57,9 @@ void Middleware::publishSensorData(bool critical, const SensorData& data) {
     std::string json_str = json_data.dump();
     zmq::message_t message(json_str.begin(), json_str.end());
     if (critical) {
-        zmq_c_publisher.send(message, zmq::send_flags::none);
+        zmq_c_publisher.send(message, 0);
     } else {
-        zmq_nc_publisher.send(message, zmq::send_flags::none);
+        zmq_nc_publisher.send(message, 0);
     }
 }
 

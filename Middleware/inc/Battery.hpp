@@ -26,27 +26,27 @@ private:
     const uint16_t ADC_MAX = 65535;   // Maximum value of ADC (16-bit)
     const float VOLTAGE_DIVIDER = 17.0f; // Adjusted for 3S 18650 battery (12.6V max)
 
-    const float MAX_VOLTAGE = 12.6f;     // Maximum voltage of the battery
-    const float MIN_VOLTAGE = 9.0f;      // Minimum voltage of the battery
-    const float NOMINAL_VOLTAGE = 11.1f; // Nominal voltage of the battery
+    const float MAX_VOLTAGE = 12.6f;
+    const float MIN_VOLTAGE = 9.0f;
+    const float NOMINAL_VOLTAGE = 11.1f;
 
-    std::mutex mtx; // Mutex for thread-safe access to shared data
+    std::mutex mtx;
 
-    int readI2CBlockData(uint8_t reg, uint8_t* data, size_t length); // Reads data from I2C
-    std::string _name;
+    int readI2CBlockData(uint8_t reg, uint8_t* data, size_t length);
 
 public:
-    explicit Battery(const std::string& name); // Constructor with explicit specifier
-    ~Battery(); // Destructor
+    explicit Battery(const std::string& name);
+    ~Battery();
 
-    int read_adc(); // Reads raw ADC value
-    float getVoltage(); // Gets battery voltage
-    float getPercentage(); // Gets battery percentage
-    std::string getStatus(float voltage); // Gets battery status (e.g., FULL, GOOD, LOW)
-    std::vector<float> get_cell_voltages(float total_voltage); // Estimates cell voltages
-    std::map<std::string, float> get_battery_info(); // Returns all battery info as a map
-    void updateSensorData() override; // Updates sensor data
-
-    std::string getName() const override; // Gets the name of the sensor
-    SensorData getSensorData() override; // Gets sensor data
+    int read_adc();
+    float getVoltage();
+    float getPercentage();
+    std::string getStatus(float voltage); // Gets battery status
+    std::vector<float> get_cell_voltages(float total_voltage);
+    std::map<std::string, float> get_battery_info();
+    void updateSensorData() override;
+    std::string getName() const override;
+    bool getCritical() const override;
+    SensorData getSensorData() override;
+    std::mutex& getMutex() override;
 };

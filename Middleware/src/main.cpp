@@ -4,13 +4,13 @@
 #include <chrono>
 
 int main() {
-    int update_interval_ms = 100; // 0.1 second
-    // std::string zmq_address = "tcp://*:5555";
-    Middleware middleware(update_interval_ms/*, zmq_address*/);
+    std::string zmq_c_address = "tcp://*:5555";
+    std::string zmq_nc_address = "tcp://*:5556";
+    Middleware middleware(zmq_c_address, zmq_nc_address);
     Battery battery("battery");
-    middleware.addSensor("battery", &battery);
+    middleware.addSensor(false, &battery);
     middleware.start();
-    std::this_thread::sleep_for(std::chrono::seconds(10));
+    std::this_thread::sleep_for(std::chrono::seconds(30));
     middleware.stop();
 
     return 0;

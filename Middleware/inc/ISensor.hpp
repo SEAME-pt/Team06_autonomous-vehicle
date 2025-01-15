@@ -3,9 +3,8 @@
 
 #include <string>
 #include <ctime>
-#include <atomic>
-#include <mutex>
 #include <iostream>
+#include <mutex>
 
 struct SensorData {
     std::string name;
@@ -13,6 +12,7 @@ struct SensorData {
     float value;
     std::string type;
     std::time_t timestamp;
+    bool critical;
 };
 
 class ISensor {
@@ -20,6 +20,8 @@ public:
     virtual ~ISensor() = default;
     virtual SensorData getSensorData() = 0;
     virtual std::string getName() const = 0;
+    virtual bool getCritical() const = 0;
+    virtual std::mutex& getMutex() = 0;
     virtual void updateSensorData() = 0;
 };
 

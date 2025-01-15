@@ -18,16 +18,16 @@ target_include_directories(Middleware PRIVATE ${PROJECT_SOURCE_DIR}/inc)
 
 # Add the paths for the external libraries
 # Assuming ZeroMQ is installed in /usr/local
-# target_include_directories(Middleware PRIVATE /usr/local/include)
+target_include_directories(Middleware PRIVATE /usr/local/include)
 
 # Link the ZeroMQ library
-# target_link_libraries(Middleware PRIVATE zmq)
+target_link_libraries(Middleware PRIVATE zmq)
 
 # Link the standard C++ library
 target_link_libraries(Middleware PRIVATE stdc++)
 
 # Add the library path for ZeroMQ (if it's in /usr/local/lib)
-# link_directories(/usr/local/lib)
+link_directories(/usr/local/lib)
 
 # Find and link pthread
 find_package(Threads REQUIRED)

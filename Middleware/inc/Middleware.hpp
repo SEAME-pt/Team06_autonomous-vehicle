@@ -7,33 +7,47 @@
 #include <mutex>
 #include <condition_variable>
 #include <atomic>
-// #include <zmq.hpp>
-// #include <nlohmann/json.hpp>
+#include <chrono>
+#include <zmq.hpp>
+#include <nlohmann/json.hpp>
 #include "ISensor.hpp"
 
 class Middleware {
 public:
-    Middleware(int update_interval_ms/*, const std::string& zmq_address*/);
+    Middleware(const std::string& zmq_c_address, const std::string& zmq_nc_address);
     ~Middleware();
 
-    void addSensor(const std::string& name, ISensor* sensor);
+    void addSensor(bool critical, ISensor* sensor);
     void start();
     void stop();
 
 private:
+    // std::unordered_map<std::string, ISensor*> non_critical_sensors;
+    // std::unordered_map<std::string, ISensor*> critical_sensors;
     std::unordered_map<std::string, ISensor*> sensors;
-    std::thread updater_thread;
-    std::mutex sensor_mutex;
-    std::condition_variable cv;
+    std::thread non_critical_thread;
+    std::thread critical_thread;
+    std::thread read_critical_thread;
+    // std::mutex non_critical_mutex;
+    // std::mutex critical_mutex;
+    // std::condition_variable nc_cv;
+    // std::condition_variable c_cv;
     std::atomic<bool> stop_flag;
-    int update_interval_ms;
 
-    // zmq::context_t zmq_context;
-    // zmq::socket_t zmq_publisher;
-    // std::string zmq_address;
+    zmq::context_t zmq_context;
+    zmq::socket_t zmq_c_publisher;
+    zmq::socket_t zmq_nc_publisher;
+    std::string zmq_c_address;
+    std::string zmq_nc_address;
 
-    void updateLoop();
-    // void publishSensorData(const SensorData& data);
+    void updateNonCritical();
+    void updateCritical();
+    void readCritical();
+    void publishSensorData(bool critical, const SensorData& data);
+
+    int const critical_update_interval_ms = 100;
+    int const non_critical_update_interval_ms = 1000;
+    int const read_critical_interval_ms = 10;
 };
 
 #endif

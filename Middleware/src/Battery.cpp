@@ -1,13 +1,14 @@
 #include "../inc/Battery.hpp"
 
-Battery::Battery(const std::string& name) : _name(name) {
+Battery::Battery(const std::string& name) {
     // Initialize sensor data
-    std::lock_guard<std::mutex> lock(mtx);
     sensorData.unit = "%";
+    std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = getPercentage();
     sensorData.type = "float";
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
+    sensorData.critical = false;
 
     // Open the I2C bus
     std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
@@ -109,5 +110,13 @@ std::map<std::string, float> Battery::get_battery_info() {
 }
 
 std::string Battery::getName() const {
-    return _name;
+    return sensorData.name;
+}
+
+std::mutex& Battery::getMutex() {
+    return mtx;
+}
+
+bool Battery::getCritical() const {
+    return sensorData.critical;
 }

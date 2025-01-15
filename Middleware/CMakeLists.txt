@@ -23,15 +23,12 @@ target_include_directories(Middleware PRIVATE /usr/local/include)
 # Link the ZeroMQ library
 target_link_libraries(Middleware PRIVATE zmq)
 
-# Link the standard C++ library
-target_link_libraries(Middleware PRIVATE stdc++)
-
-# Add the library path for ZeroMQ (if it's in /usr/local/lib)
-link_directories(/usr/local/lib)
-
 # Find and link pthread
 find_package(Threads REQUIRED)
 target_link_libraries(Middleware PRIVATE Threads::Threads)
+
+# Add the library path for ZeroMQ (if it's in /usr/local/lib)
+link_directories(/usr/local/lib)
 
 find_package(nlohmann_json REQUIRED)
 target_link_libraries(Middleware PRIVATE nlohmann_json::nlohmann_json)

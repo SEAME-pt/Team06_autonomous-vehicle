@@ -2,10 +2,8 @@
 
 Battery::Battery(const std::string& name) {
     // Initialize sensor data
-    sensorData.unit = "%";
     std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = getPercentage();
-    sensorData.type = "float";
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
     sensorData.critical = false;
@@ -37,8 +35,8 @@ SensorData Battery::getSensorData() {
 
 
 void Battery::updateSensorData() {
-    float tmp = sensorData.value;
     std::lock_guard<std::mutex> lock(mtx);
+    float tmp = sensorData.value;
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
     if (tmp != sensorData.value) {

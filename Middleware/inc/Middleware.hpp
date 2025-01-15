@@ -9,7 +9,6 @@
 #include <atomic>
 #include <chrono>
 #include <zmq.hpp>
-#include "json.hpp" // nlohmann/json
 #include "ISensor.hpp"
 
 class Middleware {
@@ -43,7 +42,7 @@ private:
     void updateNonCritical();
     void updateCritical();
     void readCritical();
-    void publishSensorData(bool critical, const SensorData& data);
+    void publishSensorData(const SensorData& data);
 
     const unsigned int critical_update_interval_ms = 100;
     const unsigned int non_critical_update_interval_ms = 1000;

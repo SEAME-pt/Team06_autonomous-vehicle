@@ -45,21 +45,12 @@ void Middleware::stop() {
     }
 }
 
-void Middleware::publishSensorData(bool critical, const SensorData& data) {
-    nlohmann::json json_data = {
-        {"name", data.name},
-        {"unit", data.unit},
-        {"value", data.value},
-        {"type", data.type},
-        {"timestamp", data.timestamp}
-    };
-
-    std::string json_str = json_data.dump();
-    zmq::message_t message(json_str.begin(), json_str.end());
-    if (critical) {
-        zmq_c_publisher.send(message, 0);
+void Middleware::publishSensorData(const SensorData& data) {
+    zmq::message_t message(&data.value, sizeof(float));
+    if (data.critical) {
+        zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
-        zmq_nc_publisher.send(message, 0);
+        zmq_nc_publisher.send(message, zmq::send_flags::none);
     }
 }
 
@@ -73,7 +64,7 @@ void Middleware::updateNonCritical() {
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {
                             std::lock_guard<std::mutex> lock(it->second->getMutex());
-                            publishSensorData(false, data);
+                            publishSensorData(data);
                         }
                     }
                 } catch (const std::exception& e) {
@@ -111,7 +102,7 @@ void Middleware::updateCritical() {
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {
                             std::lock_guard<std::mutex> lock(it->second->getMutex());
-                            publishSensorData(true, data);
+                            publishSensorData(data);
                         }
                     }
                 } catch (const std::exception& e) {

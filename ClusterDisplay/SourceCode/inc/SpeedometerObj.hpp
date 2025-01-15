@@ -4,10 +4,8 @@
 #include <QObject>
 #include <QQmlEngine>
 #include "ZmqSubscriber.hpp"
-//#include "TestSpeedSensor.hpp"
 
-# define SPEED_UPDATE_RATE 100
-# define ADDRESS "tcp://localhost:5555"
+# define SPEEDOMETER_ADDRESS "tcp://localhost:5555"
 
 class SpeedometerObj : public ZmqSubscriber
 {

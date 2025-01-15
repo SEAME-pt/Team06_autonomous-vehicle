@@ -2,31 +2,19 @@
 #include <iostream>
 
 SpeedometerObj::SpeedometerObj(QObject *parent)
-    : ZmqSubscriber(ADDRESS, parent), m_speed{0}
+    : ZmqSubscriber(SPEEDOMETER_ADDRESS, parent), m_speed{0}
 {
-    //qDebug("SpeedometerObj Constructor called.");
-    setSpeed(0);
+    setSpeed(0); // Needed so the first value gets displayed on screen
 }
+SpeedometerObj::~SpeedometerObj(){}
 
-SpeedometerObj::~SpeedometerObj()
-{
-    //qDebug("SpeedometerObj destructor called.");
-}
-
-double SpeedometerObj::speed(void) const
-{
-    //qDebug("Speed getter called");
-    return m_speed;
-}
-
+double SpeedometerObj::speed(void) const {return (m_speed);}
 void    SpeedometerObj::setSpeed(int newSpeed)
 {
-    std::cout<<"FINALY: " << newSpeed << std::endl;
-    //qDebug("Speed setter was called with value %i", newSpeed);
     if (newSpeed == m_speed)
         return ;
     m_speed = newSpeed;
-    emit speedChanged(newSpeed);
+    emit speedChanged(newSpeed); // This is what makes the value be updated on screen.
 }
 
 void    SpeedometerObj::_handleMsg(QString &message)

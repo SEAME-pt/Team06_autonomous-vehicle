@@ -45,9 +45,9 @@ private:
     void readCritical();
     void publishSensorData(bool critical, const SensorData& data);
 
-    int const critical_update_interval_ms = 100;
-    int const non_critical_update_interval_ms = 1000;
-    int const read_critical_interval_ms = 10;
+    const unsigned int critical_update_interval_ms = 100;
+    const unsigned int non_critical_update_interval_ms = 1000;
+    const unsigned int read_critical_interval_ms = 10;
 };
 
 #endif

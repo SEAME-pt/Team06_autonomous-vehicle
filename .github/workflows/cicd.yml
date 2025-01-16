@@ -40,18 +40,14 @@ jobs:
             cd /repo/build && \
             cmake .. && \
             cmake --build . && \
-            mkdir -p /repo/bin && \
-            cp ./bin/Middleware /repo/bin/ && \
-            cp ./bin/ClusterDisplay /repo/bin/ && \
-            ldd ./bin/Middleware && \
-            ldd ./bin/ClusterDisplay
+            mkdir -p /repo/bin \
             "
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: bin/Middleware
+          path: bin/*
 
   deploy:
     runs-on: [seame] # change delivery runner flag here
@@ -76,4 +72,5 @@ jobs:
       - name: SSH to Jetson and run binary
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/Middleware'
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/* \
+          && /home/team06/bin/Middleware && /home/team06/bin/ClusterDisplay'

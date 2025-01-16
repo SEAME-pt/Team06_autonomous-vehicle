@@ -39,10 +39,12 @@ jobs:
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. && \
-            make && \
+            cmake --build . && \
             mkdir -p /repo/bin && \
-            cp Middleware/Middleware /repo/bin/ && \
-            ldd Middleware/Middleware
+            cp Middleware /repo/bin/ && \
+            cp ClusterDisplay /repo/bin/ && \
+            ldd Middleware && \
+            ldd ClusterDisplay
             "
 
       - name: Upload build artifacts

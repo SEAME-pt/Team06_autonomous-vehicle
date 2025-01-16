@@ -41,6 +41,7 @@ jobs:
             cmake .. && \
             cmake --build . && \
             mkdir -p /repo/bin \
+            && ls -R /repo
             "
 
       - name: Upload build artifacts

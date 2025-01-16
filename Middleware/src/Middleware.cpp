@@ -46,7 +46,9 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
-    zmq::message_t message(&data.value, sizeof(float));
+    static_cast<unsigned int>(data.value);
+    zmq::message_t message(sizeof(unsigned int));
+    memcpy(message.data(), &data.value, sizeof(unsigned int));
     if (data.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {

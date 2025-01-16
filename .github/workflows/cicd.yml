@@ -71,5 +71,5 @@ jobs:
       - name: SSH to Jetson and run binary
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/* \
+          ssh team06@10.21.221.56 'chmod 777 /home/team06/bin/* \
           && /home/team06/bin/Middleware && /home/team06/bin/ClusterDisplay'

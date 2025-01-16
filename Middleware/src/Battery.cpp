@@ -1,14 +1,6 @@
 #include "../inc/Battery.hpp"
 
 Battery::Battery(const std::string& name) {
-    // Initialize sensor data
-    std::lock_guard<std::mutex> lock(mtx);
-    sensorData.value = getPercentage();
-    sensorData.timestamp = std::time(nullptr);
-    sensorData.name = name;
-    sensorData.critical = false;
-    sensorData.updated = true;
-
     // Open the I2C bus
     std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
     i2c_fd = open(i2c_device.c_str(), O_RDWR);
@@ -21,6 +13,13 @@ Battery::Battery(const std::string& name) {
         close(i2c_fd);
         throw std::runtime_error("Failed to set I2C slave address");
     }
+    // Initialize sensor data
+    std::lock_guard<std::mutex> lock(mtx);
+    sensorData.value = getPercentage();
+    sensorData.timestamp = std::time(nullptr);
+    sensorData.name = name;
+    sensorData.critical = false;
+    sensorData.updated = true;
 }
 
 Battery::~Battery() {

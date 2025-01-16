@@ -6,6 +6,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+set(CMAKE_PREFIX_PATH /home/ndo-vale/Qt5.9.9/5.9.9/gcc_64)
+
 find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 include_directories(inc)

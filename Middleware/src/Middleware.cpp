@@ -54,6 +54,7 @@ void Middleware::publishSensorData(const SensorData& data) {
     if (data.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
+        std::cerr << "sending: " << value_str << std::endl;
         zmq_nc_publisher.send(message, zmq::send_flags::none);
     }
 }

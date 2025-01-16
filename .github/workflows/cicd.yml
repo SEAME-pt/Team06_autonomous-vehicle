@@ -41,6 +41,7 @@ jobs:
             cmake .. && \
             cmake --build . && \
             mkdir -p /repo/bin && \
+            ls -la && \
             cp Middleware /repo/bin/ && \
             cp ClusterDisplay /repo/bin/ && \
             ldd Middleware && \

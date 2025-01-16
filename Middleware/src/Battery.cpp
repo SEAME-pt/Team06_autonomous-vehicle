@@ -20,6 +20,7 @@ Battery::Battery(const std::string& name) {
     sensorData.name = name;
     sensorData.critical = false;
     sensorData.updated = true;
+    publishSensorData(sensorData);
 }
 
 Battery::~Battery() {

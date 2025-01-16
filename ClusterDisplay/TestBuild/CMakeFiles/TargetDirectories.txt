@@ -1,4 +1,0 @@
-/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay.dir
-/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/edit_cache.dir
-/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/rebuild_cache.dir
-/home/ndo-vale/Documents/ndo-vale/ndo-vale_branch/QtCluster/TestBuild/CMakeFiles/ClusterDisplay_autogen.dir

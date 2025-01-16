@@ -2,11 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "QtSubscriber.hpp"
-
-#include "TestBattery.hpp"
 #include "BatteryIconObj.hpp"
-#include "TestSpeedSensor.hpp"
 #include "SpeedometerObj.hpp"
 #include <zmq.hpp>
 

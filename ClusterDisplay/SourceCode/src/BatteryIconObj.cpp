@@ -6,7 +6,6 @@ BatteryIconObj::BatteryIconObj(QObject *parent)
 {
     setPercentage(0);
 };
-
 BatteryIconObj::~BatteryIconObj(){}
 
 int BatteryIconObj::percentage(void) const {return m_percentage;}

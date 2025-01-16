@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file alias="InfoBar.qml">ui/InfoBar.qml</file>
+        <file alias="Speedometer.qml">ui/speedometer/Speedometer.qml</file>
+        <file alias="SimpleBar.qml">ui/SimpleBar.qml</file>
+        <file alias="BatteryIndicator.qml">ui/BatteryIndicator.qml</file>
+    </qresource>
+</RCC>

@@ -1,14 +1,6 @@
 #include "../inc/Battery.hpp"
 
 Battery::Battery(const std::string& name) {
-    // Initialize sensor data
-    std::lock_guard<std::mutex> lock(mtx);
-    sensorData.value = getPercentage();
-    sensorData.timestamp = std::time(nullptr);
-    sensorData.name = name;
-    sensorData.critical = false;
-    sensorData.updated = true;
-
     // Open the I2C bus
     std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
     i2c_fd = open(i2c_device.c_str(), O_RDWR);
@@ -21,6 +13,13 @@ Battery::Battery(const std::string& name) {
         close(i2c_fd);
         throw std::runtime_error("Failed to set I2C slave address");
     }
+    // Initialize sensor data
+    std::lock_guard<std::mutex> lock(mtx);
+    sensorData.value = getPercentage();
+    sensorData.timestamp = std::time(nullptr);
+    sensorData.name = name;
+    sensorData.critical = false;
+    sensorData.updated = true;
 }
 
 Battery::~Battery() {
@@ -58,27 +57,47 @@ int Battery::readI2CBlockData(uint8_t reg, uint8_t *data, size_t length) {
 }
 
 int Battery::read_adc() {
+    uint8_t reg = 0x02; // Registrador de tensão do barramento
     uint8_t data[2];
-    if (readI2CBlockData(0, data, 2) != 0) {
-        throw std::runtime_error("Error reading ADC.");
+
+    // Escreve o endereço do registrador
+    if (write(i2c_fd, &reg, 1) != 1) {
+        throw std::runtime_error("Falha ao escrever no barramento I2C");
     }
-    return (data[0] << 8) | data[1];
+
+    // Lê os dois bytes do registrador
+    if (read(i2c_fd, data, 2) != 2) {
+        throw std::runtime_error("Falha ao ler do barramento I2C");
+    }
+
+    // Combina os dois bytes lidos em um valor bruto
+    int raw_value = (data[0] << 8) | data[1];
+
+    std::cout << "i2c_fd :: " << raw_value << "\n";
+    // Remove os 3 bits menos significativos (status) e retorna os 13 bits restantes
+    return (raw_value >> 3) & 0x1FFF;
 }
 
 float Battery::getVoltage() {
     int adc_value = read_adc();
-    float v_measured = (adc_value * ADC_REF) / ADC_MAX;
-    float v_battery = v_measured * VOLTAGE_DIVIDER;
-    return v_battery;
+    float voltage = adc_value * 0.004; // Cada bit do ADC representa 4mV
+    return voltage;
 }
 
 float Battery::getPercentage() {
-    float voltage = getVoltage();
-    float percentage = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
-    // Manual implementation of clamp
+	float voltage = getVoltage();
+	float percentage = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
+
+    float diff = fabs(percentage - percent_old);
+    std::cout << " Difference btw: " << diff << " \n-- new: " << percentage << "\n -- old: " << percent_old << "\n";
+
+    percent_old = (diff >= 1 ? percentage : percent_old);
+    percentage = std::round(diff >= 1 ? percentage : percent_old);
+
     if (percentage < 0.0f) percentage = 0.0f;
     if (percentage > 100.0f) percentage = 100.0f;
-    return percentage;
+
+	return percentage;
 }
 
 std::string Battery::getStatus(float voltage) {

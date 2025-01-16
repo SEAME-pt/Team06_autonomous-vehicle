@@ -41,11 +41,10 @@ jobs:
             cmake .. && \
             cmake --build . && \
             mkdir -p /repo/bin && \
-            ls -la && \
-            cp Middleware /repo/bin/ && \
-            cp ClusterDisplay /repo/bin/ && \
-            ldd Middleware && \
-            ldd ClusterDisplay
+            cp ./bin/Middleware /repo/bin/ && \
+            cp ./bin/ClusterDisplay /repo/bin/ && \
+            ldd ./bin/Middleware && \
+            ldd ./bin/ClusterDisplay
             "
 
       - name: Upload build artifacts

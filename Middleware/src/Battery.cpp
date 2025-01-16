@@ -38,7 +38,7 @@ void Battery::updateSensorData() {
     float tmp = sensorData.value;
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
-    if (tmp != sensorData.value) {
+    if (abs(tmp  sensorData.value) >= 1.0f) {
         sensorData.updated = true;
     } else {
         sensorData.updated = false;

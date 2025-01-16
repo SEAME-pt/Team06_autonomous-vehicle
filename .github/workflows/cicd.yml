@@ -39,9 +39,7 @@ jobs:
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. && \
-            cmake --build . && \
-            mkdir -p /repo/bin \
-            && ls -R /repo
+            cmake --build .
             "
 
       - name: Upload build artifacts
@@ -62,7 +60,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifact
-          path: ./bin
+          path: ./build/bin
 
       - name: SSH to Jetson and copy binary
         run: |

@@ -46,6 +46,7 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
+    std::cerr << "publishing: " << data.value << std::endl;
     std::string value_str = std::to_string(data.value);
 
     zmq::message_t message(value_str.size());
@@ -61,11 +62,13 @@ void Middleware::publishSensorData(const SensorData& data) {
 
 
 void Middleware::updateNonCritical() {
+    std::cerr << "updating non critical" << std::endl;
     while (!stop_flag) {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (!it->second->getCritical()) {
+                        std::cerr << "updating non critical sensor " << it->first << std::endl;
                         it->second->updateSensorData();
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {

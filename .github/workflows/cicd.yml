@@ -5,13 +5,17 @@
 name: CI/CD
 
 on:
+  pull_request:
+    branches:
+      - main
+# for testing
   push:
-    # branches:
-    #   - main
+    branches:
+        - '**'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # change delivery runner flag here [seame]
 
     steps:
       - name: Checkout repository
@@ -37,18 +41,18 @@ jobs:
             cmake .. && \
             make && \
             mkdir -p /repo/bin && \
-            cp jetson06 /repo/bin/ && \
-            ldd jetson06
+            cp Middleware/Middleware /repo/bin/ && \
+            ldd Middleware/Middleware
             "
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: bin/jetson06
+          path: bin/Middleware
 
   deploy:
-    runs-on: [seame]
+    runs-on: [seame] # change delivery runner flag here
     needs: build
 
     steps:
@@ -70,4 +74,4 @@ jobs:
       - name: SSH to Jetson and run binary
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/jetson06 && /home/team06/bin/jetson06'
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/Middleware'

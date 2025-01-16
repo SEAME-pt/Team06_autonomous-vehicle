@@ -14,6 +14,7 @@
 #include <thread>
 #include <mutex>
 #include <ctime>
+#include <cmath>
 
 class Battery : public ISensor {
 private:
@@ -29,6 +30,9 @@ private:
     const float MAX_VOLTAGE = 12.6f;
     const float MIN_VOLTAGE = 9.0f;
     const float NOMINAL_VOLTAGE = 11.1f;
+
+    float previous_percentage = 0.0f; // To store the previous percentage for smoothing
+    float percent_old = 100.0f;
 
     std::mutex mtx;
 

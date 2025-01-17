@@ -46,22 +46,29 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
-    static_cast<unsigned int>(data.value);
-    zmq::message_t message(sizeof(unsigned int));
-    memcpy(message.data(), &data.value, sizeof(unsigned int));
+    std::cerr << "publishing: " << data.value << std::endl;
+    std::string value_str = std::to_string(data.value);
+
+    zmq::message_t message(value_str.size());
+    memcpy(message.data(), value_str.c_str(), value_str.size());
+
     if (data.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
+        std::cerr << "sending: " << value_str << std::endl;
         zmq_nc_publisher.send(message, zmq::send_flags::none);
     }
 }
 
+
 void Middleware::updateNonCritical() {
+    std::cerr << "updating non critical" << std::endl;
     while (!stop_flag) {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (!it->second->getCritical()) {
+                        std::cerr << "updating non critical sensor " << it->first << std::endl;
                         it->second->updateSensorData();
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {

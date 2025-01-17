@@ -1,6 +1,7 @@
 #include "ZmqSubscriber.hpp"
 #include <QDateTime>
 #include <QDebug>
+#include <iostream>
 
 ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     : QObject(parent), _context(1), _socket(_context, zmq::socket_type::sub)
@@ -30,7 +31,7 @@ void    ZmqSubscriber::onMessageReceived()
             break;
         std::string messageStr = message.to_string();
         QString msgContent = QString::fromStdString(message.to_string());
-        qDebug() << "message: "<< msgContent;
+        std::cout << "Received message: " << messageStr << std::endl;
         // Calls pure virtual method so each child class can deal with the message.
         _handleMsg(msgContent);
     }

@@ -11,7 +11,7 @@ on:
 # for testing
   push:
     branches:
-        - '**'
+        - dev
 
 jobs:
   build:

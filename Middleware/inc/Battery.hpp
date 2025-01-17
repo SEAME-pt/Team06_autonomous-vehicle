@@ -31,7 +31,6 @@ private:
     const float MIN_VOLTAGE = 9.0f;
     const float NOMINAL_VOLTAGE = 11.1f;
 
-    float previous_percentage = 0.0f; // To store the previous percentage for smoothing
     float percent_old = 100.0f;
 
     std::mutex mtx;
@@ -43,6 +42,8 @@ public:
     ~Battery();
 
     int read_adc();
+    bool isCharge();
+    int	read_charge();
     float getVoltage();
     float getPercentage();
     std::string getStatus(float voltage); // Gets battery status

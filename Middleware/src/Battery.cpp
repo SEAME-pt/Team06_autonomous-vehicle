@@ -45,55 +45,66 @@ void Battery::updateSensorData() {
     }
 }
 
-
-int Battery::readI2CBlockData(uint8_t reg, uint8_t *data, size_t length) {
-    if (write(i2c_fd, &reg, 1) != 1) {
-        throw std::runtime_error("Failed to write to I2C bus");
-    }
-    if (read(i2c_fd, data, length) != static_cast<ssize_t>(length)) {
-        throw std::runtime_error("Failed to read from I2C bus");
-    }
-    return 0;
-}
-
 int Battery::read_adc() {
-    uint8_t reg = 0x02; // Registrador de tensão do barramento
+    uint8_t reg = 0x02;
     uint8_t data[2];
 
-    // Escreve o endereço do registrador
     if (write(i2c_fd, &reg, 1) != 1) {
-        throw std::runtime_error("Falha ao escrever no barramento I2C");
+        throw std::runtime_error("Write failure on the I2C bus");
     }
 
-    // Lê os dois bytes do registrador
     if (read(i2c_fd, data, 2) != 2) {
-        throw std::runtime_error("Falha ao ler do barramento I2C");
+        throw std::runtime_error("Failed to read from I2C bus");
     }
 
-    // Combina os dois bytes lidos em um valor bruto
-    int raw_value = (data[0] << 8) | data[1];
+    int raw_value = (data[0] << 8) | data[1];  //Combines the two bytes read into a raw value
+    int raw = (raw_value >> 3) & 0x1FFF;
 
-    std::cout << "i2c_fd :: " << raw_value << "\n";
-    // Remove os 3 bits menos significativos (status) e retorna os 13 bits restantes
-    return (raw_value >> 3) & 0x1FFF;
+    return (raw_value >> 3) & 0x1FFF; // Remove the 3 least significant bits (status) and return the remaining 13 bits
+}
+
+int Battery::read_charge() {
+    uint8_t reg = 0x01; //
+    if (write(i2c_fd, &reg, 1) != 1) {
+        throw std::runtime_error("Error sending I2C command.");
+    }
+    uint8_t value;
+    if (read(i2c_fd, &value, 1) != 1) {
+        throw std::runtime_error("Error reading value from I2C register.");
+    }
+
+    return static_cast<int>(value);
 }
 
 float Battery::getVoltage() {
     int adc_value = read_adc();
-    float voltage = adc_value * 0.004; // Cada bit do ADC representa 4mV
+    float voltage = adc_value * 0.004; // Each ADC bit represents 4mV
     return voltage;
+}
+
+bool Battery::isCharge(){
+    int value = read_charge();
+    return (value < 255 && value > 0);
 }
 
 float Battery::getPercentage() {
 	float voltage = getVoltage();
+
 	float percentage = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
 
-    float diff = fabs(percentage - percent_old);
-    std::cout << " Difference btw: " << diff << " \n-- new: " << percentage << "\n -- old: " << percent_old << "\n";
-
-    percent_old = (diff >= 1 ? percentage : percent_old);
-    percentage = std::round(diff >= 1 ? percentage : percent_old);
-
+    if ( fabs(percentage - percent_old) >= 0.5 ){
+        if (!isCharge() && percentage > percent_old){
+            percentage = std::round(percent_old);
+        }
+        else{
+            percent_old = percentage;
+		    percentage = std::round(percentage);
+        }
+	}
+	else{
+        percentage = std::round(percent_old);
+	}
+    
     if (percentage < 0.0f) percentage = 0.0f;
     if (percentage > 100.0f) percentage = 100.0f;
 

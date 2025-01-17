@@ -18,6 +18,9 @@ Middleware::~Middleware() {
 
 void Middleware::addSensor(bool critical, ISensor* sensor) {
     sensors[sensor->getName()] = sensor;
+    publishSensorData(sensor->getSensorData());
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 }
 
 void Middleware::start() {
@@ -31,6 +34,12 @@ void Middleware::stop() {
     if (!stop_flag.exchange(true)) {
         if (non_critical_thread.joinable()) {
             non_critical_thread.join();
+        }
+        if (read_critical_thread.joinable()) {
+            read_critical_thread.join();
+        }
+        if (critical_thread.joinable()) {
+            critical_thread.join();
         }
     }
 }

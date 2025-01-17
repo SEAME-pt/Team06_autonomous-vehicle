@@ -10,6 +10,8 @@ int main() {
     Battery battery("battery");
     middleware.addSensor(false, &battery);
     middleware.start();
-    middleware.stop();
+    while (true) {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
     return 0;
 }

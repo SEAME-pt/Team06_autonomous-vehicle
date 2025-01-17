@@ -1,3 +1,0 @@
-/home/team06/Team06-SEAME-DES_Instrument-Cluster/build/CMakeFiles/rebuild_cache.dir
-/home/team06/Team06-SEAME-DES_Instrument-Cluster/build/CMakeFiles/jetson06.dir
-/home/team06/Team06-SEAME-DES_Instrument-Cluster/build/CMakeFiles/edit_cache.dir

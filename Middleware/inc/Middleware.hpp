@@ -21,16 +21,10 @@ public:
     void stop();
 
 private:
-    // std::unordered_map<std::string, ISensor*> non_critical_sensors;
-    // std::unordered_map<std::string, ISensor*> critical_sensors;
     std::unordered_map<std::string, ISensor*> sensors;
     std::thread non_critical_thread;
     std::thread critical_thread;
     std::thread read_critical_thread;
-    // std::mutex non_critical_mutex;
-    // std::mutex critical_mutex;
-    // std::condition_variable nc_cv;
-    // std::condition_variable c_cv;
     std::atomic<bool> stop_flag;
 
     zmq::context_t zmq_context;

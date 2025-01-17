@@ -17,11 +17,6 @@ Middleware::~Middleware() {
 }
 
 void Middleware::addSensor(bool critical, ISensor* sensor) {
-    // if (critical) {
-    //     critical_sensors[sensor->getName()] = sensor;
-    // } else {
-    //     non_critical_sensors[sensor->getName()] = sensor;
-    // }
     sensors[sensor->getName()] = sensor;
 }
 
@@ -34,26 +29,26 @@ void Middleware::start() {
 
 void Middleware::stop() {
     if (!stop_flag.exchange(true)) {
-        // nc_cv.notify_all();
         if (non_critical_thread.joinable()) {
             non_critical_thread.join();
         }
-        // c_cv.notify_all();
-        // if (critical_thread.joinable()) {
-        //     critical_thread.join();
-        // }
     }
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
-    zmq::message_t message(sizeof(unsigned int));
-    memcpy(message.data(), &data.value, sizeof(unsigned int));
+    int value = static_cast<int>(data.value);
+    std::string value_str = std::to_string(value);
+
+    zmq::message_t message(value_str.size());
+    memcpy(message.data(), value_str.c_str(), value_str.size());
+    std::cerr << data.name << ": " << value_str << std::endl; //debugging
     if (data.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
         zmq_nc_publisher.send(message, zmq::send_flags::none);
     }
 }
+
 
 void Middleware::updateNonCritical() {
     while (!stop_flag) {
@@ -114,4 +109,3 @@ void Middleware::updateCritical() {
         std::this_thread::sleep_for(std::chrono::milliseconds(critical_update_interval_ms));
     }
 }
-

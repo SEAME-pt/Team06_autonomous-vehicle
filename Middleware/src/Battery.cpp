@@ -15,7 +15,7 @@ Battery::Battery(const std::string& name) {
     }
     // Initialize sensor data
     std::lock_guard<std::mutex> lock(mtx);
-    sensorData.value = getPercentage();
+    sensorData.value = 0.0f;
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
     sensorData.critical = false;
@@ -127,7 +127,7 @@ std::map<std::string, float> Battery::get_battery_info() {
         {"percentage", percentage},
         {"raw_adc", static_cast<float>(adc_value)},
         {"adc_voltage", adc_voltage},
-        {"cell_voltages", cell_voltages[0]} // Simplified representation
+        {"cell_voltages", cell_voltages[0]}
     };
 
     return info;

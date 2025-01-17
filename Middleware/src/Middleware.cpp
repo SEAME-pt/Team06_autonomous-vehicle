@@ -18,6 +18,7 @@ Middleware::~Middleware() {
 
 void Middleware::addSensor(bool critical, ISensor* sensor) {
     sensors[sensor->getName()] = sensor;
+    publishSensorData(sensor->getSensorData());
 }
 
 void Middleware::start() {

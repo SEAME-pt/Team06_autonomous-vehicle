@@ -1,5 +1,6 @@
 #include "ZmqSubscriber.hpp"
 #include <QDateTime>
+#include <QDebug>
 #include <iostream>
 
 ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)

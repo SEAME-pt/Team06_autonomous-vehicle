@@ -5,5 +5,8 @@
         <file alias="Speedometer.qml">ui/speedometer/Speedometer.qml</file>
         <file alias="SimpleBar.qml">ui/SimpleBar.qml</file>
         <file alias="BatteryIndicator.qml">ui/BatteryIndicator.qml</file>
+        <file alias="TimeLabel.qml">ui/TimeLabel.qml</file>
+        <file alias="camera_icon.jpg">resources/camera_icon.jpg</file>
+        <file>CentralBoard.qml</file>
     </qresource>
 </RCC>

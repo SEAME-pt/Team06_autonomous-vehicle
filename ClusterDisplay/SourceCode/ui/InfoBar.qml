@@ -14,21 +14,17 @@ Rectangle {
     RowLayout {
         anchors.fill: parent
         Item {
-            anchors.fill: parent
+            Layout.fillHeight: true
+            Layout.fillWidth: true
             Text {
-                id: time
-                text: Qt.formatDateTime(new Date(), "hh:mm:ss")
                 anchors.centerIn: parent
+                text: "Team06"
             }
-
-            Timer {
-                interval: 1000
-                running: true
-                repeat: true
-                onTriggered: {
-                    time.text = Qt.formatDateTime(new Date(), "hh:mm:ss")
-                }
-            }
+        }
+        TimeLabel {
+            id: timeLabel
+            Layout.fillHeight: true
+            Layout.minimumWidth: 70 // Keeps time to the right, but with enough space to show the entire timeText
         }
     }
 }

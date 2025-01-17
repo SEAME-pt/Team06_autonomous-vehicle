@@ -15,7 +15,7 @@ Battery::Battery(const std::string& name) {
     }
     // Initialize sensor data
     std::lock_guard<std::mutex> lock(mtx);
-    sensorData.value = -1.0f;
+    sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
     sensorData.critical = false;

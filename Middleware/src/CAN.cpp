@@ -5,7 +5,7 @@ CAN::CAN(const std::string& name) : spi_fd(-1), debug(true) {
     if (!Init())
     {
         std::cerr << "Initialization failed!" << std::endl;
-        return 1;
+        return ;
     }
     std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = 0;

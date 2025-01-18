@@ -2,7 +2,11 @@
 
 CAN::CAN(const std::string& name) : spi_fd(-1), debug(true) {
     InitSPI();
-
+    if (!can.Init())
+    {
+        std::cerr << "Initialization failed!" << std::endl;
+        return 1;
+    }
     std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = 0;
     sensorData.timestamp = std::time(nullptr);

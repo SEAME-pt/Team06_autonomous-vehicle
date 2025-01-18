@@ -64,7 +64,7 @@
 struct CarData {
     uint16_t speed;
     uint16_t rpm;
-}
+};
 
 class CAN : public ISensor {
 public:

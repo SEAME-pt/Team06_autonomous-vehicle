@@ -45,7 +45,7 @@ public:
     bool isCharge();
     int	read_charge();
     float getVoltage();
-    float getPercentage();
+    unsigned int getPercentage();
     std::string getStatus(float voltage); // Gets battery status
     std::vector<float> get_cell_voltages(float total_voltage);
     std::map<std::string, float> get_battery_info();

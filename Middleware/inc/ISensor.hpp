@@ -8,7 +8,7 @@
 
 struct SensorData {
     std::string name;
-    float value;
+    unsigned int value;
     std::time_t timestamp;
     bool critical;
     bool updated;

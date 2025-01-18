@@ -45,8 +45,7 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
-    int value = static_cast<int>(data.value);
-    std::string value_str = std::to_string(value);
+    std::string value_str = std::to_string(data.value);
 
     zmq::message_t message(value_str.size());
     memcpy(message.data(), value_str.c_str(), value_str.size());

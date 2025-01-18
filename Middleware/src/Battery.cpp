@@ -15,7 +15,7 @@ Battery::Battery(const std::string& name) {
     }
     // Initialize sensor data
     std::lock_guard<std::mutex> lock(mtx);
-    sensorData.value = 0.0f;
+    sensorData.value = 0;
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
     sensorData.critical = false;
@@ -35,7 +35,7 @@ SensorData Battery::getSensorData() {
 
 void Battery::updateSensorData() {
     std::lock_guard<std::mutex> lock(mtx);
-    float tmp = sensorData.value;
+    unsigned int tmp = sensorData.value;
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
     if (tmp != sensorData.value) {
@@ -87,7 +87,7 @@ bool Battery::isCharge(){
     return (value < 255 && value > 0);
 }
 
-float Battery::getPercentage() {
+unsigned int Battery::getPercentage() {
 	float voltage = getVoltage();
 
 	float percentage = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
@@ -104,11 +104,11 @@ float Battery::getPercentage() {
 	else{
         percentage = std::round(percent_old);
 	}
-    
+
     if (percentage < 0.0f) percentage = 0.0f;
     if (percentage > 100.0f) percentage = 100.0f;
 
-	return percentage;
+	return static_cast<unsigned int>(percentage);
 }
 
 std::string Battery::getStatus(float voltage) {

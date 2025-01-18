@@ -2,7 +2,7 @@
 
 CAN::CAN(const std::string& name) : spi_fd(-1), debug(true) {
     InitSPI();
-    if (!can.Init())
+    if (!Init())
     {
         std::cerr << "Initialization failed!" << std::endl;
         return 1;

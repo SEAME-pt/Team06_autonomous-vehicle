@@ -1,6 +1,7 @@
 #ifndef MIDDLEWARE_HPP
 #define MIDDLEWARE_HPP
 
+#include "ISensor.hpp"
 #include <unordered_map>
 #include <string>
 #include <thread>
@@ -9,7 +10,6 @@
 #include <atomic>
 #include <chrono>
 #include <zmq.hpp>
-#include "ISensor.hpp"
 
 class Middleware {
 public:

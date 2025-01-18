@@ -61,6 +61,11 @@
 #define CAN_RD_STATUS 0xA0
 #define CAN_BIT_MODIFY 0x05
 
+struct CarData {
+    uint16_t speed;
+    uint16_t rpm;
+}
+
 class CAN : public ISensor {
 public:
     explicit CAN(const std::string& name);
@@ -78,6 +83,7 @@ public:
 private:
     SensorData sensorData;
     std::mutex mtx;
+    CarData carData;
 
     int spi_fd;
     bool debug;

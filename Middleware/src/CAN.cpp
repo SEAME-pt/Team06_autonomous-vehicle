@@ -225,9 +225,10 @@ void CAN::updateSensorData() {
     uint8_t data[8];
     uint8_t length;
     if (Receive(data, length)) {
-        if (length == sizeof(32)) {
+        if (length == sizeof(carData)) {
+            memcpy(&carData, data, sizeof(carData));
             unsigned int tmp = sensorData.value;
-            memcpy(&sensorData.value, data, sizeof(16));
+            sensorData.value = carData.speed;
             sensorData.timestamp = std::time(nullptr);
             if (tmp != sensorData.value) {
                 sensorData.updated = true;

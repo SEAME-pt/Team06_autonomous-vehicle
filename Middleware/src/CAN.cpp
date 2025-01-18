@@ -226,8 +226,6 @@ SensorData CAN::getSensorData() {
 
 void CAN::updateSensorData() {
     std::lock_guard<std::mutex> lock(mtx);
-    uint8_t data[8];
-    uint8_t length;
     if (Receive(data, length)) {
         if (length == sizeof(carData)) {
             memcpy(&carData, data, sizeof(carData));
@@ -240,8 +238,8 @@ void CAN::updateSensorData() {
                 sensorData.updated = false;
             }
         } else {
-        std::cerr << "Invalid data length received via CAN: " << (int)length << std::endl;
-        sensorData.updated = false;
+            std::cerr << "Invalid data length received via CAN: " << (int)length << std::endl;
+            sensorData.updated = false;
         }
     }
 }

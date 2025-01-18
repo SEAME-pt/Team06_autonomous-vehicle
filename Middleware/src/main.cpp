@@ -9,7 +9,7 @@ int main() {
     std::string zmq_nc_address = "tcp://127.0.0.1:5556";
     Middleware middleware(zmq_c_address, zmq_nc_address);
     Battery battery("battery");
-    CAN can("can");
+    CAN can("speed");
     middleware.addSensor(false, &battery);
     middleware.start();
     while (true) {

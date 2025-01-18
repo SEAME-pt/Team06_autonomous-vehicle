@@ -84,6 +84,8 @@ private:
     SensorData sensorData;
     std::mutex mtx;
     CarData carData;
+    uint8_t data[8];
+    uint8_t length;
 
     int spi_fd;
     bool debug;

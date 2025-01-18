@@ -225,13 +225,13 @@ SensorData CAN::getSensorData() {
 }
 
 void CAN::updateSensorData() {
-    std::lock_guard<std::mutex> lock(mtx);
     sensorData.updated = false;
     if (Receive(data, length)) {
         if (length == sizeof(carData)) {
             memcpy(&carData, data, sizeof(carData));
+            std::lock_guard<std::mutex> lock(mtx);
             unsigned int tmp = sensorData.value;
-            sensorData.value = carData.speed;
+            sensorData.value = static_cast<unsigned int>(carData.speed);
             sensorData.timestamp = std::time(nullptr);
             if (tmp != sensorData.value) {
                 sensorData.updated = true;

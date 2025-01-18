@@ -103,6 +103,7 @@ void Middleware::updateCritical() {
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (it->second->getCritical()) {
+                        it->second->updateSensorData(); //
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {
                             std::lock_guard<std::mutex> lock(it->second->getMutex());

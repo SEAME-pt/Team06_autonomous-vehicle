@@ -10,7 +10,7 @@ on:
       - main
 # for testing
   push:
-    - *
+    - '**'
 
 jobs:
   build:

@@ -239,10 +239,10 @@ void CAN::updateSensorData() {
             } else {
                 sensorData.updated = false;
             }
-        }
-    } else {
+        } else {
         std::cerr << "Invalid data length received via CAN: " << (int)length << std::endl;
         sensorData.updated = false;
+        }
     }
 }
 

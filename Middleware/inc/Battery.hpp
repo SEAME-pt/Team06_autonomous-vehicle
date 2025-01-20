@@ -31,7 +31,7 @@ private:
     const float MIN_VOLTAGE = 9.0f;
     const float NOMINAL_VOLTAGE = 11.1f;
 
-    float percent_old = 100.0f;
+    float percent_old = 0.0f;
 
     std::mutex mtx;
 
@@ -46,9 +46,6 @@ public:
     int	read_charge();
     float getVoltage();
     unsigned int getPercentage();
-    std::string getStatus(float voltage); // Gets battery status
-    std::vector<float> get_cell_voltages(float total_voltage);
-    std::map<std::string, float> get_battery_info();
     void updateSensorData() override;
     std::string getName() const override;
     bool getCritical() const override;

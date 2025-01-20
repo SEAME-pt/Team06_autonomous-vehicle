@@ -14,7 +14,6 @@ Battery::Battery(const std::string& name) {
         throw std::runtime_error("Failed to set I2C slave address");
     }
     // Initialize sensor data
-    // std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = 0;
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
@@ -34,7 +33,6 @@ SensorData Battery::getSensorData() {
 
 
 void Battery::updateSensorData() {
-    // std::lock_guard<std::mutex> lock(mtx);
     unsigned int tmp = sensorData.value;
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
@@ -92,27 +90,23 @@ unsigned int Battery::getPercentage() {
 
 	float percentage = (voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
 
-    if ( fabs(percentage - percent_old) >= 0.5 ){
-        if (!isCharge() && percentage > percent_old){
-            percentage = std::round(percent_old);
+    if ( percent_old == 0.0f ) {
+        percent_old = percentage;
+    } else if ( percentage > 100.0f ) {
+        percentage = 100.0f;
+    } else if ( percentage < 1.0f ) {
+        percentage = 1.0f;
+    } else {
+        if ( fabs(percentage - percent_old) >= 1.0f ){
+            if ( isCharge() ) {
+                percentage = (percentage > percent_old ? percentage : percent_old);
+            } else {
+                percentage = (percentage < percent_old ? percentage : percent_old);
+            }
         }
-        else{
-            percent_old = percentage;
-		    percentage = std::round(percentage);
-        }
-	}
-	else{
-        percentage = std::round(percent_old);
-	}
-
-    if (percentage < 0.0f) percentage = 0.0f;
-    if (percentage > 100.0f) percentage = 100.0f;
+    }
 
 	return static_cast<unsigned int>(percentage);
-}
-
-std::vector<float> Battery::get_cell_voltages(float total_voltage) {
-    return std::vector<float>(3, total_voltage / 3);
 }
 
 std::string Battery::getName() const {

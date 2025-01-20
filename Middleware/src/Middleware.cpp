@@ -34,9 +34,6 @@ void Middleware::stop() {
         if (non_critical_thread.joinable()) {
             non_critical_thread.join();
         }
-        if (read_critical_thread.joinable()) {
-            read_critical_thread.join();
-        }
         if (critical_thread.joinable()) {
             critical_thread.join();
         }

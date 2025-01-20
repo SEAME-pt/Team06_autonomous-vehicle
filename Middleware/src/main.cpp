@@ -18,8 +18,8 @@ int main() {
     Middleware middleware(zmq_c_address, zmq_nc_address);
     Battery battery("battery");
     CAN can("speed");
-    middleware.addSensor(false, &battery);
-    middleware.addSensor(true, &can);
+    middleware.addSensor(&battery);
+    middleware.addSensor(&can);
     middleware.start();
     while (stop_flag == false) {
         std::this_thread::sleep_for(std::chrono::seconds(1));

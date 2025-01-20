@@ -31,8 +31,6 @@ private:
     const float MIN_VOLTAGE = 9.0f;
     const float NOMINAL_VOLTAGE = 11.1f;
 
-    float percent_old = 0.0f;
-
     std::mutex mtx;
 
     int readI2CBlockData(uint8_t reg, uint8_t* data, size_t length);

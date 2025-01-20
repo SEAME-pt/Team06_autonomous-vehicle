@@ -225,8 +225,10 @@ SensorData CAN::getSensorData() {
 }
 
 void CAN::updateSensorData() {
+    std::cerr << "updateSensorData" << std::endl;
     sensorData.updated = false;
     if (Receive(data, length)) {
+        std::cerr << "Received data" << std::endl;
         if (length == sizeof(carData)) {
             memcpy(&carData, data, sizeof(carData));
             std::lock_guard<std::mutex> lock(mtx);

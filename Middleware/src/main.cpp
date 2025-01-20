@@ -11,6 +11,7 @@ int main() {
     Battery battery("battery");
     CAN can("speed");
     middleware.addSensor(false, &battery);
+    middleware.addSensor(true, &can);
     middleware.start();
     while (true) {
         std::this_thread::sleep_for(std::chrono::seconds(1));

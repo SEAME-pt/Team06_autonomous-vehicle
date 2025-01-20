@@ -225,17 +225,12 @@ SensorData CAN::getSensorData() {
 void CAN::updateSensorData() {
     sensorData.updated = false;
     if (Receive(data, length)) {
-        // if (length == sizeof(carData)) {
         memcpy(&carData, data, sizeof(carData));
         unsigned int tmp = sensorData.value;
         sensorData.value = static_cast<unsigned int>(carData.speed);
         sensorData.timestamp = std::time(nullptr);
         if (tmp != sensorData.value) {
             sensorData.updated = true;
-        }
-        if (length != sizeof(carData)) {
-            std::cerr << "Invalid data length received via CAN: " << (int)length << std::endl;
-            std::cerr << "Speed: " << carData.speed << std::endl;
         }
     }
 }

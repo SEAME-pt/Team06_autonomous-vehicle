@@ -61,7 +61,7 @@
 #define CAN_RD_STATUS 0xA0
 #define CAN_BIT_MODIFY 0x05
 
-struct CarData { // to delete
+struct CarData {
     uint16_t speed;
     uint16_t rpm;
 };

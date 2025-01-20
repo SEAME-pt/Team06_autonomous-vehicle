@@ -105,7 +105,7 @@ unsigned int Battery::getPercentage() {
             }
         }
     }
-
+    percent_old = percentage;
 	return static_cast<unsigned int>(std::round(percentage));
 }
 

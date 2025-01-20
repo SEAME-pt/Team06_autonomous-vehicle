@@ -67,7 +67,6 @@ void Middleware::updateNonCritical() {
                     SensorData data = it->second->getSensorData();
                     if (data.updated) {
                         publishSensorData(data);
-                        std::cerr << "is charging: " << it->second->isCharge() << std::endl;
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating non critical sensor " << it->first << ": " << e.what() << std::endl;

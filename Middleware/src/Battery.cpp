@@ -96,6 +96,7 @@ unsigned int Battery::getPercentage() {
         ret = 1;
     } else {
         if ( abs(ret - sensorData.value) > 1 ){
+            std::cerr << "ischarge " << isCharge();
             if ( isCharge() ) {
                 ret = (ret > sensorData.value ? ret : sensorData.value);
             } else {

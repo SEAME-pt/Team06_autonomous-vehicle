@@ -3,6 +3,7 @@
 #include "CAN.hpp"
 #include <thread>
 #include <chrono>
+#include <csignal>
 
 std::atomic<bool> stop_flag(false);
 

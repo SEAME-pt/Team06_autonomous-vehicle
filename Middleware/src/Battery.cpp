@@ -90,12 +90,12 @@ unsigned int Battery::getPercentage() {
 	unsigned int percentage = static_cast<unsigned int>(std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f));
     unsigned int ret;
 
-    if ( ret > 100 ) {
+    if ( percentage > 100 ) {
         ret = 100;
-    } else if ( ret < 1 ) {
+    } else if ( percentage < 1 ) {
         ret = 1;
     } else {
-        if ( abs(ret - sensorData.value) > 1 ){
+        if ( abs(percentage - sensorData.value) > 1 ){
             if ( isCharge() ) {
                 ret = (percentage > sensorData.value ? percentage : sensorData.value);
             } else {
@@ -103,6 +103,10 @@ unsigned int Battery::getPercentage() {
             }
         }
     }
+    std::cerr << "isCharge: " << isCharge() << std::endl;
+    std::cerr << "Percentage: " << percentage << std::endl;
+    std::cerr << "SensorData: " << sensorData.value << std::endl;
+    std::cerr << "Ret: " << ret << std::endl;
 	return ret;
 }
 

@@ -96,12 +96,12 @@ unsigned int Battery::getPercentage() {
         percentage = 100;
     } else if ( percentage < 1 ) {
         percentage = 1;
-    } else {
-        if ( charging ) {
-            percentage = (percentage > sensorData.value ? percentage : sensorData.value);
-        } else {
-            percentage = (percentage < sensorData.value ? percentage : sensorData.value);
-        }
+    // } else {
+    //     if ( charging ) {
+    //         percentage = (percentage > sensorData.value ? percentage : sensorData.value);
+    //     } else {
+    //         percentage = (percentage < sensorData.value ? percentage : sensorData.value);
+    //     }
     }
 	return percentage;
 }

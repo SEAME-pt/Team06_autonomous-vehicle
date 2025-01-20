@@ -88,26 +88,24 @@ bool Battery::isCharge(){
 unsigned int Battery::getPercentage() {
 	float voltage = getVoltage();
 	unsigned int percentage = static_cast<unsigned int>(std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f));
-    unsigned int ret;
 
     if ( percentage > 100 ) {
-        ret = 100;
+        percentage = 100;
     } else if ( percentage < 1 ) {
-        ret = 1;
+        percentage = 1;
     } else {
         if ( abs(percentage - sensorData.value) > 1 ){
             if ( isCharge() ) {
-                ret = (percentage > sensorData.value ? percentage : sensorData.value);
+                percentage = (percentage > sensorData.value ? percentage : sensorData.value);
             } else {
-                ret = (percentage < sensorData.value ? percentage : sensorData.value);
+                percentage = (percentage < sensorData.value ? percentage : sensorData.value);
             }
         }
     }
     std::cerr << "isCharge: " << isCharge() << std::endl;
     std::cerr << "Percentage: " << percentage << std::endl;
     std::cerr << "SensorData: " << sensorData.value << std::endl;
-    std::cerr << "Ret: " << ret << std::endl;
-	return ret;
+	return percentage;
 }
 
 std::string Battery::getName() const {

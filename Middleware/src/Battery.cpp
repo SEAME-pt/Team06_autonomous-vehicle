@@ -106,7 +106,7 @@ unsigned int Battery::getPercentage() {
         }
     }
 
-	return static_cast<unsigned int>(percentage);
+	return static_cast<unsigned int>(std::round(percentage));
 }
 
 std::string Battery::getName() const {

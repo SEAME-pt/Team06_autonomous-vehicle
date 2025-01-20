@@ -1,6 +1,6 @@
 #include "../inc/CAN.hpp"
 
-CAN::CAN(const std::string& name) : spi_fd(-1), debug(true) {
+CAN::CAN(const std::string& name) : spi_fd(-1), debug(false) {
     InitSPI();
     if (!Init())
     {

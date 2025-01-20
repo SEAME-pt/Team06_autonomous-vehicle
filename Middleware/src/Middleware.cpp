@@ -67,7 +67,6 @@ void Middleware::updateNonCritical() {
                         it->second->updateSensorData();
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {
-                            std::lock_guard<std::mutex> lock(it->second->getMutex());
                             publishSensorData(data);
                         }
                     }
@@ -86,6 +85,7 @@ void Middleware::readCritical(){
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (it->second->getCritical()) {
+                        std::lock_guard<std::mutex> lock(it->second->getMutex());
                         it->second->updateSensorData();
                     }
                 } catch (const std::exception& e) {
@@ -103,9 +103,9 @@ void Middleware::updateCritical() {
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (it->second->getCritical()) {
+                        std::lock_guard<std::mutex> lock(it->second->getMutex());
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {
-                            std::lock_guard<std::mutex> lock(it->second->getMutex());
                             publishSensorData(data);
                         }
                     }

@@ -14,7 +14,7 @@ Battery::Battery(const std::string& name) {
         throw std::runtime_error("Failed to set I2C slave address");
     }
     // Initialize sensor data
-    std::lock_guard<std::mutex> lock(mtx);
+    // std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = 0;
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
@@ -34,7 +34,7 @@ SensorData Battery::getSensorData() {
 
 
 void Battery::updateSensorData() {
-    std::lock_guard<std::mutex> lock(mtx);
+    // std::lock_guard<std::mutex> lock(mtx);
     unsigned int tmp = sensorData.value;
     sensorData.value = getPercentage();
     sensorData.timestamp = std::time(nullptr);
@@ -111,37 +111,8 @@ unsigned int Battery::getPercentage() {
 	return static_cast<unsigned int>(percentage);
 }
 
-std::string Battery::getStatus(float voltage) {
-    if (voltage >= 12.0f)
-        return "FULL";
-    else if (voltage >= 11.1f)
-        return "GOOD";
-    else if (voltage >= 10.2f)
-        return "LOW";
-    else
-        return "CRITICAL";
-}
-
 std::vector<float> Battery::get_cell_voltages(float total_voltage) {
     return std::vector<float>(3, total_voltage / 3);
-}
-
-std::map<std::string, float> Battery::get_battery_info() {
-    float voltage = getVoltage();
-    float percentage = getPercentage();
-    int adc_value = read_adc();
-    float adc_voltage = (adc_value * ADC_REF) / ADC_MAX;
-    std::vector<float> cell_voltages = get_cell_voltages(voltage);
-
-    std::map<std::string, float> info = {
-        {"voltage", voltage},
-        {"percentage", percentage},
-        {"raw_adc", static_cast<float>(adc_value)},
-        {"adc_voltage", adc_voltage},
-        {"cell_voltages", cell_voltages[0]}
-    };
-
-    return info;
 }
 
 std::string Battery::getName() const {

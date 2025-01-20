@@ -16,7 +16,7 @@ public:
     Middleware(const std::string& zmq_c_address, const std::string& zmq_nc_address);
     ~Middleware();
 
-    void addSensor(bool critical, ISensor* sensor);
+    void addSensor(ISensor* sensor);
     void start();
     void stop();
 

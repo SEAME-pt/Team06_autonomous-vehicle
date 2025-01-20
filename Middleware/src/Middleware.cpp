@@ -26,7 +26,6 @@ void Middleware::addSensor(bool critical, ISensor* sensor) {
 void Middleware::start() {
     stop_flag = false;
     non_critical_thread = std::thread(&Middleware::updateNonCritical, this);
-    // read_critical_thread = std::thread(&Middleware::readCritical, this);
     critical_thread = std::thread(&Middleware::updateCritical, this);
 }
 
@@ -79,31 +78,12 @@ void Middleware::updateNonCritical() {
     }
 }
 
-void Middleware::readCritical(){
-    while (!stop_flag) {
-        {
-            for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
-                try {
-                    if (it->second->getCritical()) {
-                        // std::lock_guard<std::mutex> lock(it->second->getMutex());
-                        it->second->updateSensorData();
-                    }
-                } catch (const std::exception& e) {
-                    std::cerr << "Error reading critical sensor " << it->first << ": " << e.what() << std::endl;
-                }
-            }
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(read_critical_interval_ms));
-    }
-}
-
 void Middleware::updateCritical() {
     while (!stop_flag) {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = sensors.begin(); it != sensors.end(); ++it) {
                 try {
                     if (it->second->getCritical()) {
-                        // std::lock_guard<std::mutex> lock(it->second->getMutex());
                         it->second->updateSensorData();
                         SensorData data = it->second->getSensorData();
                         if (data.updated) {

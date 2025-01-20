@@ -24,7 +24,6 @@ private:
     std::unordered_map<std::string, ISensor*> sensors;
     std::thread non_critical_thread;
     std::thread critical_thread;
-    std::thread read_critical_thread;
     std::atomic<bool> stop_flag;
 
     zmq::context_t zmq_context;
@@ -35,12 +34,10 @@ private:
 
     void updateNonCritical();
     void updateCritical();
-    void readCritical();
     void publishSensorData(const SensorData& data);
 
-    const unsigned int critical_update_interval_ms = 100;
+    const unsigned int critical_update_interval_ms = 10;
     const unsigned int non_critical_update_interval_ms = 1000;
-    const unsigned int read_critical_interval_ms = 10;
 };
 
 #endif

@@ -7,7 +7,6 @@ CAN::CAN(const std::string& name) : spi_fd(-1), debug(false) {
         std::cerr << "Initialization failed!" << std::endl;
         return ;
     }
-    std::lock_guard<std::mutex> lock(mtx);
     sensorData.value = 0;
     sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
@@ -220,7 +219,6 @@ bool CAN::getCritical() const {
 }
 
 SensorData CAN::getSensorData() {
-    // std::lock_guard<std::mutex> lock(mtx);
     return sensorData;
 }
 
@@ -229,7 +227,6 @@ void CAN::updateSensorData() {
     if (Receive(data, length)) {
         if (length == sizeof(carData)) {
             memcpy(&carData, data, sizeof(carData));
-            // std::lock_guard<std::mutex> lock(mtx);
             unsigned int tmp = sensorData.value;
             sensorData.value = static_cast<unsigned int>(carData.speed);
             sensorData.timestamp = std::time(nullptr);

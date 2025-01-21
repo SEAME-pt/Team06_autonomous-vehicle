@@ -18,7 +18,6 @@
 
 class BatteryReader {
 private:
-    SensorData sensorData;
     int i2c_fd;                 // File descriptor for I2C
     int i2c_bus = 1;            // I2C bus number
     uint8_t adc_address = 0x41; // I2C ADC address

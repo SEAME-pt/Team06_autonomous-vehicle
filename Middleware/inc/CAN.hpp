@@ -1,9 +1,7 @@
 #ifndef CAN_HPP
 #define CAN_HPP
 
-#include "ISensor.hpp"
 #include <iostream>
-#include <mutex>
 #include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -61,32 +59,18 @@
 #define CAN_RD_STATUS 0xA0
 #define CAN_BIT_MODIFY 0x05
 
-struct CarData {
-    uint16_t speed;
-    uint16_t rpm;
-};
-
-class CAN : public ISensor {
+class CAN {
 public:
-    explicit CAN(const std::string& name);
+    CAN(bool debug = false);
     ~CAN();
 
     bool Init();
     bool Send(uint16_t canId, uint8_t* data, uint8_t length);
     bool Receive(uint8_t* buffer, uint8_t& length);
-    std::string getName() const override;
-    void updateSensorData() override;
-    bool getCritical() const override;
-    SensorData getSensorData() override;
-    std::mutex& getMutex() override;
+    uint16_t getId();
+
 
 private:
-    SensorData sensorData;
-    std::mutex mtx;
-    CarData carData;
-    uint8_t data[8];
-    uint8_t length;
-
     int spi_fd;
     bool debug;
 

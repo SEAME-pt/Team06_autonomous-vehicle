@@ -1,6 +1,6 @@
-#pragma once
+#ifndef BATTERYREADER_HPP
+#define BATTERYREADER_HPP
 
-#include "ISensor.hpp"
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -45,3 +45,5 @@ public:
     std::string getStatus();
     std::map<std::string, float> get_battery_info();
 };
+
+#endif

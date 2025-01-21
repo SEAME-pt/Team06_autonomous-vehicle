@@ -1,4 +1,4 @@
-#include "../inc/BatteryReader.hpp"
+#include "BatteryReader.hpp"
 
 BatteryReader::BatteryReader() {
     // Open the I2C bus

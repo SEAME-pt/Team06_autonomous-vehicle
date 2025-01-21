@@ -1,5 +1,5 @@
-#ifndef CAN_HPP
-#define CAN_HPP
+#ifndef CanReader_HPP
+#define CanReader_HPP
 
 #include <iostream>
 #include <stdint.h>
@@ -59,10 +59,10 @@
 #define CAN_RD_STATUS 0xA0
 #define CAN_BIT_MODIFY 0x05
 
-class CAN {
+class CanReader {
 public:
-    CAN(bool debug = false);
-    ~CAN();
+    CanReader(bool debug = false);
+    ~CanReader();
 
     bool Init();
     bool Send(uint16_t canId, uint8_t* data, uint8_t length);
@@ -79,4 +79,5 @@ private:
     void Reset();
     bool InitSPI();
 };
+
 #endif

@@ -1,5 +1,5 @@
-#ifndef CanReader_HPP
-#define CanReader_HPP
+#ifndef CANREADER_HPP
+#define CANREADER_HPP
 
 #include <iostream>
 #include <stdint.h>

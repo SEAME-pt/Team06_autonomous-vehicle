@@ -1,4 +1,4 @@
-#include "../inc/CanReader.hpp"
+#include "CanReader.hpp"
 
 CanReader::CanReader(bool debug) : spi_fd(-1), debug(false) {
     InitSPI();

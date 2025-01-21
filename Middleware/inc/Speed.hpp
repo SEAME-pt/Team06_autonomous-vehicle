@@ -2,11 +2,11 @@
 #define SPEED_HPP
 
 #include "ISensor.hpp"
-#include "CAN.hpp"
+#include "CanReader.hpp"
 
 class Speed : public ISensor {
 public:
-    explicit Speed(const std::string& name);
+    Speed(const std::string& name);
     ~Speed();
     std::string getName() const override;
     void updateSensorData() override;
@@ -22,7 +22,7 @@ private:
     uint8_t length = 0;
     uint16_t speed;
     uint16_t rpm;
-    CAN can;
+    CanReader can;
 };
 
 #endif

@@ -1,6 +1,6 @@
-#include "../inc/CAN.hpp"
+#include "../inc/CanReader.hpp"
 
-CAN::CAN(bool debug) : spi_fd(-1), debug(false) {
+CanReader::CanReader(bool debug) : spi_fd(-1), debug(false) {
     InitSPI();
     if (!Init())
     {
@@ -9,13 +9,13 @@ CAN::CAN(bool debug) : spi_fd(-1), debug(false) {
     }
 }
 
-CAN::~CAN() {
+CanReader::~CanReader() {
     if (spi_fd >= 0) {
         close(spi_fd);
     }
 }
 
-bool CAN::InitSPI() {
+bool CanReader::InitSPI() {
     spi_fd = open("/dev/spidev0.0", O_RDWR);
     if (spi_fd < 0) {
         std::cerr << "Error opening SPI device" << std::endl;
@@ -44,7 +44,7 @@ bool CAN::InitSPI() {
     return true;
 }
 
-uint8_t CAN::ReadByte(uint8_t addr) {
+uint8_t CanReader::ReadByte(uint8_t addr) {
     uint8_t tx[3] = {CAN_READ, addr, 0};
     uint8_t rx[3] = {0};
 
@@ -65,7 +65,7 @@ uint8_t CAN::ReadByte(uint8_t addr) {
     return rx[2];
 }
 
-void CAN::WriteByte(uint8_t addr, uint8_t data) {
+void CanReader::WriteByte(uint8_t addr, uint8_t data) {
     uint8_t tx[3] = {CAN_WRITE, addr, data};
 
     struct spi_ioc_transfer tr;
@@ -82,7 +82,7 @@ void CAN::WriteByte(uint8_t addr, uint8_t data) {
     }
 }
 
-void CAN::Reset() {
+void CanReader::Reset() {
     uint8_t tx = CAN_RESET;
 
     struct spi_ioc_transfer tr;
@@ -99,7 +99,7 @@ void CAN::Reset() {
     }
 }
 
-bool CAN::Send(uint16_t canId, uint8_t* data, uint8_t length) {
+bool CanReader::Send(uint16_t canId, uint8_t* data, uint8_t length) {
     if (length > 8) return false;
 
     uint8_t status = ReadByte(CAN_RD_STATUS);
@@ -139,7 +139,7 @@ bool CAN::Send(uint16_t canId, uint8_t* data, uint8_t length) {
     return true;
 }
 
-bool CAN::Init() {
+bool CanReader::Init() {
     std::cout << "Resetting..." << std::endl;
     Reset();
     usleep(100000); // 100ms delay
@@ -178,7 +178,7 @@ bool CAN::Init() {
     return true;
 }
 
-bool CAN::Receive(uint8_t* buffer, uint8_t& length) {
+bool CanReader::Receive(uint8_t* buffer, uint8_t& length) {
     // Verifica se há dados para receber
     uint8_t status = ReadByte(CANINTF);
     if (!(status & 0x01)) {
@@ -205,7 +205,7 @@ bool CAN::Receive(uint8_t* buffer, uint8_t& length) {
     return true;
 }
 
-uint16_t CAN::getId()
+uint16_t CanReader::getId()
 {
 	return (ReadByte(RXB0SIDH) <<3) | (ReadByte(RXB0SIDL)>>5);
 }

@@ -32,15 +32,17 @@ private:
     const float NOMINAL_VOLTAGE = 11.1f;
 
     std::mutex mtx;
+    bool charging;
 
     int readI2CBlockData(uint8_t reg, uint8_t* data, size_t length);
+    bool isCharging();
 
 public:
     explicit Battery(const std::string& name);
     ~Battery();
 
+    bool getCharging();
     int read_adc();
-    bool isCharge();
     int	read_charge();
     float getVoltage();
     unsigned int getPercentage();

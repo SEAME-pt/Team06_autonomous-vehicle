@@ -80,7 +80,7 @@ float Battery::getVoltage() {
     return voltage;
 }
 
-bool Battery::isCharge(){
+bool Battery::isCharging(){
     int value = read_charge();
     return (value < 255 && value > 0);
 }
@@ -88,7 +88,7 @@ bool Battery::isCharge(){
 unsigned int Battery::getPercentage() {
 	float voltage = getVoltage();
 	unsigned int percentage = static_cast<unsigned int>(std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f));
-    bool charging = isCharge();
+    charging = isCharging();
 
     if (!sensorData.value) {
         return percentage;
@@ -116,4 +116,8 @@ std::mutex& Battery::getMutex() {
 
 bool Battery::getCritical() const {
     return sensorData.critical;
+}
+
+bool Battery::getCharging() {
+    return charging;
 }

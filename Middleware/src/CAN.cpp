@@ -1,17 +1,12 @@
 #include "../inc/CAN.hpp"
 
-CAN::CAN(const std::string& name) : spi_fd(-1), debug(false) {
+CAN::CAN(bool debug) : spi_fd(-1), debug(false) {
     InitSPI();
     if (!Init())
     {
         std::cerr << "Initialization failed!" << std::endl;
         return ;
     }
-    sensorData.value = 0;
-    sensorData.timestamp = std::time(nullptr);
-    sensorData.name = name;
-    sensorData.critical = true;
-    sensorData.updated = true;
 }
 
 CAN::~CAN() {
@@ -210,32 +205,7 @@ bool CAN::Receive(uint8_t* buffer, uint8_t& length) {
     return true;
 }
 
-std::string CAN::getName() const {
-    return "CAN";
+uint16_t CAN::getId()
+{
+	return (ReadByte(RXB0SIDH) <<3) | (ReadByte(RXB0SIDL)>>5);
 }
-
-bool CAN::getCritical() const {
-    return sensorData.critical;
-}
-
-SensorData CAN::getSensorData() {
-    return sensorData;
-}
-
-void CAN::updateSensorData() {
-    sensorData.updated = false;
-    if (Receive(data, length)) {
-        memcpy(&carData, data, sizeof(carData));
-        unsigned int tmp = sensorData.value;
-        sensorData.value = static_cast<unsigned int>(carData.speed);
-        sensorData.timestamp = std::time(nullptr);
-        if (tmp != sensorData.value) {
-            sensorData.updated = true;
-        }
-    }
-}
-
-std::mutex& CAN::getMutex() {
-    return mtx;
-}
-

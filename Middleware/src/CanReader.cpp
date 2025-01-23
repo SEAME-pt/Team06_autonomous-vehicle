@@ -18,31 +18,34 @@ CanReader::~CanReader() {
 bool CanReader::InitSPI() {
     spi_fd = open("/dev/spidev0.0", O_RDWR);
     if (spi_fd < 0) {
-        std::cerr << "Error opening SPI device" << std::endl;
-        return false;
+        throw std::runtime_error("Failed to open SPI device: /dev/spidev0.0");
     }
+    try {
+        uint8_t mode = SPI_MODE_0;
+        uint8_t bits = 8;
+        uint32_t speed = 10000000; // 10MHz
 
-    uint8_t mode = SPI_MODE_0;
-    uint8_t bits = 8;
-    uint32_t speed = 10000000; // 10MHz
+        if (ioctl(spi_fd, SPI_IOC_WR_MODE, &mode) < 0) {
+            throw std::runtime_error("Error setting SPI mode");
+        }
 
-    if (ioctl(spi_fd, SPI_IOC_WR_MODE, &mode) < 0) {
-        std::cerr << "Error setting SPI mode" << std::endl;
-        return false;
-    }
+        if (ioctl(spi_fd, SPI_IOC_WR_BITS_PER_WORD, &bits) < 0) {
+            throw std::runtime_error("Error setting bits per word");
+        }
 
-    if (ioctl(spi_fd, SPI_IOC_WR_BITS_PER_WORD, &bits) < 0) {
-        std::cerr << "Error setting bits per word" << std::endl;
-        return false;
-    }
-
-    if (ioctl(spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed) < 0) {
-        std::cerr << "Error setting speed" << std::endl;
-        return false;
+        if (ioctl(spi_fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed) < 0) {
+            throw std::runtime_error("Error setting SPI speed");
+        }
+    } catch (...) {
+        close(spi_fd);
+        
+        spi_fd = -1;
+        throw; // Rethrow exception after cleanup
     }
 
     return true;
 }
+
 
 uint8_t CanReader::ReadByte(uint8_t addr) {
     uint8_t tx[3] = {CAN_READ, addr, 0};

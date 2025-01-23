@@ -1,19 +1,25 @@
 #include "BatteryReader.hpp"
 
 BatteryReader::BatteryReader() {
-    // Open the I2C bus
-    std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
-    i2c_fd = open(i2c_device.c_str(), O_RDWR);
-    if (i2c_fd < 0) {
-        throw std::runtime_error("Failed to open I2C bus");
-    }
+    try {
+        std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
+        i2c_fd = open(i2c_device.c_str(), O_RDWR);
+        if (i2c_fd < 0) {
+            throw std::runtime_error("Failed to open I2C bus: " + i2c_device);
+        }
 
-    // Set the I2C slave address
-    if (ioctl(i2c_fd, I2C_SLAVE, adc_address) < 0) {
-        close(i2c_fd);
-        throw std::runtime_error("Failed to set I2C slave address");
+        if (ioctl(i2c_fd, I2C_SLAVE, adc_address) < 0) {
+            close(i2c_fd);
+            throw std::runtime_error("Failed to set I2C slave address: " + std::to_string(adc_address));
+        }
+    } catch (...) {
+        if (i2c_fd >= 0) {
+            close(i2c_fd);
+        }
+        throw; // Rethrow exception after cleanup
     }
 }
+
 
 BatteryReader::~BatteryReader() {
     if (i2c_fd >= 0) {

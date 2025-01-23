@@ -26,18 +26,10 @@ void Battery::readBattery() {
     battery = batteryReader.getPercentage();
     charging = batteryReader.isCharging();
     old = sensorData.data["battery"];
-    if (!old) {
-        return ;
-    } else if ( battery > 100 ) {
-        battery = 100;
-    } else if ( battery < 1 ) {
-        battery = 1;
+    if ( charging ) {
+        battery = (battery > old ? battery : old);
     } else {
-        if ( charging ) {
-            battery = (battery > old ? battery : old);
-        } else {
-            battery = (battery < old ? battery : old);
-        }
+        battery = (battery < old ? battery : old);
     }
 }
 

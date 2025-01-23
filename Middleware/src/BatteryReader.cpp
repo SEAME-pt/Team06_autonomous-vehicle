@@ -71,9 +71,13 @@ bool BatteryReader::isCharging(){
 
 unsigned int BatteryReader::getPercentage() {
 	float voltage = getVoltage();
-	unsigned int percentage = static_cast<unsigned int>(std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f));
+	float percentage = std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f);
+    if (percentage < 1.0f)
+        percentage = 1.0f;
+    else if (percentage > 100.0f)
+        percentage = 100.0f;
 
-    return percentage;
+    return static_cast<unsigned int>(percentage);
 }
 
 std::string BatteryReader::getStatus() {

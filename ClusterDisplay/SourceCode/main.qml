@@ -19,8 +19,4 @@ Window {
     BatteryIndicator {
         id: batteryIndicator
     }
-
-    CentralBoard {
-        id: centralBoard
-    }
 }

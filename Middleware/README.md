@@ -1,7 +1,7 @@
 # JetRacer Middleware
 
 ## Overview
-JetRacer Middleware is a C++ application designed to bridge the sensors on JetRacer with the [Cluster Display](https://github.com/SEAME-pt/Team06-SEAME-DES_Instrument-Cluster/tree/feature/clusterdisplay). It provides a robust interface for managing sensor data and communicating it efficiently to the display.
+JetRacer Middleware is a C++ application designed to bridge the sensors on JetRacer with the [Cluster Display](https://github.com/SEAME-pt/Team06-SEAME-DES_Instrument-Cluster/tree/feature/clusterdisplay/ClusterDisplay). It provides a robust interface for managing sensor data and communicating it efficiently to the display.
 
 The middleware leverages a modular design, utilizing the `ISensor.hpp` interface to create instances for each sensor, ensuring scalability and maintainability.
 
@@ -45,3 +45,6 @@ The middleware leverages a modular design, utilizing the `ISensor.hpp` interface
 - Support for additional sensors.
 - Improved threading and scheduling to optimize performance further.
 - Enhanced error handling and diagnostics for robust operation.
+- Added complexity for CAN and ZMQ communication: ID system and message content
+- Reading and Publishing on different threads with added thread safety
+- Logging implementation

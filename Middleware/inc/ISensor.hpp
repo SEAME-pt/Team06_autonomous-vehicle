@@ -4,11 +4,12 @@
 #include <string>
 #include <ctime>
 #include <iostream>
+#include <unordered_map>
 #include <mutex>
 
 struct SensorData {
     std::string name;
-    unsigned int value;
+    std::unordered_map<std::string, unsigned int> data;
     std::time_t timestamp;
     bool critical;
     bool updated;
@@ -21,7 +22,6 @@ public:
     virtual const std::string& getName() const = 0;
     virtual bool getCritical() const = 0;
     virtual bool getUpdated() const = 0;
-    virtual const unsigned int& getValue() const = 0;
     virtual std::mutex& getMutex() = 0;
     virtual void updateSensorData() = 0;
 };

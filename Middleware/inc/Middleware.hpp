@@ -35,7 +35,7 @@ private:
 
     void updateNonCritical();
     void updateCritical();
-    void publishSensorData(const SensorData& data);
+    void publishSensorData(const SensorData& sensorData);
 
     const unsigned int critical_update_interval_ms = 100;
     const unsigned int non_critical_update_interval_ms = 1000;

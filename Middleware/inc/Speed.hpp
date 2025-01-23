@@ -14,7 +14,7 @@ public:
     const SensorData& getSensorData() const override;
     std::mutex& getMutex() override;
     bool getUpdated() const override;
-    const unsigned int& getValue() const override;
+    void readSpeed();
 
 private:
     SensorData sensorData;
@@ -24,6 +24,7 @@ private:
     uint8_t length = 0;
     uint16_t speed;
     uint16_t rpm;
+    unsigned int old;
     CanReader can;
 };
 

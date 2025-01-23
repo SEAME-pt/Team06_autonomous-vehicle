@@ -13,18 +13,17 @@ public:
     bool getCritical() const override;
     const SensorData& getSensorData() const override;
     std::mutex& getMutex() override;
-    unsigned int calcPercentage();
+    void readBattery();
     bool getCharging() const;
     bool getUpdated() const override;
-    const unsigned int& getValue() const override;
-
 
 private:
     SensorData sensorData;
     std::mutex mtx;
     BatteryReader batteryReader;
     bool charging;
-    unsigned int percentage;
+    unsigned int battery;
+    unsigned int old;
 };
 
 #endif

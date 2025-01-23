@@ -1,9 +1,8 @@
 #include "Battery.hpp"
 
 Battery::Battery(const std::string& name) {
-    sensorData.value = 0;
-    sensorData.timestamp = std::time(nullptr);
     sensorData.name = name;
+    sensorData.timestamp = std::time(nullptr);
     sensorData.critical = false;
     sensorData.updated = true;
 }
@@ -12,33 +11,34 @@ Battery::~Battery() {
 }
 
 void Battery::updateSensorData() {
-    unsigned int tmp = sensorData.value;
-    sensorData.value = calcPercentage();
-    sensorData.timestamp = std::time(nullptr);
-    if (tmp != sensorData.value) {
+    sensorData.updated = false;
+    old = sensorData.data["battery"];
+    readBattery();
+    if (old != battery) {
+        sensorData.data["battery"] = battery;
+        sensorData.data["charging"] = (charging ? 1 : 0);
+        sensorData.timestamp = std::time(nullptr);
         sensorData.updated = true;
-    } else {
-        sensorData.updated = false;
     }
 }
 
-unsigned int Battery::calcPercentage() {
-    percentage = batteryReader.getPercentage();
+void Battery::readBattery() {
+    battery = batteryReader.getPercentage();
     charging = batteryReader.isCharging();
-    if (!sensorData.value) {
-        return percentage;
-    } else if ( percentage > 100 ) {
-        percentage = 100;
-    } else if ( percentage < 1 ) {
-        percentage = 1;
+    old = sensorData.data["battery"];
+    if (!old) {
+        return ;
+    } else if ( battery > 100 ) {
+        battery = 100;
+    } else if ( battery < 1 ) {
+        battery = 1;
     } else {
         if ( charging ) {
-            percentage = (percentage > sensorData.value ? percentage : sensorData.value);
+            battery = (battery > old ? battery : old);
         } else {
-            percentage = (percentage < sensorData.value ? percentage : sensorData.value);
+            battery = (battery < old ? battery : old);
         }
     }
-	return percentage;
 }
 
 const std::string& Battery::getName() const {
@@ -53,18 +53,10 @@ bool Battery::getCritical() const {
     return sensorData.critical;
 }
 
-bool Battery::getCharging() const {
-    return charging;
-}
-
 const SensorData& Battery::getSensorData() const {
     return sensorData;
 }
 
 bool Battery::getUpdated() const {
     return sensorData.updated;
-}
-
-const unsigned int& Battery::getValue() const {
-    return sensorData.value;
 }

@@ -63,15 +63,15 @@ void Middleware::updateNonCritical() {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = non_critical_sensors.begin(); it != non_critical_sensors.end(); ++it) {
                 try {
-                    sensor->updateSensorData();
-                    SensorData data = sensor->getSensorData();
+                    it->second->updateSensorData();
+                    SensorData data = it->second->getSensorData();
                     if (data.updated) {
                         publishSensorData(data);
                     }
                 } catch (const std::exception& e) {
-                    std::cerr << "Error updating non-critical sensor [" << name << "]: " << e.what() << std::endl;
+                    std::cerr << "Error updating non-critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;
                 } catch (...) {
-                    std::cerr << "Unknown error occurred while updating non-critical sensor [" << name << "]!" << std::endl;
+                    std::cerr << "Unknown error occurred while updating non-critical sensor [" << it->second->getName() << "]!" << std::endl;
                 }
             }
         }
@@ -84,15 +84,15 @@ void Middleware::updateCritical() {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = critical_sensors.begin(); it != critical_sensors.end(); ++it) {
                 try {
-                    sensor->updateSensorData();
-                    SensorData data = sensor->getSensorData();
+                    it->second->updateSensorData();
+                    SensorData data = it->second->getSensorData();
                     if (data.updated) {
                         publishSensorData(data);
                     }
                 } catch (const std::exception& e) {
-                    std::cerr << "Error updating critical sensor [" << name << "]: " << e.what() << std::endl;
+                    std::cerr << "Error updating critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;
                 } catch (...) {
-                    std::cerr << "Unknown error occurred while updating critical sensor [" << name << "]!" << std::endl;
+                    std::cerr << "Unknown error occurred while updating critical sensor [" << it->second->getName() << "]!" << std::endl;
                 }
             }
         }

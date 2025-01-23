@@ -5,7 +5,7 @@ Window {
     visible: true
     width: 1024
     height: 600
-    title: qsTr("Hello World")
+    title: qsTr("Team06 Cluster Display")
 
     color: "black"
     InfoBar {
@@ -18,9 +18,5 @@ Window {
 
     BatteryIndicator {
         id: batteryIndicator
-    }
-
-    CentralBoard {
-        id: centralBoard
     }
 }

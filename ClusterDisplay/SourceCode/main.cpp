@@ -11,10 +11,6 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    // Test objects. Sending simulated values through zmq. They should be removed afterwards
-    //TestBattery     tb;
-    //TestSpeedSensor tss;
-
     // The subscriber objects. They read from the zmq socket and update the displayed values.
     BatteryIconObj  bio(nullptr);
     SpeedometerObj  so(nullptr);

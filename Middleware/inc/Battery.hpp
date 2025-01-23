@@ -8,13 +8,16 @@ class Battery : public ISensor {
 public:
     Battery(const std::string& name);
     ~Battery();
-    std::string getName() const override;
+    const std::string& getName() const override;
     void updateSensorData() override;
     bool getCritical() const override;
-    SensorData getSensorData() override;
+    const SensorData& getSensorData() const override;
     std::mutex& getMutex() override;
     unsigned int calcPercentage();
-    bool getCharging();
+    bool getCharging() const;
+    bool getUpdated() const override;
+    const unsigned int& getValue() const override;
+
 
 private:
     SensorData sensorData;

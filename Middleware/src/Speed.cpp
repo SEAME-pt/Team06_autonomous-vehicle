@@ -11,7 +11,7 @@ Speed::Speed(const std::string& name) {
 Speed::~Speed() {
 }
 
-std::string Speed::getName() const {
+const std::string& Speed::getName() const {
     return sensorData.name;
 }
 
@@ -19,7 +19,7 @@ bool Speed::getCritical() const {
     return sensorData.critical;
 }
 
-SensorData Speed::getSensorData() {
+const SensorData& Speed::getSensorData() const {
     return sensorData;
 }
 
@@ -45,3 +45,10 @@ std::mutex& Speed::getMutex() {
     return mtx;
 }
 
+bool Speed::getUpdated() const {
+    return sensorData.updated;
+}
+
+const unsigned int& Speed::getValue() const {
+    return sensorData.value;
+}

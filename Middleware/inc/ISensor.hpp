@@ -17,9 +17,11 @@ struct SensorData {
 class ISensor {
 public:
     virtual ~ISensor() = default;
-    virtual SensorData getSensorData() = 0;
-    virtual std::string getName() const = 0;
+    virtual const SensorData& getSensorData() const = 0;
+    virtual const std::string& getName() const = 0;
     virtual bool getCritical() const = 0;
+    virtual bool getUpdated() const = 0;
+    virtual const unsigned int& getValue() const = 0;
     virtual std::mutex& getMutex() = 0;
     virtual void updateSensorData() = 0;
 };

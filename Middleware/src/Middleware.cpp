@@ -23,7 +23,7 @@ void Middleware::addSensor(ISensor* sensor) {
         non_critical_sensors[sensor->getName()] = sensor;
     }
     publishSensorData(sensor->getSensorData());
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 }
 
@@ -45,11 +45,11 @@ void Middleware::stop() {
 }
 
 void Middleware::publishSensorData(const SensorData& data) {
-    std::string value_str = std::to_string(data.value);
+    std::string dataStr = std::to_string(data.value);
 
-    zmq::message_t message(value_str.size());
-    memcpy(message.data(), value_str.c_str(), value_str.size());
-    std::cerr << data.name << ": " << value_str << std::endl; //debugging
+    zmq::message_t message(dataStr.size());
+    memcpy(message.data(), dataStr.c_str(), dataStr.size());
+    std::cerr << data.name << ": " << dataStr << std::endl; //debugging
     if (data.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
@@ -64,9 +64,8 @@ void Middleware::updateNonCritical() {
             for (std::unordered_map<std::string, ISensor*>::iterator it = non_critical_sensors.begin(); it != non_critical_sensors.end(); ++it) {
                 try {
                     it->second->updateSensorData();
-                    SensorData data = it->second->getSensorData();
-                    if (data.updated) {
-                        publishSensorData(data);
+                    if (it->second->getUpdated()) {
+                        publishSensorData(it->second->getSensorData());
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating non-critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;
@@ -84,10 +83,9 @@ void Middleware::updateCritical() {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = critical_sensors.begin(); it != critical_sensors.end(); ++it) {
                 try {
-                    it->second->updateSensorData();
-                    SensorData data = it->second->getSensorData();
-                    if (data.updated) {
-                        publishSensorData(data);
+                    it->second->updateSensorData();;
+                    if (it->second->getUpdated()) {
+                        publishSensorData(it->second->getSensorData());
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;

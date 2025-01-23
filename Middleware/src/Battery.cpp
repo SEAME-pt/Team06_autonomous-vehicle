@@ -41,7 +41,7 @@ unsigned int Battery::calcPercentage() {
 	return percentage;
 }
 
-std::string Battery::getName() const {
+const std::string& Battery::getName() const {
     return sensorData.name;
 }
 
@@ -53,10 +53,18 @@ bool Battery::getCritical() const {
     return sensorData.critical;
 }
 
-bool Battery::getCharging() {
+bool Battery::getCharging() const {
     return charging;
 }
 
-SensorData Battery::getSensorData() {
+const SensorData& Battery::getSensorData() const {
     return sensorData;
+}
+
+bool Battery::getUpdated() const {
+    return sensorData.updated;
+}
+
+const unsigned int& Battery::getValue() const {
+    return sensorData.value;
 }

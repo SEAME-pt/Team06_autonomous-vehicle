@@ -13,7 +13,7 @@ Currently, the `cicd.yml` workflow handles:
 
 ### **1. Build Stage**
 - **Environment**:
-  - Runs on a default `x86` GitHub-hosted runner (`ubuntu-latest`) sincewe don't have free access to ARM64 GitHub-hosted runners.
+  - Runs on a default `x86` GitHub-hosted runner (`ubuntu-latest`) since we don't have free access to ARM64 GitHub-hosted runners.
   - Utilizes `docker buildx` and `QEMU` to emulate the ARM64 environment of the Jetson Nano.
 
 - **Docker Image**:

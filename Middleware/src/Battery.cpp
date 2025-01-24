@@ -4,7 +4,6 @@ Battery::Battery(const std::string& name) {
     sensorData.name = name;
     sensorData.timestamp = std::time(nullptr);
     sensorData.critical = false;
-    sensorData.updated = true;
     sensorData.data["battery"] = 0;
 }
 

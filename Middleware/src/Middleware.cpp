@@ -22,6 +22,7 @@ void Middleware::addSensor(ISensor* sensor) {
     } else {
         non_critical_sensors[sensor->getName()] = sensor;
     }
+    publishSensorData(sensor->getSensorData());
     sensor->updateSensorData();
     publishSensorData(sensor->getSensorData());
     std::this_thread::sleep_for(std::chrono::milliseconds(500));

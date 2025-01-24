@@ -48,3 +48,4 @@ The middleware leverages a modular design, utilizing the `ISensor.hpp` interface
 - Added complexity for CAN and ZMQ communication: ID system and message content
 - Reading and Publishing on different threads with added thread safety
 - Logging implementation
+- Integrated controller functions

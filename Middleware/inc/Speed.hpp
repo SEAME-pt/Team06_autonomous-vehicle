@@ -8,11 +8,13 @@ class Speed : public ISensor {
 public:
     Speed(const std::string& name);
     ~Speed();
-    std::string getName() const override;
+    const std::string& getName() const override;
     void updateSensorData() override;
     bool getCritical() const override;
-    SensorData getSensorData() override;
+    const SensorData& getSensorData() const override;
     std::mutex& getMutex() override;
+    bool getUpdated() const override;
+    void readSpeed();
 
 private:
     SensorData sensorData;
@@ -22,6 +24,7 @@ private:
     uint8_t length = 0;
     uint16_t speed;
     uint16_t rpm;
+    unsigned int old;
     CanReader can;
 };
 

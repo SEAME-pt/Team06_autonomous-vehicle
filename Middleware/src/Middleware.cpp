@@ -22,8 +22,9 @@ void Middleware::addSensor(ISensor* sensor) {
     } else {
         non_critical_sensors[sensor->getName()] = sensor;
     }
+    sensor->updateSensorData();
     publishSensorData(sensor->getSensorData());
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 }
 
@@ -44,18 +45,33 @@ void Middleware::stop() {
     }
 }
 
-void Middleware::publishSensorData(const SensorData& data) {
-    std::string value_str = std::to_string(data.value);
+void Middleware::publishSensorData(const SensorData& sensorData) {  // only sending main value because Qt isnt parsing yet
+    std::string dataStr = std::to_string(sensorData.data.at(sensorData.name));
 
-    zmq::message_t message(value_str.size());
-    memcpy(message.data(), value_str.c_str(), value_str.size());
-    std::cerr << data.name << ": " << value_str << std::endl; //debugging
-    if (data.critical) {
+    zmq::message_t message(dataStr.size());
+    memcpy(message.data(), dataStr.c_str(), dataStr.size());
+    std::cerr << sensorData.name << ": " << dataStr << std::endl; //debugging
+    if (sensorData.critical) {
         zmq_c_publisher.send(message, zmq::send_flags::none);
     } else {
         zmq_nc_publisher.send(message, zmq::send_flags::none);
     }
 }
+
+// void Middleware::publishSensorData(const SensorData& sensorData) {
+//     std::string dataStr;
+//     for (std::unordered_map<std::string, unsigned int>::iterator it = sensorData.data.begin(); it != sensorData.data.end(); ++it) {
+//         dataStr += it->first + ":" + std::to_string(it->second) + ";";
+//     }
+//     zmq::message_t message(dataStr.size());
+//     memcpy(message.data(), dataStr.c_str(), dataStr.size());
+//     std::cerr << dataStr << std::endl; //debugging
+//     if (sensorData.critical) {
+//         zmq_c_publisher.send(message, zmq::send_flags::none);
+//     } else {
+//         zmq_nc_publisher.send(message, zmq::send_flags::none);
+//     }
+// }
 
 
 void Middleware::updateNonCritical() {
@@ -64,9 +80,8 @@ void Middleware::updateNonCritical() {
             for (std::unordered_map<std::string, ISensor*>::iterator it = non_critical_sensors.begin(); it != non_critical_sensors.end(); ++it) {
                 try {
                     it->second->updateSensorData();
-                    SensorData data = it->second->getSensorData();
-                    if (data.updated) {
-                        publishSensorData(data);
+                    if (it->second->getUpdated()) {
+                        publishSensorData(it->second->getSensorData());
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating non-critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;
@@ -79,15 +94,14 @@ void Middleware::updateNonCritical() {
     }
 }
 
-void Middleware::updateCritical() {
+void Middleware::updateCritical() { // will update and checkUpdate&publish on different threads
     while (!stop_flag) {
         {
             for (std::unordered_map<std::string, ISensor*>::iterator it = critical_sensors.begin(); it != critical_sensors.end(); ++it) {
                 try {
-                    it->second->updateSensorData();
-                    SensorData data = it->second->getSensorData();
-                    if (data.updated) {
-                        publishSensorData(data);
+                    it->second->updateSensorData();;
+                    if (it->second->getUpdated()) {
+                        publishSensorData(it->second->getSensorData());
                     }
                 } catch (const std::exception& e) {
                     std::cerr << "Error updating critical sensor [" << it->second->getName() << "]: " << e.what() << std::endl;

@@ -16,7 +16,7 @@ BatteryReader::BatteryReader() {
         if (i2c_fd >= 0) {
             close(i2c_fd);
         }
-        throw; // Rethrow exception after cleanup
+        throw;
     }
 }
 

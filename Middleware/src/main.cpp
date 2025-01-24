@@ -32,10 +32,10 @@ int main() {
 
         middleware.stop();
     } catch (const std::exception& e) {
-        std::cerr << "Unhandled exception: " << e.what() << std::endl;
+        std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     } catch (...) {
-        std::cerr << "Unknown exception occurred!" << std::endl;
+        std::cerr << "Unknown error!" << std::endl;
         return EXIT_FAILURE;
     }
 

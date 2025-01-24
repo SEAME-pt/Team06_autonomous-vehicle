@@ -5,6 +5,7 @@ Battery::Battery(const std::string& name) {
     sensorData.timestamp = std::time(nullptr);
     sensorData.critical = false;
     sensorData.updated = true;
+    sensorData.data["battery"] = 0;
 }
 
 Battery::~Battery() {
@@ -25,8 +26,9 @@ void Battery::updateSensorData() {
 void Battery::readBattery() {
     battery = batteryReader.getPercentage();
     charging = batteryReader.isCharging();
-    old = sensorData.data["battery"];
-    if ( charging ) {
+    if (!old) {
+        return ;
+    } else if (charging) {
         battery = (battery > old ? battery : old);
     } else {
         battery = (battery < old ? battery : old);

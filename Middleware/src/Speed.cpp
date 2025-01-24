@@ -5,7 +5,6 @@ Speed::Speed(const std::string& name) {
     sensorData.timestamp = std::time(nullptr);
     sensorData.critical = true;
     sensorData.data["speed"] = 0;
-    sensorData.updated = true;
 }
 
 Speed::~Speed() {

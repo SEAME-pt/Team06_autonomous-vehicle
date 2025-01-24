@@ -40,10 +40,12 @@ void Speed::readSpeed() {
         if (can.getId() == canId) {
             speed = (buffer[0] | (buffer[1] << 8));
             rpm = (buffer[2] | (buffer[3] << 8));
+            std::cerr << "receiving speed: " << speed << '\n';
         } else {
             std::cerr << "Invalid CAN ID: " << std::hex << can.getId() << std::endl;
         }
     }
+    std::cerr << "not receiving" << \n;
 }
 
 std::mutex& Speed::getMutex() {

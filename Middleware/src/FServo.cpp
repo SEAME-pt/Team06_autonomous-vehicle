@@ -1,6 +1,8 @@
-#include "../inc/FServo.hpp"
+#include "FServo.hpp"
 
-FServo::FServo(){
+FServo::FServo(){}
+
+void FServo::open_i2c_bus(){
 	i2c_device = "/dev/i2c-1";
 	_fdServo = open(i2c_device.c_str(), O_RDWR);
 	if (_fdServo < 0)
@@ -19,23 +21,23 @@ FServo::~FServo(){
 bool FServo::init_servo(){
 	try{
 		    // Reset PCA9685
-			writeByteData(_fdServo, 0x00, 0x06);
+			this->writeByteData(_fdServo, 0x00, 0x06);
 			usleep(100000); // Aguarda 100 ms
-			
+
 			// Setup servo control
-			writeByteData(_fdServo, 0x00, 0x10);
+			this->writeByteData(_fdServo, 0x00, 0x10);
 			usleep(100000);
 
 			// Set frequency (~50Hz)
-			writeByteData(_fdServo, 0xFE, 0x79);
+			this->writeByteData(_fdServo, 0xFE, 0x79);
 			usleep(100000);
 
 			// Configure MODE2
-			writeByteData(_fdServo, 0x01, 0x04);
+			this->writeByteData(_fdServo, 0x01, 0x04);
 			usleep(100000);
 
 			// Enable auto-increment
-			writeByteData(_fdServo, 0x00, 0x20);
+			this->writeByteData(_fdServo, 0x00, 0x20);
 			usleep(100000);
 		return true;
 	}
@@ -47,10 +49,10 @@ bool FServo::init_servo(){
 
 bool FServo::setServoPwm(const int channel, int on_value, int off_value){
 	try{
-		writeByteData(_fdServo, 0x06 + 4 * channel, on_value & 0xFF);
-		writeByteData(_fdServo, 0x07 + 4 * channel, on_value >> 8);
-		writeByteData(_fdServo, 0x08 + 4 * channel, off_value & 0xFF);
-		writeByteData(_fdServo, 0x09 + 4 * channel, off_value >> 8);
+		this->writeByteData(_fdServo, 0x06 + 4 * channel, on_value & 0xFF);
+		this->writeByteData(_fdServo, 0x07 + 4 * channel, on_value >> 8);
+		this->writeByteData(_fdServo, 0x08 + 4 * channel, off_value & 0xFF);
+		this->writeByteData(_fdServo, 0x09 + 4 * channel, off_value >> 8);
 		return true;
 	}
 	catch(const std::exception &e){
@@ -62,7 +64,7 @@ bool FServo::setServoPwm(const int channel, int on_value, int off_value){
 void FServo::set_steering(int angle){
     /* """Set steering angle (-90 to +90 degrees)""" */
 	angle = std::max(-_maxAngle, std::min(_maxAngle, angle));
-	
+
 	int pwm;
 	if (angle < 0){
 		// Calcula o PWM para ângulo negativo
@@ -72,7 +74,7 @@ void FServo::set_steering(int angle){
 		 // Calcula o PWM para ângulo positivo
 		 pwm = static_cast<int>(_servoCenterPwm + (static_cast<float>(angle) / _maxAngle) * (_servoRightPwm - _servoCenterPwm));
 	}
-	else 
+	else
 		pwm = _servoCenterPwm;
 	setServoPwm(_sterringChannel, 0 , pwm);
 	_currentAngle = angle;

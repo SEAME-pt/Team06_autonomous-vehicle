@@ -2,15 +2,16 @@
 #define ISENSOR_HPP
 
 #include <string>
-#include <ctime>
 #include <iostream>
+#include <chrono>
 #include <unordered_map>
-#include <mutex>
+#include <memory>
 
 struct SensorData {
     std::string name;
-    std::unordered_map<std::string, unsigned int> data;
-    std::time_t timestamp;
+    unsigned int value;
+    unsigned int oldValue;
+    std::chrono::time_point<std::chrono::high_resolution_clock> timestamp;
     bool critical;
     bool updated;
 };
@@ -18,12 +19,13 @@ struct SensorData {
 class ISensor {
 public:
     virtual ~ISensor() = default;
-    virtual const SensorData& getSensorData() const = 0;
+    virtual std::unordered_map<std::string, std::shared_ptr<SensorData>> getSensorData() const = 0;
     virtual const std::string& getName() const = 0;
-    virtual bool getCritical() const = 0;
-    virtual bool getUpdated() const = 0;
-    virtual std::mutex& getMutex() = 0;
     virtual void updateSensorData() = 0;
+
+private:
+    virtual void readSensor() = 0;
+    virtual void checkUpdated() = 0;
 };
 
 #endif

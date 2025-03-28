@@ -16,10 +16,10 @@ if(NOT SOURCES)
 endif()
 
 # Add an executable
-add_executable(Middleware ${SOURCES})
+add_executable(Controller ${SOURCES})
 
 # Include project headers
-target_include_directories(Middleware PRIVATE
+target_include_directories(Controller PRIVATE
     "${PROJECT_SOURCE_DIR}/inc"
     "${PROJECT_SOURCE_DIR}/../zmq/inc"
 )
@@ -33,8 +33,8 @@ find_package(PkgConfig REQUIRED)
 pkg_check_modules(ZMQ REQUIRED libzmq)
 
 # Link ZeroMQLib and libzmq (ZeroMQ C library)
-target_link_libraries(Middleware PRIVATE ${ZMQ_LIB} ${ZMQ_LIBRARIES})
+target_link_libraries(Controller PRIVATE ${ZMQ_LIB} ${ZMQ_LIBRARIES})
 
 # Find and link pthread
 find_package(Threads REQUIRED)
-target_link_libraries(Middleware PRIVATE Threads::Threads)
+target_link_libraries(Controller PRIVATE Threads::Threads)

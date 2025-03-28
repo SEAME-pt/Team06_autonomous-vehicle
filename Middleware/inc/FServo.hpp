@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FSERVO_HPP
+#define FSERVO_HPP
 
 #include <thread>
 #include <cmath>
@@ -7,7 +8,7 @@
 #include <string>
 #include <unistd.h>    // Para close(), usleep()
 #include <fcntl.h>     // Para open()
-#include <sys/ioctl.h> 
+#include <sys/ioctl.h>
 #include <linux/i2c-dev.h>// Interface padrão do Linux para I2C
 
 #include <csignal> // Biblioteca para manipulação de sinais
@@ -25,16 +26,20 @@ private:
 	const int _servoRightPwm = 320 + 150;
 	const int _sterringChannel = 0;
 
-	int _fdServo;
 	int _currentAngle;
 public:
+	int _fdServo;
 	FServo();
-	~FServo();
-	bool init_servo();
-	bool setServoPwm(const int channel, int on_value, int off_value);
-	void set_steering(int angle);
+
+	virtual void open_i2c_bus();
+	virtual ~FServo();
+	virtual bool init_servo();
+	virtual bool setServoPwm(const int channel, int on_value, int off_value);
+	virtual void set_steering(int angle);
 
 
-	void writeByteData(int fd, uint8_t reg, uint8_t value);
-	uint8_t readByteData(int fd, uint8_t reg);
+	virtual void writeByteData(int fd, uint8_t reg, uint8_t value);
+	virtual uint8_t readByteData(int fd, uint8_t reg);
 };
+
+#endif

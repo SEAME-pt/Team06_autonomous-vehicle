@@ -3,27 +3,25 @@
 
 #include "BatteryReader.hpp"
 #include "ISensor.hpp"
+#include <memory>
+#include <unordered_map>
 
 class Battery : public ISensor {
 public:
-    Battery(const std::string& name);
+    Battery();
     ~Battery();
     const std::string& getName() const override;
     void updateSensorData() override;
-    bool getCritical() const override;
-    const SensorData& getSensorData() const override;
-    std::mutex& getMutex() override;
-    void readBattery();
+    std::unordered_map<std::string, std::shared_ptr<SensorData>> getSensorData() const override;
     bool getCharging() const;
-    bool getUpdated() const override;
 
 private:
-    SensorData sensorData;
-    std::mutex mtx;
+    void readSensor();
+    void checkUpdated();
+
+    std::string _name;
+    std::unordered_map<std::string, std::shared_ptr<SensorData>> _sensorData;
     BatteryReader batteryReader;
-    bool charging;
-    unsigned int battery;
-    unsigned int old;
 };
 
 #endif

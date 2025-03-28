@@ -1,55 +1,64 @@
 #include "Battery.hpp"
 
-Battery::Battery(const std::string& name) {
-    sensorData.name = name;
-    sensorData.timestamp = std::time(nullptr);
-    sensorData.critical = false;
-    sensorData.data["battery"] = 0;
+Battery::Battery() {
+    _name = "battery";
+    _sensorData["battery"] = std::make_shared<SensorData>();
+    _sensorData["battery"]->critical = false;
+    _sensorData["battery"]->value = 0;
+    _sensorData["battery"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["charging"] = std::make_shared<SensorData>();
+    _sensorData["charging"]->critical = false;
+    _sensorData["charging"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["power"] = std::make_shared<SensorData>();
+    _sensorData["power"]->critical = true;
+    _sensorData["power"]->value = 0;
+    _sensorData["power"]->timestamp = std::chrono::high_resolution_clock::now();
 }
 
 Battery::~Battery() {
 }
 
+const std::string& Battery::getName() const {
+    return _name;
+}
+
 void Battery::updateSensorData() {
-    sensorData.updated = false;
-    old = sensorData.data["battery"];
-    readBattery();
-    if (old != battery) {
-        sensorData.data["battery"] = battery;
-        sensorData.data["charging"] = (charging ? 1 : 0);
-        sensorData.timestamp = std::time(nullptr);
-        sensorData.updated = true;
+    readSensor();
+    checkUpdated();
+}
+
+void Battery::checkUpdated() {
+    for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::const_iterator it = _sensorData.begin(); it != _sensorData.end(); ++it) {
+        if (it->second->oldValue != it->second->value) {
+            it->second->updated = true;
+        } else {
+            it->second->updated = false;
+        }
     }
 }
 
-void Battery::readBattery() {
-    battery = batteryReader.getPercentage();
-    charging = batteryReader.isCharging();
-    if (!old) {
+void Battery::readSensor() {
+    unsigned int oldBattery = _sensorData["battery"]->value;
+    unsigned int battery = batteryReader.getPercentage();
+    unsigned int charging = batteryReader.isCharging();
+
+    _sensorData["battery"]->oldValue = oldBattery;
+    _sensorData["battery"]->value = battery;
+    _sensorData["charging"]->value = charging;
+    _sensorData["power"]->value = 20;
+    // battery charging cheat. only goes up while charging, only goes down while not charging
+    if (!oldBattery) {
         return ;
     } else if (charging) {
-        battery = (battery > old ? battery : old);
+        _sensorData["battery"]->value = (battery > oldBattery ? battery : oldBattery);
     } else {
-        battery = (battery < old ? battery : old);
+        _sensorData["battery"]->value = (battery < oldBattery ? battery : oldBattery);
     }
+    _sensorData["battery"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["charging"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["power"]->timestamp = std::chrono::high_resolution_clock::now();
 }
 
-const std::string& Battery::getName() const {
-    return sensorData.name;
-}
-
-std::mutex& Battery::getMutex() {
-    return mtx;
-}
-
-bool Battery::getCritical() const {
-    return sensorData.critical;
-}
-
-const SensorData& Battery::getSensorData() const {
-    return sensorData;
-}
-
-bool Battery::getUpdated() const {
-    return sensorData.updated;
+std::unordered_map<std::string, std::shared_ptr<SensorData>> Battery::getSensorData() const {
+    return _sensorData;
 }

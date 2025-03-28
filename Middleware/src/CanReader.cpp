@@ -38,7 +38,7 @@ bool CanReader::InitSPI() {
         }
     } catch (...) {
         close(spi_fd);
-        
+
         spi_fd = -1;
         throw; // Rethrow exception after cleanup
     }
@@ -143,7 +143,7 @@ bool CanReader::Send(uint16_t canId, uint8_t* data, uint8_t length) {
 }
 
 bool CanReader::Init() {
-    std::cout << "Resetting..." << std::endl;
+    // std::cout << "Resetting..." << std::endl;
     Reset();
     usleep(100000); // 100ms delay
 

@@ -1,55 +1,60 @@
 #include "Speed.hpp"
 
-Speed::Speed(const std::string& name) {
-    sensorData.name = name;
-    sensorData.timestamp = std::time(nullptr);
-    sensorData.critical = true;
-    sensorData.data["speed"] = 0;
+Speed::Speed() {
+    _name = "speed";
+    _sensorData["speed"] = std::make_shared<SensorData>();
+    _sensorData["speed"]->critical = true;
+    _sensorData["speed"]->value = 0;
+    _sensorData["speed"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["odo"] = std::make_shared<SensorData>();
+    _sensorData["odo"]->critical = false;
+    _sensorData["odo"]->value = 0;
+    _sensorData["odo"]->timestamp = std::chrono::high_resolution_clock::now();
 }
 
 Speed::~Speed() {
 }
 
 const std::string& Speed::getName() const {
-    return sensorData.name;
+    return _name;
 }
 
-bool Speed::getCritical() const {
-    return sensorData.critical;
-}
-
-const SensorData& Speed::getSensorData() const {
-    return sensorData;
+std::unordered_map<std::string, std::shared_ptr<SensorData>> Speed::getSensorData() const {
+    return _sensorData;
 }
 
 void Speed::updateSensorData() {
-    sensorData.updated = false;
-    old = sensorData.data["speed"];
-    readSpeed();
-    if (old != speed) {
-        sensorData.data["speed"] = static_cast<unsigned int>(speed);
-        sensorData.data["rpm"] = static_cast<unsigned int>(rpm);
-        sensorData.timestamp = std::time(nullptr);
-        sensorData.updated = true;
-    }
-
+    readSensor();
+    checkUpdated();
 }
 
-void Speed::readSpeed() {
+void Speed::checkUpdated() {
+    for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::const_iterator it = _sensorData.begin(); it != _sensorData.end(); ++it) {
+        if (it->second->oldValue != it->second->value) {
+            it->second->updated = true;
+        } else {
+            it->second->updated = false;
+        }
+    }
+}
+
+void Speed::readSensor() {
     if (can.Receive(buffer, length)) {
         if (can.getId() == canId) {
-            speed = (buffer[0] | (buffer[1] << 8));
-            rpm = (buffer[2] | (buffer[3] << 8));
+            _sensorData["speed"]->oldValue = _sensorData["speed"]->value;
+            _sensorData["speed"]->value = (buffer[0] | (buffer[1] << 8));
+            _sensorData["speed"]->timestamp = std::chrono::high_resolution_clock::now();
+            calculateOdo();
+            // sensorData.data["rpm"] = (buffer[2] | (buffer[3] << 8));
         } else {
             std::cerr << "Invalid CAN ID: " << std::hex << can.getId() << std::endl;
         }
     }
 }
 
-std::mutex& Speed::getMutex() {
-    return mtx;
-}
-
-bool Speed::getUpdated() const {
-    return sensorData.updated;
+void Speed::calculateOdo() {
+    _sensorData["odo"]->oldValue = _sensorData["odo"]->value;
+    std::chrono::time_point<std::chrono::high_resolution_clock> oldTimestamp = _sensorData["odo"]->timestamp;
+    _sensorData["odo"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["odo"]->value += _sensorData["speed"]->value * (5.0 / 18.0) * (_sensorData["odo"]->timestamp - oldTimestamp).count();
 }

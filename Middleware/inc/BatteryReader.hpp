@@ -1,6 +1,6 @@
 #ifndef BATTERYREADER_HPP
 #define BATTERYREADER_HPP
-
+#include <map>
 #include <iostream>
 #include <iomanip>
 #include <vector>
@@ -11,38 +11,36 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <map>
+#include <vector>
 #include <thread>
-#include <mutex>
-#include <ctime>
 #include <cmath>
+
 
 class BatteryReader {
 private:
-    int i2c_fd;                 // File descriptor for I2C
-    int i2c_bus = 1;            // I2C bus number
-    uint8_t adc_address = 0x41; // I2C ADC address
+	int i2c_fd;
+	int i2c_bus = 1;
+	uint8_t adc_address = 0x41;
+	float percent_old = 100.0f;
 
-    const float ADC_REF = 3.3f;       // Reference voltage of ADC
-    const uint16_t ADC_MAX = 65535;   // Maximum value of ADC (16-bit)
-    const float VOLTAGE_DIVIDER = 17.0f; // Adjusted for 3S 18650 battery (12.6V max)
+	const float ADC_REF = 3.3f; // Reference voltage of ADC = 3.3V (ADC --Analog-to-Digital Converter-- )
+	const uint16_t ADC_MAX = 65535; // Maximum value of ADC = 2^16-1(16-bit)
+	const float VOLTAGE_DIVIDER =  17.0f;  // Ajustado para bateria 3S 18650 (12.6V máx)
 
-    const float MAX_VOLTAGE = 12.6f;
-    const float MIN_VOLTAGE = 9.0f;
-    const float NOMINAL_VOLTAGE = 11.1f;
-
-    int readI2CBlockData(uint8_t reg, uint8_t* data, size_t length);
+	const float MAX_VOLTAGE = 12.6f; // Maximum voltage of battery = 12.6V
+	const float MIN_VOLTAGE = 9.0f; // Minimum voltage of battery = 9.0V
 
 public:
-    BatteryReader();
-    ~BatteryReader();
 
-    int read_adc();
-    int	read_charge();
-    float getVoltage();
-    unsigned int getPercentage();
-    bool isCharging();
-    std::string getStatus();
-    std::map<std::string, float> get_battery_info();
+	BatteryReader();
+	~BatteryReader();
+
+	int	read_adc(uint8_t reg );
+	int	read_charge();
+	float getVoltage();
+	float getShunt();
+	unsigned int getPercentage();
+	bool isCharging();
 };
 
 #endif

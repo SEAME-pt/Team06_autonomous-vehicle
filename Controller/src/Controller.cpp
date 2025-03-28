@@ -1,11 +1,14 @@
-#include "../inc/Controller.hpp"
+#include "Controller.hpp"
 
 Controller::Controller(){
 	memset(_rawAxes, 0, sizeof(_rawAxes));
 	memset(_normalizedAxes, 0, sizeof(_normalizedAxes));
 	memset(_buttons, 0, sizeof(_buttons));
+}
 
+void Controller::openDevice(){
 	_joyFd = open(_device.c_str(), O_RDONLY);
+	std::cout << "JoyFd " << _joyFd << std::endl;
 	if (_joyFd == -1){
 		std::cerr << "Erro ao abrir o dispositivo: " << _device << std::endl;
 		return;
@@ -44,12 +47,15 @@ bool	Controller::readEvent()
 	struct timeval tv = {0, 0};
 
 	int ret = select(_joyFd + 1, &fds, nullptr, nullptr, &tv);
+	std::cout << "RET " << ret << std::endl;
 	if (ret == -1){
 		std::cerr << "Select Error!" << std::endl;
 		return false;
 	}
 	if (ret > 0 && FD_ISSET(_joyFd, &fds)){
 		ssize_t bytesRead = read(_joyFd, &event, sizeof(event));
+		std::cout << "BYTESREAD " << bytesRead << std::endl;
+
 
 		if (bytesRead == -1){
 			std::cerr << "Erro ao ler evento do joystick!" << std::endl;
@@ -109,3 +115,25 @@ float	Controller::_normalizeAxisValue(int value){
 	return (static_cast<float>(value) / MAX_AXIS_VALUE);
 }
 
+void Controller::setButton(int button, bool state) {
+    if (button >= 0 && button < MAX_BUTTONS) {
+        _buttons[button] = state ? 1 : 0;
+    }
+}
+
+void Controller::setRawAxis(int axis, int value) {
+    if (axis >= 0 && axis < MAX_AXES) {
+        _rawAxes[axis] = value;
+        _normalizedAxes[axis] = _normalizeAxisValue(value);
+    }
+}
+
+void Controller::setNormalizedAxis(int axis, float value) {
+    if (axis >= 0 && axis < MAX_AXES) {
+        _normalizedAxes[axis] = value;
+    }
+}
+
+void Controller::setQuit(bool value) {
+	_quit = value;
+}

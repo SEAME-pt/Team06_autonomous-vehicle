@@ -20,15 +20,13 @@ BatteryReader::BatteryReader() {
     }
 }
 
-
 BatteryReader::~BatteryReader() {
     if (i2c_fd >= 0) {
         close(i2c_fd);
     }
 }
 
-int BatteryReader::read_adc() {
-    uint8_t reg = 0x02;
+int BatteryReader::read_adc(uint8_t reg) {
     uint8_t data[2];
 
     if (write(i2c_fd, &reg, 1) != 1) {
@@ -39,14 +37,16 @@ int BatteryReader::read_adc() {
         throw std::runtime_error("Failed to read from I2C bus");
     }
 
-    int raw_value = (data[0] << 8) | data[1];  //Combines the two bytes read into a raw value
+    int raw_value = (data[0] << 8) | data[1];  // Combina os dois bytes lidos em um valor bruto
     int raw = (raw_value >> 3) & 0x1FFF;
 
-    return (raw_value >> 3) & 0x1FFF; // Remove the 3 least significant bits (status) and return the remaining 13 bits
+    return (raw_value >> 3) & 0x1FFF; // Remove os 3 bits menos significativos (status) & retorna os 13 bits restantes
 }
 
+
 int BatteryReader::read_charge() {
-    uint8_t reg = 0x01; //
+    uint8_t reg = 0x01;
+
     if (write(i2c_fd, &reg, 1) != 1) {
         throw std::runtime_error("Error sending I2C command.");
     }
@@ -59,8 +59,14 @@ int BatteryReader::read_charge() {
 }
 
 float BatteryReader::getVoltage() {
-    int adc_value = read_adc();
-    float voltage = adc_value * 0.004; // Each ADC bit represents 4mV
+    int adc_value = read_adc(0x02);
+    float voltage = adc_value * 0.004; // Cada bit do ADC representa 4mV
+    return voltage;
+}
+
+float BatteryReader::getShunt() {
+    int adc_value = read_adc(0x01);
+    float voltage = adc_value * 0.00001; // Cada bit do ADC representa 10µV
     return voltage;
 }
 
@@ -71,41 +77,12 @@ bool BatteryReader::isCharging(){
 
 unsigned int BatteryReader::getPercentage() {
 	float voltage = getVoltage();
-	float percentage = std::round((voltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f);
+    float loadVoltage = voltage + getShunt();
+    float percentage = (loadVoltage - MIN_VOLTAGE) / (MAX_VOLTAGE - MIN_VOLTAGE) * 100.0f;
     if (percentage < 1.0f)
         percentage = 1.0f;
     else if (percentage > 100.0f)
         percentage = 100.0f;
 
     return static_cast<unsigned int>(percentage);
-}
-
-std::string BatteryReader::getStatus() {
-	float voltage = getVoltage();
-	if (voltage >= 12.0f)
-		return "FULL";
-	else if (voltage >= 11.1f)
-		return "GOOD";
-	else if (voltage >= 10.2f)
-		return "LOW";
-	else
-		return "CRITICAL";
-}
-
-std::map<std::string, float> BatteryReader::get_battery_info() {
-    float voltage = getVoltage();
-    float percentage = getPercentage();
-    int adc_value = read_adc();
-    int adc_charge = read_charge();
-    float adc_voltage = (adc_value * ADC_REF) / ADC_MAX;
-
-    std::map<std::string, float> info = {
-        {"voltage", voltage},
-        {"percentage", percentage},
-        {"percentage round",std::round(percentage)},
-        {"raw_adc", static_cast<float>(adc_value)},
-        {"adc_voltage", adc_voltage},
-    };
-
-    return info;
 }

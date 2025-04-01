@@ -34,12 +34,9 @@
 
     void SensorHandler::start() {
         stop_flag = false;
-        std::cerr << "Starting sensor handler..." << std::endl;
         non_critical_thread = std::thread(&SensorHandler::publishNonCritical, this);
-        std::cerr << "Starting non-critical thread..." << std::endl;
-        critical_thread = std::thread(&SensorHandler::publishCritical, this);
-        std::cerr << "Starting critical thread..." << std::endl;
-        readSensors();
+        // critical_thread = std::thread(&SensorHandler::publishCritical, this);
+        // readSensors();
     }
 
 

@@ -6,13 +6,12 @@ Speed::Speed() {
     _sensorData["speed"]->critical = true;
     _sensorData["speed"]->value = 0;
     _sensorData["speed"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["speed"]->name = "speed";
     _sensorData["odo"] = std::make_shared<SensorData>();
     _sensorData["odo"]->critical = false;
     _sensorData["odo"]->value = 0;
     _sensorData["odo"]->timestamp = std::chrono::high_resolution_clock::now();
-    for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it = _sensorData.begin(); it != _sensorData.end(); ++it) {
-        it->second->name = it->first;
-    }
+    _sensorData["odo"]->name = "odo";
 }
 
 Speed::~Speed() {

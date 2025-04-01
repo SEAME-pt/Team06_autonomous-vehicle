@@ -6,16 +6,16 @@ Battery::Battery() {
     _sensorData["battery"]->critical = false;
     _sensorData["battery"]->value = 0;
     _sensorData["battery"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["battery"]->name = "battery";
     _sensorData["charging"] = std::make_shared<SensorData>();
     _sensorData["charging"]->critical = false;
     _sensorData["charging"]->timestamp = std::chrono::high_resolution_clock::now();
+    _sensorData["charging"]->name = "charging";
     _sensorData["power"] = std::make_shared<SensorData>();
     _sensorData["power"]->critical = true;
     _sensorData["power"]->value = 0;
     _sensorData["power"]->timestamp = std::chrono::high_resolution_clock::now();
-    for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it = _sensorData.begin(); it != _sensorData.end(); ++it) {
-        it->second->name = it->first;
-    }
+    _sensorData["power"]->name = "power";
 }
 
 Battery::~Battery() {

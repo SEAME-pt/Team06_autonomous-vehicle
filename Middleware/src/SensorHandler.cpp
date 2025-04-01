@@ -24,15 +24,8 @@
 
     void SensorHandler::addSensors() {
         _sensors["battery"] = std::make_shared<Battery>();
-        std::cout << "battery added" << std::endl;
-        std::cout << _sensors["battery"]->getName() << std::endl;
         _sensors["speed"] = std::make_shared<Speed>();
-        std::cout << "speed added" << std::endl;
-        std::cout << _sensors["speed"]->getName() << std::endl;
-        std::cout << "sensors added" << std::endl;
-        std::cout << "sorting sensor data" << std::endl;
         sortSensorData();
-        std::cout << "sensor data sorted" << std::endl;
         std::cout << "sensor data: " << std::endl;
         for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it = _criticalData.begin(); it != _criticalData.end(); ++it) {
             std::cout << it->first << std::endl;

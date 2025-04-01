@@ -18,7 +18,6 @@
         _sensors["battery"] = std::make_shared<Battery>();
         _sensors["speed"] = std::make_shared<Speed>();
         sortSensorData();
-        std::cout << "added and sorted\n";
     }
 
     void SensorHandler::sortSensorData() {
@@ -53,6 +52,7 @@
     }
 
     void SensorHandler::readSensors() {
+        std::cerr << "reading sensors" << std::endl;
         while (!stop_flag) {
             {
                 for (std::unordered_map<std::string, std::shared_ptr<ISensor>>::iterator it = _sensors.begin(); it != _sensors.end(); ++it) {

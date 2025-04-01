@@ -11,7 +11,7 @@
         for (std::unordered_map<std::string, std::shared_ptr<ISensor>>::iterator it = _sensors.begin(); it != _sensors.end(); ++it) {
             std::cout << "Sensor: " << it->second->getName() << std::endl;
             for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it2 = it->second->getSensorData().begin(); it2 != it->second->getSensorData().end(); ++it2) {
-                if (it2)
+                if (*it2)
                     std::cout << "SensorData: " << it2->first << std::endl;
             }
         }

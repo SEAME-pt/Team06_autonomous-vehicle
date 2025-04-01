@@ -18,6 +18,7 @@
         _sensors["battery"] = std::make_shared<Battery>();
         _sensors["speed"] = std::make_shared<Speed>();
         sortSensorData();
+        std::cout << "added and sorted\n";
     }
 
     void SensorHandler::sortSensorData() {

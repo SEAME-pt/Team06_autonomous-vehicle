@@ -8,6 +8,15 @@
         addSensors();
         zmq_c_publisher.send("init;");
         zmq_nc_publisher.send("init;");
+        std::cout << "sensors added: " << std::endl;
+        for (std::unordered_map<std::string, std::shared_ptr<ISensor>>::iterator it = _sensors.begin(); it != _sensors.end(); ++it) {
+            std::cout << it->second->getName() << std::endl;
+            std::cout << "sensor data: " << std::endl;
+            for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it2 = it->second->getSensorData().begin(); it2 != it->second->getSensorData().end(); ++it2) {
+                std::cout << it2->first << std::endl;
+            }
+        }
+
     }
 
     SensorHandler::~SensorHandler() {

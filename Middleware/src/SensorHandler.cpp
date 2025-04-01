@@ -34,8 +34,11 @@
 
     void SensorHandler::start() {
         stop_flag = false;
+        std::cerr << "Starting sensor handler..." << std::endl;
         non_critical_thread = std::thread(&SensorHandler::publishNonCritical, this);
+        std::cerr << "Starting non-critical thread..." << std::endl;
         critical_thread = std::thread(&SensorHandler::publishCritical, this);
+        std::cerr << "Starting critical thread..." << std::endl;
         readSensors();
     }
 
@@ -52,7 +55,6 @@
     }
 
     void SensorHandler::readSensors() {
-        std::cerr << "reading sensors" << std::endl;
         while (!stop_flag) {
             {
                 for (std::unordered_map<std::string, std::shared_ptr<ISensor>>::iterator it = _sensors.begin(); it != _sensors.end(); ++it) {

@@ -21,7 +21,7 @@ int main() {
         zmq::context_t zmq_context(1);
 
         SensorHandler sensorHandler(zmq_c_address, zmq_nc_address, zmq_context);
-        ControlAssembly controlAssembly(zmq_control_address, zmq_context);
+        // ControlAssembly controlAssembly(zmq_control_address, zmq_context);
         sensorHandler.start();
         // controlAssembly.start();
         while (!stop_flag) {

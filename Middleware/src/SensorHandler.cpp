@@ -73,7 +73,7 @@
             {
                 for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it = _nonCriticalData.begin(); it != _nonCriticalData.end(); ++it) {
                     if (it->second->updated) {
-                        publishSensorData(it->second);
+                        // publishSensorData(it->second);
                     }
                 }
             }

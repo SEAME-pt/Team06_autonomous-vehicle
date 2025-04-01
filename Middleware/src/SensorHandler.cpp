@@ -35,8 +35,8 @@
     void SensorHandler::start() {
         stop_flag = false;
         non_critical_thread = std::thread(&SensorHandler::publishNonCritical, this);
-        critical_thread = std::thread(&SensorHandler::publishCritical, this);
-        readSensors();
+        // critical_thread = std::thread(&SensorHandler::publishCritical, this);
+        // readSensors();
     }
 
 
@@ -73,7 +73,7 @@
             {
                 for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it = _nonCriticalData.begin(); it != _nonCriticalData.end(); ++it) {
                     if (it->second->updated) {
-                        publishSensorData(it->second);
+                        // publishSensorData(it->second);
                     }
                 }
             }
@@ -95,11 +95,11 @@
     }
 
     void SensorHandler::publishSensorData(std::shared_ptr<SensorData> sensorData) {
-        // std::string dataStr;
-        // dataStr = sensorData->name + ":" + std::to_string(sensorData->value) + ";";
-        // if (sensorData->critical) {
-        //     zmq_c_publisher.send(dataStr);
-        // } else {
-        //     zmq_nc_publisher.send(dataStr);
-        // }
+        std::string dataStr;
+        dataStr = sensorData->name + ":" + std::to_string(sensorData->value) + ";";
+        if (sensorData->critical) {
+            zmq_c_publisher.send(dataStr);
+        } else {
+            zmq_nc_publisher.send(dataStr);
+        }
     }

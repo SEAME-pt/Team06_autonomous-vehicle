@@ -40,8 +40,10 @@
             for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::iterator it2 = it->second->getSensorData().begin(); it2 != it->second->getSensorData().end(); ++it2) {
                 if (it2->second->critical) {
                     _criticalData[it2->first] = it2->second;
+                    std::cout << "critical: " << it2->second->name << std::endl;
                 } else {
                     _nonCriticalData[it2->first] = it2->second;
+                    std::cout << "non-critical: " << it2->second->name << std::endl;
                 }
             }
         }

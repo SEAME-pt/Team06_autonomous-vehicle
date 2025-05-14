@@ -1,0 +1,15 @@
+/home/dimoj/ClusterDisplay/build/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/build/CMakeFiles/rebuild_cache.dir
+/home/dimoj/ClusterDisplay/build/zmq/CMakeFiles/ZeroMQLib.dir
+/home/dimoj/ClusterDisplay/build/zmq/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/build/zmq/CMakeFiles/rebuild_cache.dir
+/home/dimoj/ClusterDisplay/build/Middleware/CMakeFiles/Middleware.dir
+/home/dimoj/ClusterDisplay/build/Middleware/CMakeFiles/coverage.dir
+/home/dimoj/ClusterDisplay/build/Middleware/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/build/Middleware/CMakeFiles/rebuild_cache.dir
+/home/dimoj/ClusterDisplay/build/Middleware/test/CMakeFiles/middleware_tests.dir
+/home/dimoj/ClusterDisplay/build/Middleware/test/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/build/Middleware/test/CMakeFiles/rebuild_cache.dir
+/home/dimoj/ClusterDisplay/build/Controller/CMakeFiles/Controller.dir
+/home/dimoj/ClusterDisplay/build/Controller/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/build/Controller/CMakeFiles/rebuild_cache.dir

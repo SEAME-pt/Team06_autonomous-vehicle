@@ -1,0 +1,11 @@
+Let's install the necessary dependencies:
+sudo apt-get update && sudo apt-get install -y googletest lcov gcovr
+sudo apt-get install -y libgtest-dev
+sudo apt-get install -y google-mock
+
+Now we need to build and install GTest from source since Ubuntu's package only installs the source files:
+cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib
+
+Let's also install GMock (which comes with GTest):
+cd /usr/src/googletest/googlemock && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib
+

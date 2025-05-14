@@ -1,40 +1,61 @@
 cmake_minimum_required(VERSION 3.10)
 
-# Set the project name
-project(Jetson VERSION 1.0)
+# Set the project name and language
+project(Middleware CXX)
 
-# Set the C++ standard to C++17 (or higher if needed)
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set the source directory for your project and collect source files
-file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
+# Enable testing support
+enable_testing()
 
-# Check if any source files were found
-if(NOT SOURCES)
-    message(FATAL_ERROR "No source files found in ${PROJECT_SOURCE_DIR}/src/")
-endif()
-
-# Add an executable
-add_executable(Middleware ${SOURCES})
-
-# Include project headers
-target_include_directories(Middleware PRIVATE
-    "${PROJECT_SOURCE_DIR}/inc"
-    "${PROJECT_SOURCE_DIR}/../zmq/inc"
-)
-
-# Set the library path for ZeroMQLib and libzmq
-set(ZMQ_LIB_DIR "${PROJECT_SOURCE_DIR}/../build/zmq")  # Path to the ZeroMQLib build directory
-set(ZMQ_LIB "${ZMQ_LIB_DIR}/libZeroMQLib.a")          # Static library file for ZeroMQLib
-
-# Find and link libzmq (ZeroMQ C library)
+# Find required packages
+find_package(GTest REQUIRED)
+find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ZMQ REQUIRED libzmq)
 
-# Link ZeroMQLib and libzmq (ZeroMQ C library)
-target_link_libraries(Middleware PRIVATE ${ZMQ_LIB} ${ZMQ_LIBRARIES})
+# Add compiler flags for coverage
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
 
-# Find and link pthread
-find_package(Threads REQUIRED)
-target_link_libraries(Middleware PRIVATE Threads::Threads)
+# Source files
+file(GLOB SOURCES "src/*.cpp")
+file(GLOB HEADERS "inc/*.hpp")
+
+# Set ZMQ library path
+set(ZMQ_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../build/zmq")
+set(ZMQ_LIB "${ZMQ_LIB_DIR}/libZeroMQLib.a")
+
+# Create the main library
+add_library(Middleware STATIC ${SOURCES} ${HEADERS})
+target_include_directories(Middleware
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/../zmq/inc
+)
+target_link_libraries(Middleware
+    PRIVATE
+        gcov
+        Threads::Threads
+        ${ZMQ_LIB}
+        ${ZMQ_LIBRARIES}
+)
+
+# Tests
+if(GTEST_FOUND)
+    message(STATUS "Google Test found - building tests")
+    add_subdirectory(test)
+else()
+    message(WARNING "Google Test not found - skipping tests")
+endif()
+
+# Coverage target
+add_custom_target(coverage
+    COMMAND lcov --directory . --capture --output-file coverage.info
+    COMMAND lcov --remove coverage.info '/usr/*' --output-file coverage.info
+    COMMAND lcov --list coverage.info
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Generating coverage report..."
+)

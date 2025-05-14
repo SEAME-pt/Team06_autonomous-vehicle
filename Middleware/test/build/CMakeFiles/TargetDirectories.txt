@@ -1,0 +1,3 @@
+/home/dimoj/ClusterDisplay/Middleware/test/build/CMakeFiles/middleware_tests.dir
+/home/dimoj/ClusterDisplay/Middleware/test/build/CMakeFiles/edit_cache.dir
+/home/dimoj/ClusterDisplay/Middleware/test/build/CMakeFiles/rebuild_cache.dir

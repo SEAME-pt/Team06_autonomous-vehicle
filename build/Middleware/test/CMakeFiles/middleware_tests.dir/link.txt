@@ -1,0 +1,1 @@
+/usr/bin/c++  -fprofile-arcs -ftest-coverage  -fprofile-arcs -ftest-coverage CMakeFiles/middleware_tests.dir/unit/battery_test.cpp.o -o ../../bin/middleware_tests  ../libMiddleware.a -lgmock -lgmock_main -lgcov /home/dimoj/ClusterDisplay/Middleware/../build/zmq/libZeroMQLib.a -lzmq /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a 

@@ -1,17 +1,14 @@
 #include "Speed.hpp"
 
+
+
 Speed::Speed() {
     _name = "speed";
-    _sensorData["speed"] = std::make_shared<SensorData>();
-    _sensorData["speed"]->critical = true;
-    _sensorData["speed"]->value = 0;
-    _sensorData["speed"]->timestamp = std::chrono::high_resolution_clock::now();
-    _sensorData["speed"]->name = "speed";
-    _sensorData["odo"] = std::make_shared<SensorData>();
-    _sensorData["odo"]->critical = false;
-    _sensorData["odo"]->value = 0;
-    _sensorData["odo"]->timestamp = std::chrono::high_resolution_clock::now();
-    _sensorData["odo"]->name = "odo";
+    _sensorData["speed"] = std::make_shared<SensorData>("speed", true);
+    _sensorData["speed"]->value.store(0);
+
+    _sensorData["odo"] = std::make_shared<SensorData>("odo", false);
+    _sensorData["odo"]->value.store(0);
 }
 
 Speed::~Speed() {
@@ -31,11 +28,11 @@ void Speed::updateSensorData() {
 }
 
 void Speed::checkUpdated() {
-    for (std::unordered_map<std::string, std::shared_ptr<SensorData>>::const_iterator it = _sensorData.begin(); it != _sensorData.end(); ++it) {
-        if (it->second->oldValue != it->second->value) {
-            it->second->updated = true;
+    for (const auto& [name, sensor] : _sensorData) {
+        if (sensor->oldValue.load() != sensor->value.load()) {
+            sensor->updated.store(true);
         } else {
-            it->second->updated = false;
+            sensor->updated.store(false);
         }
     }
 }
@@ -43,9 +40,10 @@ void Speed::checkUpdated() {
 void Speed::readSensor() {
     if (can.Receive(buffer, length)) {
         if (can.getId() == canId) {
-            _sensorData["speed"]->oldValue = _sensorData["speed"]->value;
-            _sensorData["speed"]->value = (buffer[0] | (buffer[1] << 8));
-            _sensorData["speed"]->timestamp = std::chrono::high_resolution_clock::now();
+            auto speed_value = _sensorData["speed"]->value.load();
+            _sensorData["speed"]->oldValue.store(speed_value);
+            _sensorData["speed"]->value.store(buffer[0] | (buffer[1] << 8));
+            _sensorData["speed"]->timestamp = std::chrono::steady_clock::now();
             calculateOdo();
             // sensorData.data["rpm"] = (buffer[2] | (buffer[3] << 8));
         } else {
@@ -55,8 +53,17 @@ void Speed::readSensor() {
 }
 
 void Speed::calculateOdo() {
-    _sensorData["odo"]->oldValue = _sensorData["odo"]->value;
-    std::chrono::time_point<std::chrono::high_resolution_clock> oldTimestamp = _sensorData["odo"]->timestamp;
-    _sensorData["odo"]->timestamp = std::chrono::high_resolution_clock::now();
-    _sensorData["odo"]->value += _sensorData["speed"]->value * (5.0 / 18.0) * (_sensorData["odo"]->timestamp - oldTimestamp).count();
+    auto odo_value = _sensorData["odo"]->value.load();
+    _sensorData["odo"]->oldValue.store(odo_value);
+    auto oldTimestamp = _sensorData["odo"]->timestamp;
+    _sensorData["odo"]->timestamp = std::chrono::steady_clock::now();
+
+    // Calculate time difference in seconds
+    auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(_sensorData["odo"]->timestamp - oldTimestamp);
+    double time_diff_seconds = duration.count();
+
+    // Calculate distance: speed (km/h) * time (s) * (5/18) for m/s conversion
+    auto speed = _sensorData["speed"]->value.load();
+    auto new_odo = static_cast<unsigned int>(speed * (5.0 / 18.0) * time_diff_seconds);
+    _sensorData["odo"]->value.store(odo_value + new_odo);
 }

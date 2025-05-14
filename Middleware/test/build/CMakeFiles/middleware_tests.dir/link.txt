@@ -1,1 +1,0 @@
-/usr/bin/c++ -rdynamic CMakeFiles/middleware_tests.dir/unit/battery_test.o -o middleware_tests  -lMiddleware -lGTest::GTest -lGTest::Main -lgcov -lThreads::Threads 

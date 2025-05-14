@@ -4,25 +4,25 @@ file(GLOB TEST_SOURCES "unit/*.cpp")
 # Create test executable
 add_executable(middleware_tests ${TEST_SOURCES})
 
-# Link against GTest, GMock and our library
-target_link_libraries(middleware_tests
-    PRIVATE
-    Middleware
-    GTest::GTest
-    GTest::Main
-    gmock
-    gmock_main
-    gcov
-    Threads::Threads
-    ${ZMQ_LIB}
-    ${ZMQ_LIBRARIES}
-)
-
 # Include directories
 target_include_directories(middleware_tests
     PRIVATE
-    ${CMAKE_SOURCE_DIR}/inc
-    ${CMAKE_SOURCE_DIR}/../zmq/inc
+        ${CMAKE_SOURCE_DIR}/Middleware/inc
+        ${CMAKE_SOURCE_DIR}/zmq/inc
+)
+
+# Link against GTest, GMock and our library
+target_link_libraries(middleware_tests
+    PRIVATE
+        Middleware
+        GTest::GTest
+        GTest::Main
+        gmock
+        gmock_main
+        gcov
+        Threads::Threads
+        ${ZMQ_LIB}
+        ${ZMQ_LIBRARIES}
 )
 
 # Add tests to CTest

@@ -9,3 +9,12 @@ cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /
 Let's also install GMock (which comes with GTest):
 cd /usr/src/googletest/googlemock && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib
 
+mkdir build && cd build
+cmake ..
+make
+ctest --verbose
+
+# From build directory
+lcov --capture --directory . --output-file coverage.info
+lcov --remove coverage.info '/usr/*' --output-file coverage.info
+genhtml coverage.info --output-directory coverage_report

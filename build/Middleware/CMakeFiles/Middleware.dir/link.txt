@@ -1,2 +1,0 @@
-/usr/bin/ar qc libMiddleware.a CMakeFiles/Middleware.dir/src/BackMotors.cpp.o CMakeFiles/Middleware.dir/src/Battery.cpp.o CMakeFiles/Middleware.dir/src/BatteryReader.cpp.o CMakeFiles/Middleware.dir/src/CanReader.cpp.o CMakeFiles/Middleware.dir/src/ControlAssembly.cpp.o CMakeFiles/Middleware.dir/src/FServo.cpp.o CMakeFiles/Middleware.dir/src/SensorHandler.cpp.o CMakeFiles/Middleware.dir/src/Speed.cpp.o CMakeFiles/Middleware.dir/src/main.cpp.o
-/usr/bin/ranlib libMiddleware.a

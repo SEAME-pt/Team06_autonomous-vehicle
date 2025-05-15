@@ -17,7 +17,7 @@ std::string ZmqSubscriber::receive() {
     //     return "";  // No message available, return immediately
     // }
 
-    // std::string message(static_cast<char*>(msg.data()), msg.size());
+    std::string message(static_cast<char*>(msg.data()), msg.size());
     // std::cerr << "RECEIVED from " << _address << ": " << message << std::endl;
     return message;
 }

@@ -3,6 +3,8 @@
 ZmqSubscriber::ZmqSubscriber(const std::string& address, zmq::context_t& context) : _context(context), _socket(context, zmq::socket_type::sub), _address(address) {
         _socket.connect(address);
         _socket.set(zmq::sockopt::subscribe, ""); // Subscribe to all messages
+        _socket.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
+        _socket.setsockopt(ZMQ_RCVHWM, &hwm, sizeof(hwm));
     }
 
 ZmqSubscriber::~ZmqSubscriber() {

@@ -85,14 +85,14 @@ void ControlAssembly::handleMessage(const std::string& message) {
     // Apply steering if present in the message
     if (values.find("steering") != values.end()) {
         int steering = static_cast<int>(values["steering"]);
-        std::cout << "Setting steering to: " << steering << std::endl;
+        std::cerr << "Setting steering to: " << steering << std::endl;
         _fServo.set_steering(steering);
     }
 
     // Apply throttle if present in the message
     if (values.find("throttle") != values.end()) {
         double throttle = values["throttle"];
-        std::cout << "Setting throttle to: " << throttle << std::endl;
+        std::cerr << "Setting throttle to: " << throttle << std::endl;
         _backMotors.setSpeed(throttle);
     }
 }

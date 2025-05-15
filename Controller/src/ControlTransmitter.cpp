@@ -54,7 +54,6 @@ void ControlTransmitter::startTransmitting() {
 			_acceleration -= (force * 0.55f); // Aceleração proporcional ao valor de force
 		}
         std::string throttleMsg = "throttle:" + std::to_string(_acceleration) + ";";
-        std::cout << "Sending: " << throttleMsg << std::endl;
         _zmq_publisher.send(throttleMsg);
 
 		float gear = _controller.getAxis(0); // eixo horizontal (X) do analógico esquerdo.
@@ -71,7 +70,6 @@ void ControlTransmitter::startTransmitting() {
 		int steeringAngle = static_cast<int>(_turn * 30);
 		steeringAngle = std::max(-45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
 		std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
-        std::cout << "Sending: " << steeringMsg << std::endl;
         _zmq_publisher.send(steeringMsg);
     }
     std::cout << "Exiting transmission loop, sending zero values" << std::endl;

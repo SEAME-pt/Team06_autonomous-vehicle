@@ -2,21 +2,35 @@
 
 ControlTransmitter::ControlTransmitter(const std::string& zmq_address, zmq::context_t& zmq_context)
     : _zmq_publisher(zmq_address, zmq_context) {
+    std::cout << "ControlTransmitter initialized with address: " << zmq_address << std::endl;
     _zmq_publisher.send("init;");
+    std::cout << "Sent init message" << std::endl;
 }
 
 ControlTransmitter::~ControlTransmitter() {
+    std::cout << "ControlTransmitter shutting down, sending zero values" << std::endl;
     _zmq_publisher.send("throttle:0;steering:0;");
 }
 
+bool ControlTransmitter::initController() {
+    std::cout << "Initializing controller..." << std::endl;
+    _controller.openDevice();
+    bool connected = _controller.isConnected();
+    std::cout << "Controller " << (connected ? "connected" : "failed to connect") << std::endl;
+    return connected;
+}
+
 void ControlTransmitter::startTransmitting() {
+    std::cout << "Starting transmission loop..." << std::endl;
     while (true) {
         _onClick = false;
         if (!_controller.readEvent()) {
+            std::cout << "Controller read event failed, exiting loop" << std::endl;
             break;
         }
         if (_controller.getButton(X_BUTTON)) {
             _onClick = true;
+            std::cout << "X button pressed, sending stop command" << std::endl;
             _zmq_publisher.send("throttle:0;steering:0;");
         }
         if (_controller.getButton(SELECT_BUTTON)) {
@@ -39,7 +53,9 @@ void ControlTransmitter::startTransmitting() {
 		if (force != 0){
 			_acceleration -= (force * 0.55f); // Aceleração proporcional ao valor de force
 		}
-        _zmq_publisher.send("throttle:" + std::to_string(_acceleration) + ";");
+        std::string throttleMsg = "throttle:" + std::to_string(_acceleration) + ";";
+        std::cout << "Sending: " << throttleMsg << std::endl;
+        _zmq_publisher.send(throttleMsg);
 
 		float gear = _controller.getAxis(0); // eixo horizontal (X) do analógico esquerdo.
 		if (std::abs(gear) > 0.1f) { // Zona morta
@@ -54,12 +70,16 @@ void ControlTransmitter::startTransmitting() {
 
 		int steeringAngle = static_cast<int>(_turn * 30);
 		steeringAngle = std::max(-45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
-		_zmq_publisher.send("steering:" + std::to_string(steeringAngle) + ";");
+		std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
+        std::cout << "Sending: " << steeringMsg << std::endl;
+        _zmq_publisher.send(steeringMsg);
     }
+    std::cout << "Exiting transmission loop, sending zero values" << std::endl;
     _zmq_publisher.send("throttle:0;steering:0;");
     return;
 }
 
 void ControlTransmitter::zmqPublish(std::string message) {
+    std::cout << "Publishing message: " << message << std::endl;
     _zmq_publisher.send(message);
 }

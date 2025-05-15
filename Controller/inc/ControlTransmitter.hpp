@@ -14,6 +14,9 @@ public:
     ControlTransmitter(const std::string& zmq_address, zmq::context_t& zmq_context);
     ~ControlTransmitter();
 
+    // Initialize controller and return whether it was successful
+    bool initController();
+
     void startTransmitting();
 
 private:

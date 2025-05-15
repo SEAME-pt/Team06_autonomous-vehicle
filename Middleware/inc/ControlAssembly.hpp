@@ -4,6 +4,7 @@
 #include "ZmqSubscriber.hpp"
 #include "BackMotors.hpp"
 #include "FServo.hpp"
+#include "ControlLogger.hpp"
 #include <iostream>
 #include <chrono>
 #include <cstdio>
@@ -35,6 +36,7 @@ private:
 
     BackMotors	_backMotors;
 	FServo		_fServo;
+    ControlLogger _logger;
 };
 
 #endif

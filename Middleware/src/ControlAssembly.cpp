@@ -1,7 +1,7 @@
 #include "ControlAssembly.hpp"
 
 ControlAssembly::ControlAssembly(const std::string& address, zmq::context_t& context)
-    : zmq_subscriber(address, context), stop_flag(false) {
+    : zmq_subscriber(address, context), stop_flag(false), _logger("control_updates.log") {
     std::cout << "ControlAssembly initialized with ZMQ address: " << address << std::endl;
     _backMotors.open_i2c_bus();
 	_fServo.open_i2c_bus();
@@ -79,20 +79,27 @@ void ControlAssembly::handleMessage(const std::string& message) {
         std::cout << "Received init message, resetting to zero values" << std::endl;
         _fServo.set_steering(0);
         _backMotors.setSpeed(0);
+        _logger.logControlUpdate("init", 0, 0);
         return;
     }
 
+    double steering = 0.0;
+    double throttle = 0.0;
+
     // Apply steering if present in the message
     if (values.find("steering") != values.end()) {
-        int steering = static_cast<int>(values["steering"]);
+        steering = values["steering"];
         std::cout << "Setting steering to: " << steering << std::endl;
-        _fServo.set_steering(steering);
+        _fServo.set_steering(static_cast<int>(steering));
     }
 
     // Apply throttle if present in the message
     if (values.find("throttle") != values.end()) {
-        double throttle = values["throttle"];
+        throttle = values["throttle"];
         std::cout << "Setting throttle to: " << throttle << std::endl;
         _backMotors.setSpeed(throttle);
     }
+
+    // Log the control update
+    _logger.logControlUpdate(message, steering, throttle);
 }

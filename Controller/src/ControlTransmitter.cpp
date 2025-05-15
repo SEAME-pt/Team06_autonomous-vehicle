@@ -1,6 +1,4 @@
 #include "ControlTransmitter.hpp"
-#include <thread>
-#include <chrono>
 
 ControlTransmitter::ControlTransmitter(const std::string& zmq_address, zmq::context_t& zmq_context)
     : _zmq_publisher(zmq_address, zmq_context) {
@@ -75,7 +73,6 @@ void ControlTransmitter::startTransmitting() {
         // _zmq_publisher.send(steeringMsg);
         std::string combinedMsg = throttleMsg + steeringMsg;
         _zmq_publisher.send(combinedMsg);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100)); //
     }
     std::cout << "Exiting transmission loop, sending zero values" << std::endl;
     _zmq_publisher.send("throttle:0;steering:0;");

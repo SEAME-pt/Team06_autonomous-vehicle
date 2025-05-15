@@ -37,4 +37,4 @@ target_link_libraries(Middleware PRIVATE ${ZMQ_LIB} ${ZMQ_LIBRARIES})
 
 # Find and link pthread
 find_package(Threads REQUIRED)
-target_link_libraries(Middleware PRIVATE Threads::Threads stdc++fs)
+target_link_libraries(Middleware PRIVATE Threads::Threads)

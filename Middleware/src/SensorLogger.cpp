@@ -2,20 +2,23 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
-#include <filesystem>
 
 SensorLogger::SensorLogger(const std::string& log_file_path) {
     std::cout << "Initializing logger with file: " << log_file_path << std::endl;
 
-    // Create the file if it doesn't exist
-    if (!std::filesystem::exists(log_file_path)) {
-        std::ofstream create_file(log_file_path);
+    // Try to create/open the file first in read mode to check if it exists
+    std::ifstream check_file(log_file_path.c_str());
+    if (!check_file) {
+        // File doesn't exist, create it
+        std::ofstream create_file(log_file_path.c_str());
         create_file.close();
         std::cout << "Created new log file" << std::endl;
+    } else {
+        check_file.close();
     }
 
     // Open with both append and out mode to ensure proper file creation and appending
-    log_file.open(log_file_path, std::ios::app | std::ios::out);
+    log_file.open(log_file_path.c_str(), std::ios::app | std::ios::out);
     if (!log_file.is_open()) {
         std::cerr << "Failed to open log file: " << log_file_path << std::endl;
         throw std::runtime_error("Failed to open log file: " + log_file_path);

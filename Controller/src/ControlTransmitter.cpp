@@ -71,6 +71,7 @@ void ControlTransmitter::startTransmitting() {
 		steeringAngle = std::max(-45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
 		std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
         _zmq_publisher.send(steeringMsg);
+        std::this_thread::sleep_for(std::chrono::milliseconds(100)); //
     }
     std::cout << "Exiting transmission loop, sending zero values" << std::endl;
     _zmq_publisher.send("throttle:0;steering:0;");

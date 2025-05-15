@@ -46,13 +46,13 @@ void ControlAssembly::receiveMessages() {
         std::string message = zmq_subscriber.receive();
 
         if (!message.empty()) {
-            // std::cout << "Received control message: " << message << std::endl;
+            std::cout << "Received control message: " << message << std::endl;
             handleMessage(message);
         } else {
-            // std::cout << "Received empty message" << std::endl;
+            std::cout << "Received empty message" << std::endl;
         }
 
-        // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     std::cout << "Message receiver thread stopping" << std::endl;
 }
@@ -61,7 +61,7 @@ void ControlAssembly::handleMessage(const std::string& message) {
     std::unordered_map<std::string, double> values;
     std::stringstream ss(message);
     std::string token;
-    // std::cout << "Parsing message: " << message << std::endl;
+    std::cout << "Parsing message: " << message << std::endl;
     while (std::getline(ss, token, ';')) {
         if (token.empty()) continue;
 
@@ -71,7 +71,7 @@ void ControlAssembly::handleMessage(const std::string& message) {
         std::getline(ss_token, key, ':');
         ss_token >> value;
         values[key] = value;
-        // std::cout << "Parsed key: '" << key << "', value: " << value << std::endl;
+        std::cout << "Parsed key: '" << key << "', value: " << value << std::endl;
     }
 
     // Handle special 'init' message
@@ -85,14 +85,14 @@ void ControlAssembly::handleMessage(const std::string& message) {
     // Apply steering if present in the message
     if (values.find("steering") != values.end()) {
         int steering = static_cast<int>(values["steering"]);
-        // std::cerr << "Setting steering to: " << steering << std::endl;
+        std::cout << "Setting steering to: " << steering << std::endl;
         _fServo.set_steering(steering);
     }
 
     // Apply throttle if present in the message
     if (values.find("throttle") != values.end()) {
         double throttle = values["throttle"];
-        // std::cerr << "Setting throttle to: " << throttle << std::endl;
+        std::cout << "Setting throttle to: " << throttle << std::endl;
         _backMotors.setSpeed(throttle);
     }
 }

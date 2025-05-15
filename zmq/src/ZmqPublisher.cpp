@@ -5,10 +5,6 @@ ZmqPublisher::ZmqPublisher(const std::string& address, zmq::context_t& context)
     _socket(context, zmq::socket_type::pub),
     _address(address) {
     _socket.bind(address);
-    int linger = 1000;  // milliseconds
-    _socket.setsockopt(ZMQ_LINGER, &linger, sizeof(linger));
-    int hwm = 1000;     // messages
-    _socket.setsockopt(ZMQ_SNDHWM, &hwm, sizeof(hwm));
 }
 
 ZmqPublisher::~ZmqPublisher() {

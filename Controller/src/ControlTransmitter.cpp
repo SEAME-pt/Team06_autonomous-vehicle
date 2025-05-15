@@ -1,4 +1,6 @@
 #include "ControlTransmitter.hpp"
+#include <thread>
+#include <chrono>
 
 ControlTransmitter::ControlTransmitter(const std::string& zmq_address, zmq::context_t& zmq_context)
     : _zmq_publisher(zmq_address, zmq_context) {
@@ -54,7 +56,7 @@ void ControlTransmitter::startTransmitting() {
 			_acceleration -= (force * 0.55f); // Aceleração proporcional ao valor de force
 		}
         std::string throttleMsg = "throttle:" + std::to_string(_acceleration) + ";";
-        _zmq_publisher.send(throttleMsg);
+        // _zmq_publisher.send(throttleMsg);
 
 		float gear = _controller.getAxis(0); // eixo horizontal (X) do analógico esquerdo.
 		if (std::abs(gear) > 0.1f) { // Zona morta
@@ -70,7 +72,9 @@ void ControlTransmitter::startTransmitting() {
 		int steeringAngle = static_cast<int>(_turn * 30);
 		steeringAngle = std::max(-45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
 		std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
-        _zmq_publisher.send(steeringMsg);
+        // _zmq_publisher.send(steeringMsg);
+        std::string combinedMsg = throttleMsg + steeringMsg;
+        _zmq_publisher.send(combinedMsg);
         std::this_thread::sleep_for(std::chrono::milliseconds(100)); //
     }
     std::cout << "Exiting transmission loop, sending zero values" << std::endl;

@@ -2,14 +2,26 @@
 #include <iomanip>
 #include <sstream>
 #include <iostream>
+#include <filesystem>
 
 SensorLogger::SensorLogger(const std::string& log_file_path) {
+    std::cout << "Initializing logger with file: " << log_file_path << std::endl;
+
+    // Create the file if it doesn't exist
+    if (!std::filesystem::exists(log_file_path)) {
+        std::ofstream create_file(log_file_path);
+        create_file.close();
+        std::cout << "Created new log file" << std::endl;
+    }
+
     // Open with both append and out mode to ensure proper file creation and appending
     log_file.open(log_file_path, std::ios::app | std::ios::out);
     if (!log_file.is_open()) {
         std::cerr << "Failed to open log file: " << log_file_path << std::endl;
         throw std::runtime_error("Failed to open log file: " + log_file_path);
     }
+
+    std::cout << "Log file opened successfully" << std::endl;
 
     // Write session start marker and immediately flush
     std::lock_guard<std::mutex> lock(log_mutex);
@@ -20,6 +32,8 @@ SensorLogger::SensorLogger(const std::string& log_file_path) {
         std::cerr << "Failed to write to log file after opening" << std::endl;
         throw std::runtime_error("Failed to write to log file after opening");
     }
+
+    std::cout << "Logger initialization complete" << std::endl;
 }
 
 SensorLogger::~SensorLogger() {
@@ -28,6 +42,7 @@ SensorLogger::~SensorLogger() {
             std::lock_guard<std::mutex> lock(log_mutex);
             log_file << "\n=== Sensor Logging Session Ended at " << getTimestamp() << " ===\n" << std::flush;
             log_file.close();
+            std::cout << "Logger shutdown complete" << std::endl;
         } catch (const std::exception& e) {
             std::cerr << "Error during logger shutdown: " << e.what() << std::endl;
         }
@@ -44,12 +59,20 @@ void SensorLogger::logSensorUpdate(const std::shared_ptr<SensorData>& sensorData
             return;
         }
 
-        log_file << getTimestamp() << " - "
-                << "Sensor: " << sensorData->name
-                << ", Value: " << sensorData->value
-                << ", Old Value: " << sensorData->oldValue
-                << ", Critical: " << (sensorData->critical ? "Yes" : "No")
-                << std::endl << std::flush;
+        // Only log if the value has actually changed
+        if (sensorData->value != sensorData->oldValue) {
+            log_file << getTimestamp() << " - "
+                    << "Sensor: " << sensorData->name
+                    << ", Value: " << sensorData->value
+                    << ", Old Value: " << sensorData->oldValue
+                    << ", Critical: " << (sensorData->critical ? "Yes" : "No")
+                    << std::endl << std::flush;
+
+            // Debug output
+            std::cout << "Logged update for sensor: " << sensorData->name
+                     << " (Value: " << sensorData->value
+                     << ", Old: " << sensorData->oldValue << ")" << std::endl;
+        }
     } catch (const std::exception& e) {
         std::cerr << "Error logging sensor update: " << e.what() << std::endl;
     }
@@ -67,6 +90,8 @@ void SensorLogger::logError(const std::string& sensorName, const std::string& er
                 << "Sensor: " << sensorName
                 << ", Error: " << errorMessage
                 << std::endl << std::flush;
+
+        std::cout << "Logged error for sensor: " << sensorName << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Error logging error message: " << e.what() << std::endl;
     }

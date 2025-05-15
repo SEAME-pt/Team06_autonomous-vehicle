@@ -52,7 +52,7 @@ void ControlAssembly::receiveMessages() {
             std::cout << "Received empty message" << std::endl;
         }
 
-        // std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
     std::cout << "Message receiver thread stopping" << std::endl;
 }

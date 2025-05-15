@@ -36,15 +36,17 @@ void Battery::checkUpdated() {
 
 void Battery::readSensor() {
     auto oldBattery = _sensorData["battery"]->value.load();
+    auto oldCharging = _sensorData["charging"]->value.load();
     auto battery = batteryReader.getPercentage();
     auto charging = batteryReader.isCharging();
 
     _sensorData["battery"]->oldValue.store(oldBattery);
+    _sensorData["charging"]->oldValue.store(oldCharging);
     _sensorData["battery"]->value.store(battery);
     _sensorData["charging"]->value.store(charging);
     // _sensorData["power"]->value.store(20);
 
-    // battery charging cheat. only goes up while charging, only goes down while not charging
+    // Battery charging cheat. only goes up while charging, only goes down while not charging
     if (!oldBattery) {
         return;
     } else if (charging) {

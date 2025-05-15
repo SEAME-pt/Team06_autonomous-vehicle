@@ -4,7 +4,8 @@
     SensorHandler::SensorHandler(const std::string& zmq_c_address, const std::string& zmq_nc_address, zmq::context_t& zmq_context)
         : stop_flag(false),
         zmq_c_publisher(zmq_c_address, zmq_context),
-        zmq_nc_publisher(zmq_nc_address, zmq_context) {
+        zmq_nc_publisher(zmq_nc_address, zmq_context),
+        _logger("sensor_updates.log") {
         addSensors();
         zmq_c_publisher.send("init;");
         zmq_nc_publisher.send("init;");
@@ -15,6 +16,7 @@
             std::cout << "Sensor: " << sensor->getName() << std::endl;
             for (const auto& [data_name, data] : sensor->getSensorData()) {
                 std::cout << "SensorData: " << data_name << std::endl;
+                _logger.logSensorUpdate(data);
             }
         }
     }
@@ -82,8 +84,10 @@
                         sensor->updateSensorData();
                     } catch (const std::exception& e) {
                         std::cerr << "Error updating sensor [" << sensor->getName() << "]: " << e.what() << std::endl;
+                        _logger.logError(sensor->getName(), e.what());
                     } catch (...) {
                         std::cerr << "Unknown error occurred while updating sensor [" << sensor->getName() << "]!" << std::endl;
+                        _logger.logError(sensor->getName(), "Unknown error occurred during update");
                     }
                 }
             }
@@ -133,7 +137,9 @@
             } else {
                 zmq_nc_publisher.send(dataStr);
             }
+            _logger.logSensorUpdate(sensorData);
         } catch (const std::exception& e) {
             std::cerr << "Error publishing sensor data: " << e.what() << std::endl;
+            _logger.logError(sensorData->name, std::string("Error publishing data: ") + e.what());
         }
     }

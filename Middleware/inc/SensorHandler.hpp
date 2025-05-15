@@ -5,6 +5,7 @@
 #include "Battery.hpp"
 #include "Speed.hpp"
 #include "ZmqPublisher.hpp"
+#include "SensorLogger.hpp"
 #include <atomic>
 #include <thread>
 #include <memory>
@@ -53,6 +54,7 @@ private:
 
     ZmqPublisher zmq_c_publisher;
     ZmqPublisher zmq_nc_publisher;
+    SensorLogger _logger;
 
     static constexpr int critical_update_interval_ms = 50;
     static constexpr int non_critical_update_interval_ms = 200;

@@ -7,6 +7,9 @@ project(Middleware CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Set output directories for all builds (executables go to bin/)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 # Enable testing support
 enable_testing()
 
@@ -24,6 +27,9 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-cove
 file(GLOB SOURCES "src/*.cpp")
 file(GLOB HEADERS "inc/*.hpp")
 
+# Exclude main.cpp from the library sources
+list(FILTER SOURCES EXCLUDE REGEX ".*main.cpp$")
+
 # Set ZMQ library path
 set(ZMQ_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../build/zmq")
 set(ZMQ_LIB "${ZMQ_LIB_DIR}/libZeroMQLib.a")
@@ -37,6 +43,22 @@ target_include_directories(Middleware
 )
 target_link_libraries(Middleware
     PRIVATE
+        gcov
+        Threads::Threads
+        ${ZMQ_LIB}
+        ${ZMQ_LIBRARIES}
+)
+
+# Create the executable
+add_executable(Middleware src/main.cpp)
+target_include_directories(Middleware
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
+        ${CMAKE_CURRENT_SOURCE_DIR}/../zmq/inc
+)
+target_link_libraries(Middleware
+    PRIVATE
+        Middleware
         gcov
         Threads::Threads
         ${ZMQ_LIB}

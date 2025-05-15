@@ -13,11 +13,11 @@ std::string ZmqSubscriber::receive() {
     zmq::message_t msg;
     zmq::recv_result_t result = _socket.recv(msg, zmq::recv_flags::dontwait);
 
-    if (!result) {
-        return "";  // No message available, return immediately
-    }
+    // if (!result) {
+    //     return "";  // No message available, return immediately
+    // }
 
-    std::string message(static_cast<char*>(msg.data()), msg.size());
-    std::cerr << "RECEIVED from " << _address << ": " << message << std::endl;
+    // std::string message(static_cast<char*>(msg.data()), msg.size());
+    // std::cerr << "RECEIVED from " << _address << ": " << message << std::endl;
     return message;
 }

@@ -12,7 +12,7 @@ ZmqPublisher::~ZmqPublisher() {
 }
 
 void ZmqPublisher::send(const std::string& message) {
-    std::cerr << "PUBLISHING to " << _address << ": " << message << std::endl;
+    // std::cerr << "PUBLISHING to " << _address << ": " << message << std::endl;
     zmq::message_t msg(message.size());
     memcpy(msg.data(), message.c_str(), message.size());
     _socket.send(msg, zmq::send_flags::none);

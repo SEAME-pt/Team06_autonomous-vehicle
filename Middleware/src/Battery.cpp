@@ -8,8 +8,8 @@ Battery::Battery() {
     _sensorData["charging"] = std::make_shared<SensorData>("charging", false);
     _sensorData["charging"]->value.store(0);
 
-    _sensorData["power"] = std::make_shared<SensorData>("power", true);
-    _sensorData["power"]->value.store(0);
+    // _sensorData["power"] = std::make_shared<SensorData>("power", true);
+    // _sensorData["power"]->value.store(0);
 }
 
 Battery::~Battery() {
@@ -42,7 +42,7 @@ void Battery::readSensor() {
     _sensorData["battery"]->oldValue.store(oldBattery);
     _sensorData["battery"]->value.store(battery);
     _sensorData["charging"]->value.store(charging);
-    _sensorData["power"]->value.store(20);
+    // _sensorData["power"]->value.store(20);
 
     // battery charging cheat. only goes up while charging, only goes down while not charging
     if (!oldBattery) {
@@ -59,7 +59,7 @@ void Battery::readSensor() {
     auto now = std::chrono::steady_clock::now();
     _sensorData["battery"]->timestamp = now;
     _sensorData["charging"]->timestamp = now;
-    _sensorData["power"]->timestamp = now;
+    // _sensorData["power"]->timestamp = now;
 }
 
 std::unordered_map<std::string, std::shared_ptr<SensorData>> Battery::getSensorData() const {

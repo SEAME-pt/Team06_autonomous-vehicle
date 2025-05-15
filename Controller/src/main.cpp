@@ -9,15 +9,16 @@ int main() {
     std::string zmq_address = "tcp://127.0.0.1:5557";
     zmq::context_t zmq_context(1);
 
-    Controller controller;
+    // Create transmitter with controller reference
+    ControlTransmitter controlTransmitter(zmq_address, zmq_context);
 
-    controller.openDevice();
-    if (!controller.isConnected()) {
+    // Initialize the controller inside the transmitter
+    if (!controlTransmitter.initController()) {
         std::cerr << "Failed to initialize controller!" << std::endl;
         return EXIT_FAILURE;
     }
 
-    ControlTransmitter controlTransmitter(zmq_address, zmq_context);
+    // This is a blocking call that should keep the program running
     controlTransmitter.startTransmitting();
 
     return EXIT_SUCCESS;

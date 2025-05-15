@@ -63,6 +63,15 @@ int main() {
         std::cout << "Stopping control assembly..." << std::endl;
         control_assembly->stop();
 
+        // Release component resources
+        std::cout << "Releasing components..." << std::endl;
+        sensor_handler.reset();
+        control_assembly.reset();
+
+        // Terminate ZMQ context to ensure clean shutdown
+        std::cout << "Terminating ZMQ context..." << std::endl;
+        zmq_context.close();
+
         std::cout << "Shutdown complete." << std::endl;
         return EXIT_SUCCESS;
 

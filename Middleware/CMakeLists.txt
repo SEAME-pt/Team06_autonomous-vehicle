@@ -50,13 +50,13 @@ target_link_libraries(Middleware
 )
 
 # Create the executable
-add_executable(Middleware src/main.cpp)
-target_include_directories(Middleware
+add_executable(MiddlewareMain src/main.cpp)
+target_include_directories(MiddlewareMain
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
         ${CMAKE_CURRENT_SOURCE_DIR}/../zmq/inc
 )
-target_link_libraries(Middleware
+target_link_libraries(MiddlewareMain
     PRIVATE
         Middleware
         gcov

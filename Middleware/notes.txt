@@ -18,3 +18,9 @@ ctest --verbose
 lcov --capture --directory . --output-file coverage.info
 lcov --remove coverage.info '/usr/*' --output-file coverage.info
 genhtml coverage.info --output-directory coverage_report
+
+zmq
+Only keeping the most recent message (HWM=1 and CONFLATE=1)
+Ensuring quick socket closure (LINGER=0)
+Disabling Nagle's algorithm via the IPV6 option for minimal TCP latency
+

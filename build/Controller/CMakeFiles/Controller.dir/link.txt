@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Controller.dir/src/ControlTransmitter.cpp.o CMakeFiles/Controller.dir/src/Controller.cpp.o CMakeFiles/Controller.dir/src/main.cpp.o -o ../bin/Controller  /home/dimoj/ClusterDisplay/Controller/../build/zmq/libZeroMQLib.a -lzmq 

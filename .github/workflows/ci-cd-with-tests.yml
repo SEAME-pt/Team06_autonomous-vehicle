@@ -12,7 +12,7 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: [seame] #ubuntu-latest
+    runs-on: ubuntu-latest
     outputs:
       tests_passed: ${{ steps.set_test_output.outputs.tests_passed }}
 
@@ -46,7 +46,6 @@ jobs:
             echo 'Checking pkg-config...' && \
             pkg-config --list-all | grep zmq || echo 'ZeroMQ not found in pkg-config'
             "
-
       - name: Build project with tests and coverage
         run: |
           docker run --rm --platform linux/arm64 \
@@ -55,8 +54,7 @@ jobs:
             /bin/bash -c "
             # Install ZeroMQ dependencies first
             apt-get update && \
-            apt-get install -y libzmq3-dev git wget tar lcov gcovr \
-                             libi2c-dev joystick libjoystick-dev liblinux-dev linux-libc-dev && \
+            apt-get install -y libzmq3-dev git wget tar && \
             # Install newer cppzmq for modern API support (temporary until Docker image is updated)
             cd /tmp && \
             wget https://github.com/zeromq/cppzmq/archive/v4.8.1.tar.gz && \
@@ -68,79 +66,11 @@ jobs:
             ldconfig && \
             # Now build the project
             cd /repo && \
-            # Check for required headers
-            echo 'Checking for required headers:' && \
-            find /usr/include -name 'joystick.h' -o -name 'i2c-dev.h' && \
-            # Create dummy headers if not found
-            mkdir -p /repo/Controller/mock_headers/linux && \
-            if [ ! -f /usr/include/linux/joystick.h ]; then
-              echo 'Creating mock joystick.h' && \
-              cat > /repo/Controller/mock_headers/linux/joystick.h << 'ENDJS'
-#ifndef LINUX_JOYSTICK_H
-#define LINUX_JOYSTICK_H
-#include <stdint.h>
-
-#define JS_EVENT_BUTTON 0x01
-#define JS_EVENT_AXIS   0x02
-#define JS_EVENT_INIT   0x80
-
-struct js_event {
-    uint32_t time;     /* event timestamp in milliseconds */
-    int16_t value;     /* value */
-    uint8_t type;      /* event type */
-    uint8_t number;    /* axis/button number */
-};
-
-#define JSIOCGNAME(len) _IOC(_IOC_READ, 'j', 0x13, len)
-
-#endif /* LINUX_JOYSTICK_H */
-ENDJS
-            fi && \
-            if [ ! -f /usr/include/linux/i2c-dev.h ]; then
-              echo 'Creating mock i2c-dev.h' && \
-              cat > /repo/Controller/mock_headers/linux/i2c-dev.h << 'ENDI2C'
-#ifndef LINUX_I2C_DEV_H
-#define LINUX_I2C_DEV_H
-/* Minimal header for build purposes */
-#endif /* LINUX_I2C_DEV_H */
-ENDI2C
-            fi && \
-            # Update Controller's CMakeLists.txt to include mock headers if needed
-            echo "# Check if we need to use mock headers" > /repo/Controller/mock_headers.cmake && \
-            echo "if(EXISTS \"\${PROJECT_SOURCE_DIR}/mock_headers\")" >> /repo/Controller/mock_headers.cmake && \
-            echo "    target_include_directories(Controller PRIVATE \"\${PROJECT_SOURCE_DIR}/mock_headers\")" >> /repo/Controller/mock_headers.cmake && \
-            echo "endif()" >> /repo/Controller/mock_headers.cmake && \
-
-            # Append to CMakeLists.txt without using heredoc
-            cat /repo/Controller/CMakeLists.txt /repo/Controller/mock_headers.cmake > /repo/Controller/CMakeLists.txt.new && \
-            mv /repo/Controller/CMakeLists.txt.new /repo/Controller/CMakeLists.txt && \
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. -DCODE_COVERAGE=ON && \
-            # First build ZeroMQLib and Middleware
-            make -j$(nproc) ZeroMQLib middleware && \
-            echo '==== ZeroMQLib and Middleware built successfully ====' && \
-            # Now try to build Controller with detailed output
-            VERBOSE=1 make -j1 Controller || { \
-              echo '==== Controller build failed, checking dependency errors ====' && \
-              cat Controller/CMakeFiles/Controller.dir/depend.make || echo 'No dependency information' && \
-              cat Controller/CMakeFiles/Controller.dir/link.txt || echo 'No link command information' && \
-              find Controller/CMakeFiles/Controller.dir -name '*.o*' | wc -l && \
-              find Controller/CMakeFiles/Controller.dir -name '*.o*' && \
-              find Controller/CMakeFiles -name '*.log' -exec cat {} \\; && \
-              grep -r error Controller/CMakeFiles && \
-              echo '==== Trying alternative build approaches ====' && \
-              make VERBOSE=1 Controller || echo 'Controller build failed again' && \
-              exit 1; \
-            } && \
-            # Build the rest of the project
-            make -j$(nproc) || { \
-              echo '==== Full build failed, but Controller was built ====' && \
-              # Continue anyway to test what we can
-              true; \
-            }
+            make
             "
-
       - name: Run tests
         id: run_tests
         continue-on-error: true
@@ -151,26 +81,20 @@ ENDI2C
             /bin/bash -c "
             # Ensure dependencies are installed
             apt-get update && \
-            apt-get install -y libzmq3-dev lcov gcovr && \
+            apt-get install -y libzmq3-dev && \
             # The build step should have already installed cppzmq
             cd /repo/build/bin && \
             mkdir -p reports && \
-            export GTEST_COLOR=1 && \
-            # Run each test with XML output and collect coverage data
+            # Run each test with XML output
             for test in *_test; do
               if [ -x \"\$test\" ]; then
                 echo \"Running \$test...\"
                 mkdir -p \"reports/\$test\"
-                # Run with coverage instrumentation
-                GCOV_PREFIX=/repo/build GCOV_PREFIX_STRIP=2 ./\$test --gtest_output=xml:\"reports/\$test/results.xml\" || echo \"Test \$test failed with exit code \$?\"
+                ./\$test --gtest_output=xml:\"reports/\$test/results.xml\" || echo \"Test \$test failed with exit code \$?\"
               fi
-            done && \
-            # Generate initial coverage data files
-            cd /repo/build && \
-            find . -name '*.gcda' -o -name '*.gcno' | sort
+            done
             "
           # We don't exit with failure here - we'll analyze test results separately
-
       - name: Set tests passed output
         id: set_test_output
         run: |
@@ -183,7 +107,6 @@ ENDI2C
             echo "tests_passed=true" >> $GITHUB_OUTPUT
             echo "All tests passed"
           fi
-
       - name: Generate coverage report
         run: |
           docker run --rm --platform linux/arm64 \
@@ -192,54 +115,16 @@ ENDI2C
             /bin/bash -c "
             # Ensure dependencies are installed
             apt-get update && \
-            apt-get install -y libzmq3-dev lcov gcovr && \
-            # Create directory structure first to ensure it exists
-            mkdir -p /repo/build/coverage/html && \
-
-            # Run tests to generate coverage data
+            apt-get install -y libzmq3-dev && \
+            # The build step should have already installed cppzmq
             cd /repo/build && \
-            export GTEST_COLOR=1 && \
-
-            # Generate coverage report manually with verbose output
-            echo 'Generating coverage report manually...' && \
-            lcov --capture --directory /repo/build --output-file /repo/build/coverage/coverage.info && \
-            echo 'Initial coverage info captured:' && \
-            ls -la /repo/build/coverage/coverage.info && \
-
-            lcov --remove /repo/build/coverage/coverage.info '/usr/*' --output-file /repo/build/coverage/coverage.info && \
-            echo 'Final coverage info after removing system files:' && \
-            ls -la /repo/build/coverage/coverage.info && \
-
-            echo 'Generating HTML report...' && \
-            genhtml /repo/build/coverage/coverage.info --output-directory /repo/build/coverage/html && \
-
-            # Ensure the files have the right permissions for the GitHub runner
-            chmod -R 777 /repo/build/coverage && \
-
-            # Verify the coverage report exists with detailed listing
-            echo 'Coverage report files:' && \
-            find /repo/build/coverage -type f | sort && \
-            echo 'Coverage HTML report directory:' && \
-            ls -la /repo/build/coverage/html || echo 'Coverage report directory not found'
+            make coverage || true
             "
-
-      - name: Fix file permissions
-        run: |
-          # Fix permissions for coverage reports and other files created in Docker
-          sudo chown -R $(id -u):$(id -g) build/ || true
-          # Ensure coverage directory exists and is accessible
-          mkdir -p build/coverage/html || true
-          # Set world-readable permissions
-          chmod -R 755 build/ || true
-
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: |
-            build/coverage/html/**
-            build/coverage/coverage.info
-          if-no-files-found: warn
+          path: build/coverage/html
         if: always()
 
       - name: Upload test results
@@ -260,7 +145,6 @@ ENDI2C
         uses: codecov/codecov-action@v3
         if: always()
         with:
-          files: ./build/coverage/coverage.info
           directory: ./build/coverage
           flags: unittests
           name: codecov-umbrella
@@ -283,7 +167,6 @@ ENDI2C
         run: |
           mkdir -p ./team06/bin \
           && rm -rf ./bin/*
-
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -295,14 +178,12 @@ ENDI2C
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
           team06@10.21.221.56:/home/team06/
-
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'
-
   notify:
-    runs-on: [seame]
+    runs-on: ubuntu-latest
     needs: [build_and_test, deploy]
     if: always()
     steps:

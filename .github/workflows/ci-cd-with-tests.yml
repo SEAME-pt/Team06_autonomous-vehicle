@@ -75,7 +75,7 @@ jobs:
             mkdir -p /repo/Controller/mock_headers/linux && \
             if [ ! -f /usr/include/linux/joystick.h ]; then
               echo 'Creating mock joystick.h' && \
-              cat > /repo/Controller/mock_headers/linux/joystick.h << 'EOF'
+              cat > /repo/Controller/mock_headers/linux/joystick.h << 'ENDJS'
 #ifndef LINUX_JOYSTICK_H
 #define LINUX_JOYSTICK_H
 #include <stdint.h>
@@ -94,26 +94,25 @@ struct js_event {
 #define JSIOCGNAME(len) _IOC(_IOC_READ, 'j', 0x13, len)
 
 #endif /* LINUX_JOYSTICK_H */
-EOF
+ENDJS
             fi && \
             if [ ! -f /usr/include/linux/i2c-dev.h ]; then
               echo 'Creating mock i2c-dev.h' && \
-              cat > /repo/Controller/mock_headers/linux/i2c-dev.h << 'EOF'
+              cat > /repo/Controller/mock_headers/linux/i2c-dev.h << 'ENDI2C'
 #ifndef LINUX_I2C_DEV_H
 #define LINUX_I2C_DEV_H
 /* Minimal header for build purposes */
 #endif /* LINUX_I2C_DEV_H */
-EOF
+ENDI2C
             fi && \
             # Update Controller's CMakeLists.txt to include mock headers if needed
-            cat > /repo/Controller/CMakeLists.txt.new << 'EOF'
-$(cat /repo/Controller/CMakeLists.txt)
+            echo "# Check if we need to use mock headers" > /repo/Controller/mock_headers.cmake && \
+            echo "if(EXISTS \"\${PROJECT_SOURCE_DIR}/mock_headers\")" >> /repo/Controller/mock_headers.cmake && \
+            echo "    target_include_directories(Controller PRIVATE \"\${PROJECT_SOURCE_DIR}/mock_headers\")" >> /repo/Controller/mock_headers.cmake && \
+            echo "endif()" >> /repo/Controller/mock_headers.cmake && \
 
-# Check if we need to use mock headers
-if(EXISTS \"${PROJECT_SOURCE_DIR}/mock_headers\")
-    target_include_directories(Controller PRIVATE \"${PROJECT_SOURCE_DIR}/mock_headers\")
-endif()
-EOF
+            # Append to CMakeLists.txt without using heredoc
+            cat /repo/Controller/CMakeLists.txt /repo/Controller/mock_headers.cmake > /repo/Controller/CMakeLists.txt.new && \
             mv /repo/Controller/CMakeLists.txt.new /repo/Controller/CMakeLists.txt && \
             mkdir -p /repo/build && \
             cd /repo/build && \
@@ -194,39 +193,51 @@ EOF
             # Ensure dependencies are installed
             apt-get update && \
             apt-get install -y libzmq3-dev lcov gcovr && \
+            # Create directory structure first to ensure it exists
+            mkdir -p /repo/build/coverage/html && \
+
             # Run tests to generate coverage data
             cd /repo/build && \
             export GTEST_COLOR=1 && \
 
-            # Print CMake variables to see the coverage target definition
-            cmake --build . --target help | grep coverage || echo 'No coverage target found' && \
-
-            # Try to run the coverage target
-            cmake --build . --target coverage || true && \
-
-            # Debug - check if the coverage files exist
-            echo 'Checking coverage files:' && \
-            find /repo/build -name 'coverage' -type d || true && \
-            find /repo/build -name '*.info' || true && \
-
-            # Generate coverage report manually
+            # Generate coverage report manually with verbose output
             echo 'Generating coverage report manually...' && \
-            cd /repo && \
-            mkdir -p /repo/build/coverage/html && \
             lcov --capture --directory /repo/build --output-file /repo/build/coverage/coverage.info && \
+            echo 'Initial coverage info captured:' && \
+            ls -la /repo/build/coverage/coverage.info && \
+
             lcov --remove /repo/build/coverage/coverage.info '/usr/*' --output-file /repo/build/coverage/coverage.info && \
+            echo 'Final coverage info after removing system files:' && \
+            ls -la /repo/build/coverage/coverage.info && \
+
+            echo 'Generating HTML report...' && \
             genhtml /repo/build/coverage/coverage.info --output-directory /repo/build/coverage/html && \
 
-            # Verify the coverage report exists
-            ls -la /repo/build/coverage/html || echo 'Coverage report directory still not found'
+            # Ensure the files have the right permissions for the GitHub runner
+            chmod -R 777 /repo/build/coverage && \
+
+            # Verify the coverage report exists with detailed listing
+            echo 'Coverage report files:' && \
+            find /repo/build/coverage -type f | sort && \
+            echo 'Coverage HTML report directory:' && \
+            ls -la /repo/build/coverage/html || echo 'Coverage report directory not found'
             "
+
+      - name: Fix file permissions
+        run: |
+          # Fix permissions for coverage reports and other files created in Docker
+          sudo chown -R $(id -u):$(id -g) build/ || true
+          # Ensure coverage directory exists and is accessible
+          mkdir -p build/coverage/html || true
+          # Set world-readable permissions
+          chmod -R 755 build/ || true
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: |
-            build/coverage/html
+            build/coverage/html/**
             build/coverage/coverage.info
           if-no-files-found: warn
         if: always()
@@ -249,6 +260,7 @@ EOF
         uses: codecov/codecov-action@v3
         if: always()
         with:
+          files: ./build/coverage/coverage.info
           directory: ./build/coverage
           flags: unittests
           name: codecov-umbrella

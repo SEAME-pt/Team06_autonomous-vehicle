@@ -36,18 +36,13 @@ RUN apt-get update && apt-get install -y \
     && apt-get update \
     && apt-get install -y cmake \
 
-    # Install cppzmq (ZMQ C++ bindings)
-    && cd /tmp \
-    && wget https://github.com/zeromq/cppzmq/archive/v4.7.1.zip \
-    && unzip v4.7.1.zip \
-    && cd cppzmq-4.7.1 \
-    && mkdir build && cd build \
-    && cmake .. \
-    && make -j$(nproc) \
+    # Update ZeroMQ to latest version
+    && git clone https://github.com/zeromq/cppzmq.git \
+    && cd cppzmq && mkdir build && cd build \
+    && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local \
     && make install \
-    && ldconfig \
 
     # Clean up the build and apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /tmp/cppzmq-4.7.1 /tmp/v4.7.1.zip
+    && rm -rf /cppzmq

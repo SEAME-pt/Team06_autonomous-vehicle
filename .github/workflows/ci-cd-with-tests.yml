@@ -12,7 +12,7 @@ on:
 
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest
+    runs-on: [seame] #ubuntu-latest
     outputs:
       tests_passed: ${{ steps.set_test_output.outputs.tests_passed }}
 
@@ -55,7 +55,7 @@ jobs:
             /bin/bash -c "
             # Install ZeroMQ dependencies first
             apt-get update && \
-            apt-get install -y libzmq3-dev git wget tar && \
+            apt-get install -y libzmq3-dev git wget tar lcov gcovr && \
             # Install newer cppzmq for modern API support (temporary until Docker image is updated)
             cd /tmp && \
             wget https://github.com/zeromq/cppzmq/archive/v4.8.1.tar.gz && \
@@ -70,7 +70,7 @@ jobs:
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. -DCODE_COVERAGE=ON && \
-            make
+            make -j$(nproc)
             "
 
       - name: Run tests
@@ -83,18 +83,23 @@ jobs:
             /bin/bash -c "
             # Ensure dependencies are installed
             apt-get update && \
-            apt-get install -y libzmq3-dev && \
+            apt-get install -y libzmq3-dev lcov gcovr && \
             # The build step should have already installed cppzmq
             cd /repo/build/bin && \
             mkdir -p reports && \
-            # Run each test with XML output
+            export GTEST_COLOR=1 && \
+            # Run each test with XML output and collect coverage data
             for test in *_test; do
               if [ -x \"\$test\" ]; then
                 echo \"Running \$test...\"
                 mkdir -p \"reports/\$test\"
-                ./\$test --gtest_output=xml:\"reports/\$test/results.xml\" || echo \"Test \$test failed with exit code \$?\"
+                # Run with coverage instrumentation
+                GCOV_PREFIX=/repo/build GCOV_PREFIX_STRIP=2 ./\$test --gtest_output=xml:\"reports/\$test/results.xml\" || echo \"Test \$test failed with exit code \$?\"
               fi
-            done
+            done && \
+            # Generate initial coverage data files
+            cd /repo/build && \
+            find . -name '*.gcda' -o -name '*.gcno' | sort
             "
           # We don't exit with failure here - we'll analyze test results separately
 
@@ -119,17 +124,42 @@ jobs:
             /bin/bash -c "
             # Ensure dependencies are installed
             apt-get update && \
-            apt-get install -y libzmq3-dev && \
-            # The build step should have already installed cppzmq
+            apt-get install -y libzmq3-dev lcov gcovr && \
+            # Run tests to generate coverage data
             cd /repo/build && \
-            make coverage || true
+            export GTEST_COLOR=1 && \
+
+            # Print CMake variables to see the coverage target definition
+            cmake --build . --target help | grep coverage || echo 'No coverage target found' && \
+
+            # Try to run the coverage target
+            cmake --build . --target coverage || true && \
+
+            # Debug - check if the coverage files exist
+            echo 'Checking coverage files:' && \
+            find /repo/build -name 'coverage' -type d || true && \
+            find /repo/build -name '*.info' || true && \
+
+            # Generate coverage report manually
+            echo 'Generating coverage report manually...' && \
+            cd /repo && \
+            mkdir -p /repo/build/coverage/html && \
+            lcov --capture --directory /repo/build --output-file /repo/build/coverage/coverage.info && \
+            lcov --remove /repo/build/coverage/coverage.info '/usr/*' --output-file /repo/build/coverage/coverage.info && \
+            genhtml /repo/build/coverage/coverage.info --output-directory /repo/build/coverage/html && \
+
+            # Verify the coverage report exists
+            ls -la /repo/build/coverage/html || echo 'Coverage report directory still not found'
             "
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: build/coverage/html
+          path: |
+            build/coverage/html
+            build/coverage/coverage.info
+          if-no-files-found: warn
         if: always()
 
       - name: Upload test results
@@ -191,7 +221,7 @@ jobs:
           ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'
 
   notify:
-    runs-on: ubuntu-latest
+    runs-on: [seame]
     needs: [build_and_test, deploy]
     if: always()
     steps:

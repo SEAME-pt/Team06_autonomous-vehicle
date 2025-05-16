@@ -32,6 +32,21 @@ jobs:
       - name: Make test script executable
         run: chmod +x run_tests.sh
 
+      - name: Inspect ZeroMQ installation
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            echo 'Checking for libzmq library files...' && \
+            find /usr -name '*zmq*' | grep -E '\.so|\.a' || echo 'No library files found' && \
+            echo 'Checking for ZeroMQ headers...' && \
+            find /usr -name 'zmq.h' || echo 'No zmq.h found' && \
+            find /usr -name 'zmq.hpp' || echo 'No zmq.hpp found' && \
+            echo 'Checking pkg-config...' && \
+            pkg-config --list-all | grep zmq || echo 'ZeroMQ not found in pkg-config'
+            "
+
       - name: Build project with tests and coverage
         run: |
           docker run --rm --platform linux/arm64 \

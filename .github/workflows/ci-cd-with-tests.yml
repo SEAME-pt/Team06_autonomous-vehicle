@@ -53,6 +53,10 @@ jobs:
             -v ${{ github.workspace }}:/repo \
             -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
+            # Install ZeroMQ dependencies first
+            apt-get update && \
+            apt-get install -y libzmq3-dev && \
+            # Now build the project
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. -DCODE_COVERAGE=ON && \
@@ -67,6 +71,9 @@ jobs:
             -v ${{ github.workspace }}:/repo \
             -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
+            # Ensure dependencies are installed
+            apt-get update && \
+            apt-get install -y libzmq3-dev && \
             cd /repo/build/bin && \
             mkdir -p reports && \
             # Run each test with XML output
@@ -99,6 +106,9 @@ jobs:
             -v ${{ github.workspace }}:/repo \
             -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
+            # Ensure dependencies are installed
+            apt-get update && \
+            apt-get install -y libzmq3-dev && \
             cd /repo/build && \
             make coverage || true
             "

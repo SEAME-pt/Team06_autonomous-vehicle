@@ -31,7 +31,7 @@ This system consists of three main components:
 Prerequisites:
 - C++17 compatible compiler
 - CMake 3.10+
-- ZeroMQ library (libzmq3-dev)
+- ZeroMQ library (libzmq3-dev) - **Required**
 - ZeroMQ C++ bindings (cppzmq)
 - Qt 5.9+ (for ClusterDisplay)
 - pthread
@@ -42,10 +42,9 @@ Build steps:
 git clone https://github.com/your-organization/Team06-SEAME-DES_Instrument-Cluster.git
 cd Team06-SEAME-DES_Instrument-Cluster
 
-# The run_tests.sh script will automatically install dependencies
-# Or you can install them manually:
-# sudo apt-get install -y libzmq3-dev
-# and follow instructions at https://github.com/zeromq/cppzmq to install cppzmq
+# Install required ZeroMQ dependencies if not already installed
+sudo apt-get update
+sudo apt-get install -y libzmq3-dev
 
 # Build using the script
 ./build.sh

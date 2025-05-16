@@ -3,6 +3,18 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
+# Check if we need to install dependencies
+if [ ! -f "/usr/include/zmq.h" ]; then
+    echo "Installing ZeroMQ dependencies..."
+    if [ $(id -u) -eq 0 ]; then
+        apt-get update
+        apt-get install -y libzmq3-dev
+    else
+        sudo apt-get update
+        sudo apt-get install -y libzmq3-dev
+    fi
+fi
+
 # Create and navigate to build directory
 mkdir -p build
 cd build

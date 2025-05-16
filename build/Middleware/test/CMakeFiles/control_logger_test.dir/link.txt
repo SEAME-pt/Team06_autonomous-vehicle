@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/control_logger_test.dir/ControlLoggerTest.cpp.o -o ../../bin/control_logger_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lzmq 

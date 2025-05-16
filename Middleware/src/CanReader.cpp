@@ -1,21 +1,35 @@
 #include "CanReader.hpp"
 
-CanReader::CanReader(bool debug) : spi_fd(-1), debug(false) {
-    InitSPI();
-    if (!Init())
-    {
-        std::cerr << "Initialization failed!" << std::endl;
-        return ;
+CanReader::CanReader(bool test_mode) : test_mode(test_mode), debug(false) {
+    if (!test_mode) {
+        try {
+            InitSPI();
+            if (!Init()) {
+                std::cerr << "Initialization failed!" << std::endl;
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "Error initializing CanReader: " << e.what() << std::endl;
+        }
+    } else {
+        // Initialize test mode register defaults
+        test_registers[CANCTRL] = 0x00;  // Normal mode
+        test_registers[CANSTAT] = 0x00;  // Normal mode
+        test_registers[RXB0CTRL] = 0x60; // Receive any message
+        test_registers[CANINTF] = 0x00;  // No interrupts
     }
 }
 
 CanReader::~CanReader() {
-    if (spi_fd >= 0) {
+    if (!test_mode && spi_fd >= 0) {
         close(spi_fd);
     }
 }
 
 bool CanReader::InitSPI() {
+    if (test_mode) {
+        return true;
+    }
+
     spi_fd = open("/dev/spidev0.0", O_RDWR);
     if (spi_fd < 0) {
         throw std::runtime_error("Failed to open SPI device: /dev/spidev0.0");
@@ -38,7 +52,6 @@ bool CanReader::InitSPI() {
         }
     } catch (...) {
         close(spi_fd);
-
         spi_fd = -1;
         throw; // Rethrow exception after cleanup
     }
@@ -46,8 +59,15 @@ bool CanReader::InitSPI() {
     return true;
 }
 
-
 uint8_t CanReader::ReadByte(uint8_t addr) {
+    if (test_mode) {
+        auto it = test_registers.find(addr);
+        if (it != test_registers.end()) {
+            return it->second;
+        }
+        return 0; // Default for test mode
+    }
+
     uint8_t tx[3] = {CAN_READ, addr, 0};
     uint8_t rx[3] = {0};
 
@@ -69,6 +89,11 @@ uint8_t CanReader::ReadByte(uint8_t addr) {
 }
 
 void CanReader::WriteByte(uint8_t addr, uint8_t data) {
+    if (test_mode) {
+        test_registers[addr] = data;
+        return;
+    }
+
     uint8_t tx[3] = {CAN_WRITE, addr, data};
 
     struct spi_ioc_transfer tr;
@@ -86,6 +111,16 @@ void CanReader::WriteByte(uint8_t addr, uint8_t data) {
 }
 
 void CanReader::Reset() {
+    if (test_mode) {
+        // Reset test registers to default values
+        test_registers.clear();
+        test_registers[CANCTRL] = 0x00;
+        test_registers[CANSTAT] = 0x00;
+        test_registers[RXB0CTRL] = 0x60;
+        test_registers[CANINTF] = 0x00;
+        return;
+    }
+
     uint8_t tx = CAN_RESET;
 
     struct spi_ioc_transfer tr;
@@ -104,6 +139,11 @@ void CanReader::Reset() {
 
 bool CanReader::Send(uint16_t canId, uint8_t* data, uint8_t length) {
     if (length > 8) return false;
+
+    if (test_mode) {
+        // In test mode, just simulate successful send
+        return true;
+    }
 
     uint8_t status = ReadByte(CAN_RD_STATUS);
 
@@ -143,7 +183,12 @@ bool CanReader::Send(uint16_t canId, uint8_t* data, uint8_t length) {
 }
 
 bool CanReader::Init() {
-    // std::cout << "Resetting..." << std::endl;
+    if (test_mode) {
+        // In test mode, just set default register values
+        WriteByte(CANCTRL, 0x00);  // Normal mode
+        return true;
+    }
+
     Reset();
     usleep(100000); // 100ms delay
 
@@ -182,6 +227,17 @@ bool CanReader::Init() {
 }
 
 bool CanReader::Receive(uint8_t* buffer, uint8_t& length) {
+    if (test_mode) {
+        if (!test_should_receive) {
+            length = 0;
+            return false;
+        }
+
+        memcpy(buffer, test_receive_data, test_receive_length);
+        length = test_receive_length;
+        return true;
+    }
+
     // Verifica se há dados para receber
     uint8_t status = ReadByte(CANINTF);
     if (!(status & 0x01)) {
@@ -208,7 +264,56 @@ bool CanReader::Receive(uint8_t* buffer, uint8_t& length) {
     return true;
 }
 
-uint16_t CanReader::getId()
-{
-	return (ReadByte(RXB0SIDH) <<3) | (ReadByte(RXB0SIDL)>>5);
+uint16_t CanReader::getId() {
+    if (test_mode) {
+        return test_can_id;
+    }
+    return (ReadByte(RXB0SIDH) << 3) | (ReadByte(RXB0SIDL) >> 5);
+}
+
+// Test mode methods
+uint8_t CanReader::setTestRegister(uint8_t addr, uint8_t value) {
+    if (test_mode) {
+        test_registers[addr] = value;
+    }
+    return value; // Return the value that was set
+}
+
+uint8_t CanReader::getTestRegister(uint8_t addr) const {
+    if (test_mode) {
+        auto it = test_registers.find(addr);
+        if (it != test_registers.end()) {
+            return it->second;
+        }
+    }
+    return 0; // Default value if not in test mode or register not found
+}
+
+void CanReader::setTestReceiveData(const uint8_t* data, uint8_t length, uint16_t id) {
+    if (test_mode) {
+        test_should_receive = true;
+        test_can_id = id;
+        test_receive_length = length > 8 ? 8 : length;
+        memcpy(test_receive_data, data, test_receive_length);
+
+        // Also update registers to match
+        test_registers[RXB0SIDH] = (id >> 3) & 0xFF;
+        test_registers[RXB0SIDL] = (id & 0x07) << 5;
+        test_registers[RXB0DLC] = test_receive_length;
+
+        for (uint8_t i = 0; i < test_receive_length; i++) {
+            test_registers[RXB0D0 + i] = test_receive_data[i];
+        }
+    }
+}
+
+void CanReader::setTestShouldReceive(bool shouldReceive) {
+    if (test_mode) {
+        test_should_receive = shouldReceive;
+        if (shouldReceive) {
+            test_registers[CANINTF] = 0x01; // RX0IF flag
+        } else {
+            test_registers[CANINTF] = 0x00;
+        }
+    }
 }

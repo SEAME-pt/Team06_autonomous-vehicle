@@ -19,7 +19,10 @@
 
 class ControlAssembly {
 public:
-    ControlAssembly(const std::string& address, zmq::context_t& context);
+    ControlAssembly(const std::string& address,
+                    zmq::context_t& context,
+                    std::shared_ptr<IBackMotors> backMotors = nullptr,
+                    std::shared_ptr<IFServo> fServo = nullptr);
     ~ControlAssembly();
 
     void start();
@@ -34,8 +37,8 @@ private:
     std::thread _listenerThread;
     std::atomic<bool> stop_flag;
 
-    BackMotors	_backMotors;
-	FServo		_fServo;
+    std::shared_ptr<IBackMotors> _backMotors;
+    std::shared_ptr<IFServo> _fServo;
     ControlLogger _logger;
 };
 

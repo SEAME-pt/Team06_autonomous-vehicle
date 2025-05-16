@@ -38,7 +38,13 @@ int main() {
 
         // Initialize components
         std::cout << "Initializing sensor handler..." << std::endl;
-        sensor_handler = std::make_unique<SensorHandler>(zmq_c_address, zmq_nc_address, zmq_context);
+        sensor_handler = std::make_unique<SensorHandler>(
+            zmq_c_address,
+            zmq_nc_address,
+            zmq_context,
+            nullptr,
+            nullptr,
+            true);  // Use real sensors in production
 
         std::cout << "Initializing control assembly..." << std::endl;
         control_assembly = std::make_unique<ControlAssembly>(zmq_control_address, zmq_context);

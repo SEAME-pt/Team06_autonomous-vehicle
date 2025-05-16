@@ -4,18 +4,34 @@
 #include <zmq.hpp>
 #include <string>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 
-class ZmqPublisher {
-    public:
-        ZmqPublisher(const std::string& address, zmq::context_t& context);
-        ~ZmqPublisher();
+// Interface for publisher functionality
+class IPublisher {
+public:
+    virtual ~IPublisher() = default;
+    virtual void send(const std::string& message) = 0;
+};
 
-        void send(const std::string& message);
+class ZmqPublisher : public IPublisher {
+public:
+    // Constructor with test_mode parameter
+    ZmqPublisher(const std::string& address, zmq::context_t& context, bool test_mode = false);
+    ~ZmqPublisher() override;
 
-    private:
-        zmq::context_t& _context;
-        zmq::socket_t _socket;
-        std::string _address;
+    // Send a message through the publisher
+    void send(const std::string& message) override;
+
+    // Test if the publisher is connected
+    bool isConnected() const;
+
+private:
+    zmq::context_t& _context;
+    zmq::socket_t _socket;
+    std::string _address;
+    bool _test_mode;
+    bool _is_connected;
 };
 
 #endif

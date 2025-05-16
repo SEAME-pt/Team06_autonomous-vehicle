@@ -14,24 +14,39 @@
 #include <chrono>
 #include <linux/i2c-dev.h>// Interface padrão do Linux para I2C
 
+// Forward declaration
+class BackMotors;
 
-class BackMotors{
+// Interface for BackMotors
+class IBackMotors {
+public:
+	virtual ~IBackMotors() = default;
+	virtual void open_i2c_bus() = 0;
+	virtual bool init_motors() = 0;
+	virtual bool setMotorPwm(const int channel, int value) = 0;
+	virtual void setSpeed(int speed) = 0;
+	virtual void writeByteData(int fd, uint8_t reg, uint8_t value) = 0;
+	virtual uint8_t readByteData(int fd, uint8_t reg) = 0;
+	virtual int getFdMotor() = 0;
+};
+
+class BackMotors : public IBackMotors {
 private:
 	const int _motorAddr = 0x60;
 
 public:
 	int _fdMotor;
 	BackMotors();
-	virtual ~BackMotors();
-	virtual void open_i2c_bus();
-	virtual bool init_motors();
-	virtual bool setMotorPwm(const int channel, int value);
-	virtual void setSpeed(int speed);
+	~BackMotors() override;
+	void open_i2c_bus() override;
+	bool init_motors() override;
+	bool setMotorPwm(const int channel, int value) override;
+	void setSpeed(int speed) override;
 
-	virtual void writeByteData(int fd, uint8_t reg, uint8_t value);
-	virtual uint8_t readByteData(int fd, uint8_t reg);
+	void writeByteData(int fd, uint8_t reg, uint8_t value) override;
+	uint8_t readByteData(int fd, uint8_t reg) override;
 
-	int getFdMotor();
+	int getFdMotor() override;
 };
 
 #endif

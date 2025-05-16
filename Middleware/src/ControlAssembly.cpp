@@ -1,15 +1,22 @@
 #include "ControlAssembly.hpp"
 
-ControlAssembly::ControlAssembly(const std::string& address, zmq::context_t& context)
-    : zmq_subscriber(address, context), stop_flag(false), _logger("control_updates.log") {
+ControlAssembly::ControlAssembly(const std::string& address,
+                                 zmq::context_t& context,
+                                 std::shared_ptr<IBackMotors> backMotors,
+                                 std::shared_ptr<IFServo> fServo)
+    : zmq_subscriber(address, context),
+      stop_flag(false),
+      _backMotors(backMotors ? backMotors : std::make_shared<BackMotors>()),
+      _fServo(fServo ? fServo : std::make_shared<FServo>()),
+      _logger("control_updates.log") {
     std::cout << "ControlAssembly initialized with ZMQ address: " << address << std::endl;
-    _backMotors.open_i2c_bus();
-	_fServo.open_i2c_bus();
-	if (!_backMotors.init_motors()){
+    _backMotors->open_i2c_bus();
+	_fServo->open_i2c_bus();
+	if (!_backMotors->init_motors()){
 		std::cerr << "Failed to initialize BackMotors" << std::endl;
 		return;
 	}
-	if (!_fServo.init_servo()){
+	if (!_fServo->init_servo()){
 		std::cerr << "Failed to initialize FServo" << std::endl;
 		return;
 	}
@@ -19,8 +26,8 @@ ControlAssembly::ControlAssembly(const std::string& address, zmq::context_t& con
 ControlAssembly::~ControlAssembly() {
     std::cout << "ControlAssembly shutting down" << std::endl;
     stop();
-    _backMotors.setSpeed(0);
-	_fServo.set_steering(0);
+    _backMotors->setSpeed(0);
+	_fServo->set_steering(0);
     std::cout << "Motor speed and steering set to 0" << std::endl;
 }
 
@@ -77,8 +84,8 @@ void ControlAssembly::handleMessage(const std::string& message) {
     // Handle special 'init' message
     if (message == "init;") {
         std::cout << "Received init message, resetting to zero values" << std::endl;
-        _fServo.set_steering(0);
-        _backMotors.setSpeed(0);
+        _fServo->set_steering(0);
+        _backMotors->setSpeed(0);
         _logger.logControlUpdate("init", 0, 0);
         return;
     }
@@ -90,14 +97,14 @@ void ControlAssembly::handleMessage(const std::string& message) {
     if (values.find("steering") != values.end()) {
         steering = values["steering"];
         std::cout << "Setting steering to: " << steering << std::endl;
-        _fServo.set_steering(static_cast<int>(steering));
+        _fServo->set_steering(static_cast<int>(steering));
     }
 
     // Apply throttle if present in the message
     if (values.find("throttle") != values.end()) {
         throttle = values["throttle"];
         std::cout << "Setting throttle to: " << throttle << std::endl;
-        _backMotors.setSpeed(throttle);
+        _backMotors->setSpeed(throttle);
     }
 
     // Log the control update

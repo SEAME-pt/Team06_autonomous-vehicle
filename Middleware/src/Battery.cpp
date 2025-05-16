@@ -1,6 +1,6 @@
 #include "Battery.hpp"
 
-Battery::Battery() {
+Battery::Battery(std::shared_ptr<IBatteryReader> reader) : batteryReader(reader) {
     _name = "battery";
     _sensorData["battery"] = std::make_shared<SensorData>("battery", false);
     _sensorData["battery"]->value.store(0);
@@ -37,8 +37,8 @@ void Battery::checkUpdated() {
 void Battery::readSensor() {
     auto oldBattery = _sensorData["battery"]->value.load();
     auto oldCharging = _sensorData["charging"]->value.load();
-    auto battery = batteryReader.getPercentage();
-    auto charging = batteryReader.isCharging();
+    auto battery = batteryReader->getPercentage();
+    auto charging = batteryReader->isCharging();
 
     _sensorData["battery"]->oldValue.store(oldBattery);
     _sensorData["charging"]->oldValue.store(oldCharging);
@@ -66,4 +66,8 @@ void Battery::readSensor() {
 
 std::unordered_map<std::string, std::shared_ptr<SensorData>> Battery::getSensorData() const {
     return _sensorData;
+}
+
+bool Battery::getCharging() const {
+    return _sensorData.at("charging")->value.load() > 0;
 }

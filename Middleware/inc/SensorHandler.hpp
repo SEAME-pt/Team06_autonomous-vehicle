@@ -4,7 +4,7 @@
 #include "ISensor.hpp"
 #include "Battery.hpp"
 #include "Speed.hpp"
-#include "ZmqPublisher.hpp"
+#include "IPublisher.hpp"
 #include "SensorLogger.hpp"
 #include <atomic>
 #include <thread>
@@ -16,9 +16,13 @@
 
 class SensorHandler {
 public:
-    explicit SensorHandler(const std::string& zmq_c_address,
-                          const std::string& zmq_nc_address,
-                          zmq::context_t& zmq_context);
+    explicit SensorHandler(
+        const std::string& zmq_c_address,
+        const std::string& zmq_nc_address,
+        zmq::context_t& zmq_context,
+        std::shared_ptr<IPublisher> c_publisher = nullptr,
+        std::shared_ptr<IPublisher> nc_publisher = nullptr,
+        bool use_real_sensors = true);
     ~SensorHandler();
 
     // Delete copy and move operations
@@ -29,6 +33,10 @@ public:
 
     void start();
     void stop();
+
+    // For testing
+    void addSensor(const std::string& name, std::shared_ptr<ISensor> sensor);
+    std::unordered_map<std::string, std::shared_ptr<ISensor>> getSensors() const;
 
 private:
     void addSensors();
@@ -52,8 +60,8 @@ private:
     std::unordered_map<std::string, std::shared_ptr<SensorData>> _criticalData;
     std::unordered_map<std::string, std::shared_ptr<SensorData>> _nonCriticalData;
 
-    ZmqPublisher zmq_c_publisher;
-    ZmqPublisher zmq_nc_publisher;
+    std::shared_ptr<IPublisher> zmq_c_publisher;
+    std::shared_ptr<IPublisher> zmq_nc_publisher;
     SensorLogger _logger;
 
     static constexpr int critical_update_interval_ms = 50;

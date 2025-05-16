@@ -16,7 +16,22 @@
 #include <atomic>
 #include <chrono> // Para cálculos de tempo
 
-class FServo{
+// Forward declaration
+class FServo;
+
+// Interface for FServo
+class IFServo {
+public:
+	virtual ~IFServo() = default;
+	virtual void open_i2c_bus() = 0;
+	virtual bool init_servo() = 0;
+	virtual bool setServoPwm(const int channel, int on_value, int off_value) = 0;
+	virtual void set_steering(int angle) = 0;
+	virtual void writeByteData(int fd, uint8_t reg, uint8_t value) = 0;
+	virtual uint8_t readByteData(int fd, uint8_t reg) = 0;
+};
+
+class FServo : public IFServo {
 private:
 	std::string i2c_device;
 	const int _servoAddr = 0x40;
@@ -31,15 +46,14 @@ public:
 	int _fdServo;
 	FServo();
 
-	virtual void open_i2c_bus();
-	virtual ~FServo();
-	virtual bool init_servo();
-	virtual bool setServoPwm(const int channel, int on_value, int off_value);
-	virtual void set_steering(int angle);
+	void open_i2c_bus() override;
+	~FServo() override;
+	bool init_servo() override;
+	bool setServoPwm(const int channel, int on_value, int off_value) override;
+	void set_steering(int angle) override;
 
-
-	virtual void writeByteData(int fd, uint8_t reg, uint8_t value);
-	virtual uint8_t readByteData(int fd, uint8_t reg);
+	void writeByteData(int fd, uint8_t reg, uint8_t value) override;
+	uint8_t readByteData(int fd, uint8_t reg) override;
 };
 
 #endif

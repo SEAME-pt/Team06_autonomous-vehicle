@@ -1,6 +1,54 @@
-# Controller Class
+# SEA:ME Instrument Cluster - Controller
 
-The `Controller` class provides an interface to interact with a joystick in Linux, capturing events from the axes and buttons. It allows the application to know whether the joystick is connected, if an event has occurred, and provides functions to access the values of the axes and buttons. Joystick events are read non-blocking using `select()`, which allows the application to continue running while waiting for joystick input.
+The Controller component provides joystick interfacing for the Instrument Cluster system, allowing for user interaction with the display. It handles joystick input events in a non-blocking manner, normalizes axis values, and detects button presses.
+
+## Features
+
+- Non-blocking joystick event reading using `select()`
+- Axis value normalization (-1.0 to 1.0 scale)
+- Button state tracking
+- Configurable button mapping
+- Linux joystick interface integration
+
+## Dependencies
+
+- C++17 compatible compiler
+- CMake 3.10+
+- Linux joystick interface
+- pthread
+
+## Building
+
+```bash
+# From the project root
+mkdir -p build && cd build
+cmake ..
+make
+```
+
+Or use the main build script:
+
+```bash
+./build.sh
+```
+
+## Running
+
+```bash
+# From the build/bin directory
+./Controller
+```
+
+## Code Structure
+
+- `inc/`: Header files
+  - Controller class definition
+  - Joystick event structures
+- `src/`: Implementation files
+  - Controller implementation
+  - Main application logic
+
+## Controller Class API
 
 ### `readEvent()`
 
@@ -28,12 +76,15 @@ The `Controller` class provides an interface to interact with a joystick in Linu
 - Takes a raw axis value (an integer) and divides it by the maximum value (`MAX_AXIS_VALUE`), which is probably 32767 (the maximum possible value for a joystick axis).
 - Returns the normalized value as a floating-point number.
 
+## Control Index Settings
 
-# Control Index Settings
-## Index (getAxis(n)) Common Movement
-### 0 X-axis of the left analogue (Left/Right)
-### 1 Left analogue Y-axis (Up/Down)
-### 2 X-axis of the right analogue (Left/Right)
-### 3 Y-axis of the right analogue (Up/Down) OR Triggers (L2/R2)
-### 4 L2 trigger (left trigger)
-### 5 R2 trigger (right trigger)
+### Common Axis Mappings
+
+| Index | Description |
+|-------|-------------|
+| 0 | X-axis of the left analogue (Left/Right) |
+| 1 | Y-axis of the left analogue (Up/Down) |
+| 2 | X-axis of the right analogue (Left/Right) |
+| 3 | Y-axis of the right analogue (Up/Down) OR Triggers (L2/R2) |
+| 4 | L2 trigger (left trigger) |
+| 5 | R2 trigger (right trigger) |

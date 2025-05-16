@@ -2,10 +2,11 @@
 #include "SensorLogger.hpp"
 #include "ISensor.hpp"
 #include <fstream>
-#include <filesystem>
 #include <string>
 #include <regex>
 #include <memory>
+#include <unistd.h>  // for unlink
+#include <sys/stat.h> // for stat
 
 class SensorLoggerTest : public ::testing::Test {
 protected:
@@ -13,7 +14,7 @@ protected:
         // Use a temporary file for testing
         test_log_file = "test_sensor_log.log";
         // Make sure any existing file is removed
-        std::filesystem::remove(test_log_file);
+        removeFile(test_log_file);
 
         // Create a test sensor data instance
         testSensorData = std::make_shared<SensorData>("test_sensor", true);
@@ -24,7 +25,18 @@ protected:
 
     void TearDown() override {
         // Clean up the test log file
-        std::filesystem::remove(test_log_file);
+        removeFile(test_log_file);
+    }
+
+    // Helper function to remove a file
+    void removeFile(const std::string& path) {
+        unlink(path.c_str()); // Remove file if it exists, ignore errors
+    }
+
+    // Helper function to check if a file exists
+    bool fileExists(const std::string& path) {
+        struct stat buffer;
+        return (stat(path.c_str(), &buffer) == 0);
     }
 
     std::string test_log_file;
@@ -46,7 +58,7 @@ TEST_F(SensorLoggerTest, InitializationCreatesLogFile) {
     }
 
     // File should exist
-    EXPECT_TRUE(std::filesystem::exists(test_log_file));
+    EXPECT_TRUE(fileExists(test_log_file));
 
     // Content should include session start and end markers
     std::string content = readLogFile();
@@ -110,7 +122,7 @@ TEST_F(SensorLoggerTest, NullSensorDataHandling) {
     }
 
     // File should still exist with session markers but no data entry
-    EXPECT_TRUE(std::filesystem::exists(test_log_file));
+    EXPECT_TRUE(fileExists(test_log_file));
     std::string content = readLogFile();
 
     // Count entries that have "Sensor:"

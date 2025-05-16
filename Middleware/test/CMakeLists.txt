@@ -21,23 +21,6 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 # Set the ZeroMQLib path
 set(ZMQ_LIB "${CMAKE_BINARY_DIR}/zmq/libZeroMQLib.a")
 
-# Check if we need to link with stdc++fs for filesystem support
-include(CheckCXXSourceCompiles)
-set(CMAKE_REQUIRED_FLAGS "-std=c++17")
-check_cxx_source_compiles("
-    #include <filesystem>
-    int main() {
-        std::filesystem::path p{\"/tmp\"};
-        return !std::filesystem::exists(p);
-    }"
-    FILESYSTEM_WORKS_WITHOUT_LINKING
-)
-if(NOT FILESYSTEM_WORKS_WITHOUT_LINKING)
-    set(FILESYSTEM_LIB stdc++fs)
-else()
-    set(FILESYSTEM_LIB "")
-endif()
-
 # Add test executables
 add_executable(battery_test BatteryTest.cpp)
 target_link_libraries(battery_test gtest gtest_main middleware ${ZMQ_LIB} pthread)
@@ -64,10 +47,10 @@ add_executable(control_assembly_test ControlAssemblyTest.cpp)
 target_link_libraries(control_assembly_test gtest gtest_main middleware ${ZMQ_LIB} pthread)
 
 add_executable(sensor_logger_test SensorLoggerTest.cpp)
-target_link_libraries(sensor_logger_test gtest gtest_main middleware ${ZMQ_LIB} pthread ${FILESYSTEM_LIB})
+target_link_libraries(sensor_logger_test gtest gtest_main middleware ${ZMQ_LIB} pthread)
 
 add_executable(control_logger_test ControlLoggerTest.cpp)
-target_link_libraries(control_logger_test gtest gtest_main middleware ${ZMQ_LIB} pthread ${FILESYSTEM_LIB})
+target_link_libraries(control_logger_test gtest gtest_main middleware ${ZMQ_LIB} pthread)
 
 add_executable(battery_reader_test BatteryReaderTest.cpp)
 target_link_libraries(battery_reader_test gtest gtest_main middleware ${ZMQ_LIB} pthread)

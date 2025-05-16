@@ -17,13 +17,18 @@ endif()
 
 # Find required packages
 find_package(Threads REQUIRED)
-find_package(ZeroMQ QUIET)
 
-if(NOT ZeroMQ_FOUND)
-    # If ZeroMQ is not found, use the package from the system
-    find_library(ZeroMQ_LIBRARIES NAMES zmq)
-    if(NOT ZeroMQ_LIBRARIES)
-        message(FATAL_ERROR "ZeroMQ library not found")
+# Find ZeroMQ using PkgConfig
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ZMQ REQUIRED libzmq)
+
+# Look for cppzmq wrapper
+find_package(cppzmq QUIET)
+if(NOT cppzmq_FOUND)
+    message(STATUS "cppzmq not found via CMake, checking manually")
+    find_path(CPPZMQ_INCLUDE_DIRS zmq.hpp PATHS /usr/local/include /usr/include)
+    if(NOT CPPZMQ_INCLUDE_DIRS)
+        message(FATAL_ERROR "cppzmq headers not found")
     endif()
 endif()
 
@@ -34,6 +39,8 @@ set(ZMQ_LIB "${CMAKE_BINARY_DIR}/zmq/libZeroMQLib.a")
 include_directories(
     "${PROJECT_SOURCE_DIR}/inc"
     "${PROJECT_SOURCE_DIR}/../zmq/inc"
+    ${ZMQ_INCLUDE_DIRS}
+    ${CPPZMQ_INCLUDE_DIRS}
 )
 
 # Set the source directory for your project and collect source files
@@ -48,11 +55,12 @@ endif()
 file(GLOB LIB_SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 list(FILTER LIB_SOURCES EXCLUDE REGEX ".*main\\.cpp$")
 add_library(middleware STATIC ${LIB_SOURCES})
-target_link_libraries(middleware ${ZMQ_LIB} ${ZeroMQ_LIBRARIES} Threads::Threads)
+target_link_libraries(middleware ${ZMQ_LIB} ${ZMQ_LIBRARIES} Threads::Threads)
 
 # Main executable - use the original name "Middleware"
 add_executable(Middleware "${PROJECT_SOURCE_DIR}/src/main.cpp")
-target_link_libraries(Middleware middleware ${ZMQ_LIB} ${ZeroMQ_LIBRARIES} Threads::Threads)
+# Link against both the middleware library and the ZeroMQ libraries
+target_link_libraries(Middleware middleware ${ZMQ_LIB} ${ZMQ_LIBRARIES} Threads::Threads)
 
 # Option to enable testing
 option(BUILD_TESTS "Build tests" ON)

@@ -36,13 +36,17 @@ RUN apt-get update && apt-get install -y \
     && apt-get update \
     && apt-get install -y cmake \
 
-    # Update ZeroMQ to latest version
-    && git clone https://github.com/zeromq/cppzmq.git \
-    && cd cppzmq && mkdir build && cd build \
-    && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local \
+    # Install a newer version of cppzmq (>= 4.7.0) for modern API support
+    && cd /tmp \
+    && wget https://github.com/zeromq/cppzmq/archive/v4.8.1.tar.gz \
+    && tar xzf v4.8.1.tar.gz \
+    && cd cppzmq-4.8.1 \
+    && mkdir build && cd build \
+    && cmake .. -DCPPZMQ_BUILD_TESTS=OFF \
     && make install \
+    && ldconfig \
 
     # Clean up the build and apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /cppzmq
+    && rm -rf /tmp/cppzmq-4.8.1 /tmp/v4.8.1.tar.gz

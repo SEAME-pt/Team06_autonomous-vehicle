@@ -55,8 +55,18 @@ jobs:
             /bin/bash -c "
             # Install ZeroMQ dependencies first
             apt-get update && \
-            apt-get install -y libzmq3-dev && \
+            apt-get install -y libzmq3-dev git wget tar && \
+            # Install newer cppzmq for modern API support (temporary until Docker image is updated)
+            cd /tmp && \
+            wget https://github.com/zeromq/cppzmq/archive/v4.8.1.tar.gz && \
+            tar xzf v4.8.1.tar.gz && \
+            cd cppzmq-4.8.1 && \
+            mkdir build && cd build && \
+            cmake .. -DCPPZMQ_BUILD_TESTS=OFF && \
+            make install && \
+            ldconfig && \
             # Now build the project
+            cd /repo && \
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. -DCODE_COVERAGE=ON && \
@@ -74,6 +84,7 @@ jobs:
             # Ensure dependencies are installed
             apt-get update && \
             apt-get install -y libzmq3-dev && \
+            # The build step should have already installed cppzmq
             cd /repo/build/bin && \
             mkdir -p reports && \
             # Run each test with XML output
@@ -109,6 +120,7 @@ jobs:
             # Ensure dependencies are installed
             apt-get update && \
             apt-get install -y libzmq3-dev && \
+            # The build step should have already installed cppzmq
             cd /repo/build && \
             make coverage || true
             "

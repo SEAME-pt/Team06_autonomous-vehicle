@@ -13,9 +13,9 @@ This system consists of three main components:
 ## Architecture
 
 ```
-┌─────────────┐     ┌────────────┐     ┌────────────────┐
-│ Controller  │────▶│ Middleware │────▶│ ClusterDisplay │
-└─────────────┘     └────────────┘     └────────────────┘
+┌─────────────┐      ┌────────────┐      ┌────────────────┐
+│ Controller  │────▶ │ Middleware │────▶│ ClusterDisplay │
+└─────────────┘      └────────────┘      └────────────────┘
    Joystick           Data Processing      Qt-based UI
    Input              & Publishing         Display
 ```
@@ -65,9 +65,45 @@ Connect a compatible joystick to interact with the system.
 - `/zmq` - ZeroMQ integration files
 - `/build` - Build output directory (created during build)
 
+## Testing & Code Coverage
+
+The project includes comprehensive unit tests for all components. Tests can be run using:
+
+```bash
+cd build
+ctest
+```
+
+### Code Coverage Report
+
+Code coverage reports can be generated to visualize test coverage:
+
+```bash
+./build.sh --coverage
+```
+
+This generates an HTML coverage report in `build/coverage/html/index.html` with:
+
+- Line coverage statistics
+- Branch coverage statistics
+- Function coverage statistics
+- Uncovered code highlighting
+
+The coverage report helps identify areas of the codebase that need additional testing and ensures the reliability of the system.
+
+| Component    | Coverage Metrics Tracked   |
+|--------------|----------------------------|
+| Controller   | Lines, branches, functions |
+| Middleware   | Lines, branches, functions |
+| ZMQ Library  | Lines, branches, functions |
+
+For actual coverage percentages, run the coverage report generation command and view the detailed HTML report.
+
 ## Documentation
 
 Each component has its own README with detailed information:
 - [Controller Documentation](Controller/README.md)
 - [Middleware Documentation](Middleware/README.md)
 - [ClusterDisplay Documentation](ClusterDisplay/README.md)
+- [ZeroMQ Library Documentation](zmq/README.md)
+- [Middleware Tests Documentation](Middleware/test/README.md)

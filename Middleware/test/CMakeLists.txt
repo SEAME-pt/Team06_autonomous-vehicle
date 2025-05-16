@@ -124,9 +124,9 @@ if(CODE_COVERAGE)
     COMMAND ${CMAKE_BINARY_DIR}/bin/can_reader_direct_test
     COMMAND ${CMAKE_BINARY_DIR}/bin/zmq_publisher_test
 
-    # Generate coverage report with error handling
-    COMMAND lcov --capture --directory ${CMAKE_BINARY_DIR}/Middleware/CMakeFiles/middleware.dir --output-file ${CMAKE_BINARY_DIR}/coverage/coverage.info --ignore-errors mismatch
-    COMMAND lcov --remove ${CMAKE_BINARY_DIR}/coverage/coverage.info '/usr/*' --output-file ${CMAKE_BINARY_DIR}/coverage/coverage.info --ignore-errors unused
+    # Generate coverage report without problematic flags
+    COMMAND lcov --capture --directory ${CMAKE_BINARY_DIR}/Middleware/CMakeFiles/middleware.dir --output-file ${CMAKE_BINARY_DIR}/coverage/coverage.info
+    COMMAND lcov --remove ${CMAKE_BINARY_DIR}/coverage/coverage.info '/usr/*' --output-file ${CMAKE_BINARY_DIR}/coverage/coverage.info
     COMMAND genhtml ${CMAKE_BINARY_DIR}/coverage/coverage.info --output-directory ${CMAKE_BINARY_DIR}/coverage/html
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/battery_test.dir/BatteryTest.cpp.o -o ../../bin/battery_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

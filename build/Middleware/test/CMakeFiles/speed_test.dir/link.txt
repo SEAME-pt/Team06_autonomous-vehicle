@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/speed_test.dir/SpeedTest.cpp.o -o ../../bin/speed_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

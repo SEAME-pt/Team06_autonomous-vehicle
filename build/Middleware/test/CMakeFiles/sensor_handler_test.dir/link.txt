@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/sensor_handler_test.dir/SensorHandlerTest.cpp.o -o ../../bin/sensor_handler_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

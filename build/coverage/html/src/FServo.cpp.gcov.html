@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - src/FServo.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">src</a> - FServo.cpp<span style="font-size: 80%;"> (source / <a href="FServo.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntry">60</td>
+            <td class="headerCovTableEntryLo">73.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2025-05-16 10:55:45</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryMed">81.8 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;FServo.hpp&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<a name="3"><span class="lineNum">       3 </span><span class="lineCov">         17 : FServo::FServo(){}</span></a>
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span><span class="lineCov">          1 : void FServo::open_i2c_bus(){</span>
+<span class="lineNum">       6 </span><span class="lineCov">          1 :         i2c_device = &quot;/dev/i2c-1&quot;;</span>
+<span class="lineNum">       7 </span><span class="lineCov">          1 :         _fdServo = open(i2c_device.c_str(), O_RDWR);</span>
+<span class="lineNum">       8 </span><span class="lineCov">          1 :         if (_fdServo &lt; 0)</span>
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 :                 throw std::runtime_error(&quot;Error open I2C&quot;);</span>
+<span class="lineNum">      10 </span><span class="lineCov">          1 :         if ( ioctl(_fdServo, I2C_SLAVE, _servoAddr) &lt; 0){</span>
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :                 close (_fdServo);</span>
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 :                 throw std::runtime_error(&quot;Erro ao configurar endereço I2C do servo.&quot;);</span>
+<span class="lineNum">      13 </span>            :         }
+<a name="14"><span class="lineNum">      14 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span><span class="lineCov">         34 : FServo::~FServo(){</span>
+<span class="lineNum">      17 </span><span class="lineCov">         17 :         close(_fdServo);</span>
+<span class="lineNum">      18 </span><span class="lineCov">         17 :     std::cout &lt;&lt; &quot;destructor call\n&quot;;</span>
+<a name="19"><span class="lineNum">      19 </span><span class="lineCov">         17 : }</span></a>
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span><span class="lineCov">          1 : bool FServo::init_servo(){</span>
+<span class="lineNum">      22 </span>            :         try{
+<span class="lineNum">      23 </span>            :                     // Reset PCA9685
+<span class="lineNum">      24 </span><span class="lineCov">          1 :                         this-&gt;writeByteData(_fdServo, 0x00, 0x06);</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :                         usleep(100000); // Aguarda 100 ms</span>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            :                         // Setup servo control
+<span class="lineNum">      28 </span><span class="lineCov">          1 :                         this-&gt;writeByteData(_fdServo, 0x00, 0x10);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          1 :                         usleep(100000);</span>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :                         // Set frequency (~50Hz)
+<span class="lineNum">      32 </span><span class="lineCov">          1 :                         this-&gt;writeByteData(_fdServo, 0xFE, 0x79);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :                         usleep(100000);</span>
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :                         // Configure MODE2
+<span class="lineNum">      36 </span><span class="lineCov">          1 :                         this-&gt;writeByteData(_fdServo, 0x01, 0x04);</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :                         usleep(100000);</span>
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            :                         // Enable auto-increment
+<span class="lineNum">      40 </span><span class="lineCov">          1 :                         this-&gt;writeByteData(_fdServo, 0x00, 0x20);</span>
+<span class="lineNum">      41 </span><span class="lineCov">          1 :                         usleep(100000);</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :                 return true;</span>
+<span class="lineNum">      43 </span>            :         }
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :         catch(const std::exception &amp;e){</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                 std::cerr &lt;&lt; &quot;Erro ao inicializar o servo: &quot; &lt;&lt; e.what() &lt;&lt; std::endl;</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">      47 </span>            :         }
+<a name="48"><span class="lineNum">      48 </span>            : }</a>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span><span class="lineCov">         57 : bool FServo::setServoPwm(const int channel, int on_value, int off_value){</span>
+<span class="lineNum">      51 </span>            :         try{
+<span class="lineNum">      52 </span><span class="lineCov">         57 :                 this-&gt;writeByteData(_fdServo, 0x06 + 4 * channel, on_value &amp; 0xFF);</span>
+<span class="lineNum">      53 </span><span class="lineCov">         57 :                 this-&gt;writeByteData(_fdServo, 0x07 + 4 * channel, on_value &gt;&gt; 8);</span>
+<span class="lineNum">      54 </span><span class="lineCov">         57 :                 this-&gt;writeByteData(_fdServo, 0x08 + 4 * channel, off_value &amp; 0xFF);</span>
+<span class="lineNum">      55 </span><span class="lineCov">         57 :                 this-&gt;writeByteData(_fdServo, 0x09 + 4 * channel, off_value &gt;&gt; 8);</span>
+<span class="lineNum">      56 </span><span class="lineCov">         57 :                 return true;</span>
+<span class="lineNum">      57 </span>            :         }
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :         catch(const std::exception &amp;e){</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                 std::cerr &lt;&lt; &quot;Erro ao configurar PWM do servo: &quot; &lt;&lt; e.what() &lt;&lt; std::endl;</span>
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">      61 </span>            :         }
+<a name="62"><span class="lineNum">      62 </span>            : }</a>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">         77 : void FServo::set_steering(int angle){</span>
+<span class="lineNum">      65 </span>            :     /* &quot;&quot;&quot;Set steering angle (-90 to +90 degrees)&quot;&quot;&quot; */
+<span class="lineNum">      66 </span><span class="lineCov">         77 :         angle = std::max(-_maxAngle, std::min(_maxAngle, angle));</span>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :         int pwm;
+<span class="lineNum">      69 </span><span class="lineCov">         77 :         if (angle &lt; 0){</span>
+<span class="lineNum">      70 </span>            :                 // Calcula o PWM para ângulo negativo
+<span class="lineNum">      71 </span><span class="lineCov">          8 :                 pwm = static_cast&lt;int&gt;(_servoCenterPwm + (static_cast&lt;float&gt;(angle) / _maxAngle) * (_servoCenterPwm - _servoLeftPwm));</span>
+<span class="lineNum">      72 </span>            :         }
+<span class="lineNum">      73 </span><span class="lineCov">         69 :         else if (angle &gt; 0){</span>
+<span class="lineNum">      74 </span>            :                  // Calcula o PWM para ângulo positivo
+<span class="lineNum">      75 </span><span class="lineCov">          8 :                  pwm = static_cast&lt;int&gt;(_servoCenterPwm + (static_cast&lt;float&gt;(angle) / _maxAngle) * (_servoRightPwm - _servoCenterPwm));</span>
+<span class="lineNum">      76 </span>            :         }
+<span class="lineNum">      77 </span>            :         else
+<span class="lineNum">      78 </span><span class="lineCov">         61 :                 pwm = _servoCenterPwm;</span>
+<span class="lineNum">      79 </span><span class="lineCov">         77 :         setServoPwm(_sterringChannel, 0 , pwm);</span>
+<span class="lineNum">      80 </span><span class="lineCov">         77 :         _currentAngle = angle;</span>
+<a name="81"><span class="lineNum">      81 </span><span class="lineCov">         77 : }</span></a>
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span><span class="lineCov">        233 : void FServo::writeByteData(int fd, uint8_t reg, uint8_t value) {</span>
+<span class="lineNum">      84 </span><span class="lineCov">        233 :         uint8_t buffer[2] = {reg, value};</span>
+<span class="lineNum">      85 </span><span class="lineCov">        233 :         if (write(fd, buffer, 2) != 2) {</span>
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 throw std::runtime_error(&quot;Erro ao escrever no dispositivo I2C.&quot;);</span>
+<span class="lineNum">      87 </span>            :         }
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">        233 : }</span></a>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 : uint8_t FServo::readByteData(int fd, uint8_t reg){</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :         if(write(fd, &amp;reg, 1) != 1)</span>
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 :                 throw std::runtime_error(&quot;Erro ao enviar o registrador ao dispositivo I2C.&quot;);</span>
+<span class="lineNum">      93 </span>            :         uint8_t value;
+<span class="lineNum">      94 </span><span class="lineNoCov">          0 :         if (read(fd, &amp;value, 1) != 1)</span>
+<a name="95"><span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 throw std::runtime_error(&quot;Erro ao ler o registrador ao dispositivo I2C.&quot;);</span></a>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :         return value;</span>
+<span class="lineNum">      97 </span><span class="lineCov">        147 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

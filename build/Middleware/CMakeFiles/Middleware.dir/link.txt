@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/Middleware.dir/src/main.cpp.o -o ../bin/Middleware  libmiddleware.a ../zmq/libZeroMQLib.a -lzmq -lpthread 

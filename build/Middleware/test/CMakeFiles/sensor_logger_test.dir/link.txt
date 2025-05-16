@@ -1,0 +1,1 @@
+/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/sensor_logger_test.dir/SensorLoggerTest.cpp.o -o ../../bin/sensor_logger_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

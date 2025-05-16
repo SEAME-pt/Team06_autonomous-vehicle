@@ -2,6 +2,8 @@
 
 A comprehensive digital instrument cluster system for automotive applications developed as part of the SEA:ME course. This project demonstrates the integration of sensor data collection, joystick controls, and a modern digital display for vehicle instrumentation.
 
+![CI/CD Pipeline](https://github.com/your-organization/ClusterDisplay/actions/workflows/ci-cd-with-tests.yml/badge.svg)
+
 ## Project Overview
 
 This system consists of three main components:
@@ -70,9 +72,26 @@ Connect a compatible joystick to interact with the system.
 The project includes comprehensive unit tests for all components. Tests can be run using:
 
 ```bash
+# Run all tests
+./run_tests.sh
+
+# From the build directory
 cd build
 ctest
 ```
+
+### Continuous Integration/Continuous Deployment
+
+This project uses GitHub Actions for a comprehensive CI/CD pipeline:
+
+- **Build**: Compiles the code with test and coverage options
+- **Test**: Runs all unit tests and generates test reports
+- **Coverage**: Generates code coverage reports
+- **Deploy**: Deploys to target hardware if tests pass (main/dev branches only)
+
+The pipeline prevents deployment of broken code by ensuring that all tests pass before deployment occurs.
+
+You can view the latest pipeline results in the [GitHub Actions tab](https://github.com/your-organization/ClusterDisplay/actions).
 
 ### Code Coverage Report
 

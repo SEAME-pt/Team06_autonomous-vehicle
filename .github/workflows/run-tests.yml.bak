@@ -1,0 +1,88 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    outputs:
+      tests_passed: ${{ steps.set_output.outputs.tests_passed }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Pull Jetson Nano Ubuntu Docker image
+        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+
+      - name: Make test script executable
+        run: chmod +x run_tests.sh
+
+      - name: Build and run tests
+        id: run_tests
+        continue-on-error: true
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "./run_tests.sh"
+          echo "TESTS_EXIT_CODE=$?" >> $GITHUB_ENV
+
+      - name: Set output based on test results
+        id: set_output
+        run: |
+          echo "tests_passed=${{ env.TESTS_EXIT_CODE == '0' }}" >> $GITHUB_OUTPUT
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/coverage/html
+        if: success() || failure()
+
+      - name: Upload test results as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/bin/reports
+        if: always()
+
+      - name: Publish test report
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: 'build/bin/reports/**/results.xml'
+          fail_on_failure: true
+
+      - name: Generate coverage badges
+        uses: codecov/codecov-action@v3
+        if: success() || failure()
+        with:
+          directory: ./build/coverage
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+          verbose: true
+
+  # This job will only run if the tests pass
+  trigger-cross-compilation:
+    needs: test
+    if: needs.test.outputs.tests_passed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Cross-Compilation Workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: cicd.yml
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/back_motors_test.dir/BackMotorsTest.cpp.o -o ../../bin/back_motors_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

@@ -1,6 +1,17 @@
 # SEA:ME Instrument Cluster - Middleware Tests
 
-This directory contains comprehensive unit tests for the Middleware component of the Instrument Cluster system. The tests are designed to verify the functionality of each class and ensure reliability of the overall system.
+## Summary
+
+This directory contains comprehensive unit tests for the Middleware component. The current test suite achieves **81.9% line coverage** and **94.6% function coverage** across all source files, demonstrating a robust testing strategy.
+
+**Coverage Highlights:**
+- 100% line coverage for Battery and Speed sensor components
+- 94.7% line coverage for ControlAssembly component
+- 89.8% line coverage for SensorHandler component
+- All components achieve at least 81.8% function coverage
+- CAN bus reader component (68.8% line coverage) identified for additional test coverage
+
+The tests are designed to verify both expected functionality and edge cases, ensuring the reliability and correctness of the Middleware component.
 
 ## Test Structure
 

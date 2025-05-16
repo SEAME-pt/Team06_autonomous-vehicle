@@ -1,1 +1,0 @@
-/usr/bin/c++  -g -O0 --coverage -fprofile-arcs -ftest-coverage  --coverage CMakeFiles/f_servo_direct_test.dir/FServoDirectTest.cpp.o -o ../../bin/f_servo_direct_test  ../../lib/libgtest.a ../../lib/libgtest_main.a ../libmiddleware.a ../../zmq/libZeroMQLib.a -lpthread ../../lib/libgtest.a -lpthread -lzmq 

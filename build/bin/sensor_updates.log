@@ -1,6 +1,0 @@
-
-=== Sensor Logging Session Started at 2025-05-16 05:29:36.569 ===
-2025-05-16 05:29:37.201 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
-2025-05-16 05:29:37.202 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
-
-=== Sensor Logging Session Ended at 2025-05-16 05:29:41.316 ===

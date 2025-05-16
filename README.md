@@ -85,19 +85,11 @@ Code coverage reports can be generated to visualize test coverage:
 This generates an HTML coverage report in `build/coverage/html/index.html` with:
 
 - Line coverage statistics
-- Branch coverage statistics
 - Function coverage statistics
 - Uncovered code highlighting
 
 The coverage report helps identify areas of the codebase that need additional testing and ensures the reliability of the system.
 
-| Component    | Coverage Metrics Tracked   |
-|--------------|----------------------------|
-| Controller   | Lines, branches, functions |
-| Middleware   | Lines, branches, functions |
-| ZMQ Library  | Lines, branches, functions |
-
-For actual coverage percentages, run the coverage report generation command and view the detailed HTML report.
 
 ## Documentation
 

@@ -1,4 +1,5 @@
 #include "ZmqSubscriber.hpp"
+#include <chrono>
 
 ZmqSubscriber::ZmqSubscriber(const std::string& address, zmq::context_t& context, bool test_mode)
     : _context(context),
@@ -72,7 +73,9 @@ std::string ZmqSubscriber::receive(int timeout_ms) {
             zmq::pollitem_t items[] = {
                 { static_cast<void*>(_socket), 0, ZMQ_POLLIN, 0 }
             };
-            zmq::poll(&items[0], 1, timeout_ms);
+
+            // Use std::chrono::milliseconds instead of a long integer
+            zmq::poll(&items[0], 1, std::chrono::milliseconds(timeout_ms));
 
             if (!(items[0].revents & ZMQ_POLLIN)) {
                 return ""; // No message available after timeout

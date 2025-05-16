@@ -3,9 +3,6 @@
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Install required dependencies
-apt-get update -qq && apt-get install -y lcov gcovr -qq || true
-
 # Create and navigate to build directory
 mkdir -p build
 cd build

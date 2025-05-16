@@ -17,6 +17,16 @@ The workflow is defined in `.github/workflows/ci-cd-with-tests.yml` and is trigg
 - Pull requests to `main`
 - Manual triggers via the GitHub UI
 
+### Docker Environment
+
+The pipeline uses a pre-built Docker image (`jmoreiraseame/jetson-nano-ubuntu:bionic`) that includes:
+- Ubuntu 18.04 base image (matching the target Jetson Nano environment)
+- All required dependencies pre-installed (libzmq3-dev, cppzmq, etc.)
+- Development tools (git, cmake, build-essential, etc.)
+- Qt5 dependencies for the UI component
+
+The Docker image definition is maintained in the `CICD/Dockerfile` directory and can be updated as needed.
+
 ## Pipeline Stages
 
 ### 1. Build and Test
@@ -24,6 +34,7 @@ The workflow is defined in `.github/workflows/ci-cd-with-tests.yml` and is trigg
 This stage:
 - Sets up the necessary Docker environment (QEMU, Buildx)
 - Uses a custom Jetson Nano Ubuntu Docker image for consistent builds
+- Installs required dependencies (libzmq3-dev, cppzmq, etc.)
 - Compiles the code with test and coverage options enabled
 - Runs all unit tests and captures results in JUnit XML format
 - Generates code coverage reports
@@ -63,16 +74,23 @@ Code coverage reports are:
 
 ## Local Testing
 
-You can run the same tests locally using:
+You can run the same tests locally using either:
 
+### Using the run_tests.sh script directly:
 ```bash
 ./run_tests.sh
 ```
 
-This script:
-- Builds the project with test and coverage options
-- Runs all unit tests
-- Generates coverage reports in the same format as the CI pipeline
+### Using Docker (recommended for consistency with CI):
+```bash
+# Pull the Docker image
+docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+
+# Run tests inside the container
+docker run -it --rm --platform linux/arm64 -v $(pwd):/app -w /app jmoreiraseame/jetson-nano-ubuntu:bionic ./run_tests.sh
+```
+
+This provides the exact same environment as the CI pipeline, ensuring consistent results.
 
 ## Troubleshooting
 
@@ -82,6 +100,13 @@ If the pipeline fails:
 2. Examine the logs to identify the specific failure
 3. Download artifacts for detailed test results and coverage reports
 4. Make fixes locally and run tests before pushing again
+
+### Common Issues
+
+- **Dependency Problems**: The workflow installs cppzmq from source. If this fails, check the logs for error messages.
+- **Compilation Errors**: Look for compiler error messages in the workflow logs.
+- **Test Failures**: Check the test results artifacts for detailed test failure information.
+- **Deployment Issues**: These are often related to network or credentials problems.
 
 ## Adding/Modifying Tests
 

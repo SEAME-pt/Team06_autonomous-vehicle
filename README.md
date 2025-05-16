@@ -31,7 +31,8 @@ This system consists of three main components:
 Prerequisites:
 - C++17 compatible compiler
 - CMake 3.10+
-- ZeroMQ library
+- ZeroMQ library (libzmq3-dev)
+- ZeroMQ C++ bindings (cppzmq)
 - Qt 5.9+ (for ClusterDisplay)
 - pthread
 
@@ -41,11 +42,37 @@ Build steps:
 git clone https://github.com/your-organization/Team06-SEAME-DES_Instrument-Cluster.git
 cd Team06-SEAME-DES_Instrument-Cluster
 
+# The run_tests.sh script will automatically install dependencies
+# Or you can install them manually:
+# sudo apt-get install -y libzmq3-dev
+# and follow instructions at https://github.com/zeromq/cppzmq to install cppzmq
+
 # Build using the script
 ./build.sh
 
 # For code coverage report
 ./build.sh --coverage
+```
+
+### Using Docker for Development
+
+We provide a pre-configured Docker image with all dependencies pre-installed, which ensures consistency between local development and CI/CD:
+
+```bash
+# Pull the Docker image
+docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+
+# Run a container with the current directory mounted
+docker run -it --rm --platform linux/arm64 -v $(pwd):/app -w /app jmoreiraseame/jetson-nano-ubuntu:bionic bash
+
+# Inside the container, you can build and test
+mkdir -p build && cd build
+cmake .. -DCODE_COVERAGE=ON
+make
+cd bin && ./battery_test  # Run a specific test
+
+# Or use the run_tests.sh script to run all tests
+cd /app && ./run_tests.sh
 ```
 
 ## Running the Application

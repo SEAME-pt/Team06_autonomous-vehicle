@@ -7,12 +7,18 @@ RUN apt-get update && apt-get install -y \
     libpthread-stubs0-dev \
     git \
     curl \
+    wget \
+    unzip \
     pkg-config \
     libgpiod-dev \
     libi2c-dev \
 
     # ZeroMQ dependencies
     libzmq3-dev \
+
+    # Test coverage tools
+    lcov \
+    gcovr \
 
     # Qt5 dependencies
     qtbase5-dev \
@@ -26,17 +32,22 @@ RUN apt-get update && apt-get install -y \
     | gpg --dearmor -o /usr/share/keyrings/kitware-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] \
     https://apt.kitware.com/ubuntu/ bionic main" \
-    | sudo tee /etc/apt/sources.list.d/kitware.list \
+    | tee /etc/apt/sources.list.d/kitware.list \
     && apt-get update \
     && apt-get install -y cmake \
 
-    # Update ZeroMQ to latest version
-    && git clone https://github.com/zeromq/cppzmq.git \
-    && cd cppzmq && mkdir build && cd build \
-    && cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local \
+    # Install cppzmq (ZMQ C++ bindings)
+    && cd /tmp \
+    && wget https://github.com/zeromq/cppzmq/archive/v4.7.1.zip \
+    && unzip v4.7.1.zip \
+    && cd cppzmq-4.7.1 \
+    && mkdir build && cd build \
+    && cmake .. \
+    && make -j$(nproc) \
     && make install \
+    && ldconfig \
 
     # Clean up the build and apt cache
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /cppzmq
+    && rm -rf /tmp/cppzmq-4.7.1 /tmp/v4.7.1.zip

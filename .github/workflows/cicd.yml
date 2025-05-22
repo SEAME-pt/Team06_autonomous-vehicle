@@ -12,6 +12,7 @@ on:
   push:
     branches:
         - dev
+        - zm/cicd
 
 jobs:
   build:

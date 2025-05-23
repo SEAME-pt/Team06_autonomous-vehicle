@@ -33,13 +33,17 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Cache Docker layers
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
+      # Only cache Docker image if needed, disabling for now as it causes warnings
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
+
+      - name: Pull Jetson Nano Ubuntu Docker image
+        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
 
       - name: Run tests
         run: |
@@ -49,9 +53,13 @@ jobs:
             /bin/bash -c "
             mkdir -p /repo/build && \
             cd /repo/build && \
-            cmake .. -DBUILD_TESTS=ON && \
+            # Configure with BUILD_TESTS ON and explicitly set the test directory
+            cmake .. -DBUILD_TESTS=ON -DRunCMake.CTestCommandLine=ON && \
+            # Build everything including tests
             cmake --build . && \
-            ctest --output-on-failure
+            # Run CTest with verbose output to debug the issue
+            cd /repo/build/Middleware/test && \
+            ctest -V
             "
 
   build:
@@ -87,11 +95,13 @@ jobs:
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. -DVERSION=${{ env.APP_VERSION }} && \
-            cmake --build .
+            cmake --build . && \
+            # Create version file inside the Docker container where we have permissions
+            mkdir -p bin && \
+            echo '${{ env.APP_VERSION }}' > bin/version.txt && \
+            # Ensure artifacts directory has proper permissions
+            chmod -R 777 bin
             "
-
-      - name: Create version file
-        run: echo "${{ env.APP_VERSION }}" > build/bin/version.txt
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

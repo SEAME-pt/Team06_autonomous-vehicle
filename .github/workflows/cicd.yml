@@ -50,8 +50,8 @@ jobs:
             -v ${{ github.workspace }}:/repo \
             -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            chmod +x /repo/runtests.sh && \
-            ./runtests.sh
+            chmod +x /repo/run_tests.sh && \
+            ./run_tests.sh
             "
 
   build:

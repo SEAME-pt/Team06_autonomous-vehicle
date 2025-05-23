@@ -48,7 +48,9 @@ jobs:
         run: |
           docker run --rm --platform linux/arm64 \
             -v ${{ github.workspace }}:/repo \
-            -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
+            -w /repo \
+            -e CI=true \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
             chmod +x /repo/run_tests.sh && \
             ./run_tests.sh

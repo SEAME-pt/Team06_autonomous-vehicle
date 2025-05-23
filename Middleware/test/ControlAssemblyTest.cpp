@@ -21,6 +21,20 @@ protected:
     std::shared_ptr<zmq::context_t> context;
     std::shared_ptr<MockBackMotors> mockBackMotors;
     std::shared_ptr<MockFServo> mockFServo;
+
+    // Helper function to wait for a condition with timeout
+    template <typename Func>
+    bool waitForCondition(Func condition, int timeoutMs = 3000, int checkIntervalMs = 100) {
+        auto start = std::chrono::steady_clock::now();
+        while (std::chrono::duration_cast<std::chrono::milliseconds>(
+               std::chrono::steady_clock::now() - start).count() < timeoutMs) {
+            if (condition()) {
+                return true;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(checkIntervalMs));
+        }
+        return false;
+    }
 };
 
 TEST_F(ControlAssemblyTest, Initialization) {
@@ -42,7 +56,7 @@ TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
     assembly.start();
 
     // Wait for thread to start - increased wait time for CI environment
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send a throttle message via ZMQ
     zmq::socket_t sender(*context, ZMQ_PUB);
@@ -53,23 +67,19 @@ TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
 
     // Send message multiple times to ensure delivery in CI environment
     std::string message = "throttle:50;";
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
 
-    // Wait for message to be received and processed - increased wait time
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    // Wait for the value to be set with a timeout
+    bool speedSet = waitForCondition([&]() {
+        return mockBackMotors->getCurrentSpeed() == 50;
+    }, 5000);  // 5 second timeout, much more generous for CI
 
-    // Allow test to pass if either the value is correct or we're in CI (GitHub Actions)
-    // CI environments often have network timing issues with ZMQ
-    if (std::getenv("CI") != nullptr) {
-        // We're in CI environment, skip this check
-        GTEST_SKIP() << "Skipping throttle message check in CI environment due to network timing inconsistencies";
-    } else {
-        // Check that the throttle was set
-        EXPECT_EQ(mockBackMotors->getCurrentSpeed(), 50);
-    }
+    // Use real assertion that will fail if the condition isn't met
+    EXPECT_TRUE(speedSet) << "Throttle message was not processed within the timeout period. Current speed: "
+                         << mockBackMotors->getCurrentSpeed();
 
     // Stop the assembly
     assembly.stop();
@@ -83,7 +93,7 @@ TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
     assembly.start();
 
     // Wait for thread to start - increased wait time for CI environment
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send a steering message via ZMQ
     zmq::socket_t sender(*context, ZMQ_PUB);
@@ -94,23 +104,19 @@ TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
 
     // Send message multiple times to ensure delivery in CI environment
     std::string message = "steering:30;";
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
 
-    // Wait for message to be received and processed - increased wait time
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    // Wait for the value to be set with a timeout
+    bool steeringSet = waitForCondition([&]() {
+        return mockFServo->getSteeringAngle() == 30;
+    }, 5000);  // 5 second timeout, much more generous for CI
 
-    // Allow test to pass if either the value is correct or we're in CI (GitHub Actions)
-    // CI environments often have network timing issues with ZMQ
-    if (std::getenv("CI") != nullptr) {
-        // We're in CI environment, skip this check
-        GTEST_SKIP() << "Skipping steering message check in CI environment due to network timing inconsistencies";
-    } else {
-        // Check that the steering was set
-        EXPECT_EQ(mockFServo->getSteeringAngle(), 30);
-    }
+    // Use real assertion that will fail if the condition isn't met
+    EXPECT_TRUE(steeringSet) << "Steering message was not processed within the timeout period. Current angle: "
+                            << mockFServo->getSteeringAngle();
 
     // Stop the assembly
     assembly.stop();
@@ -133,7 +139,7 @@ TEST_F(ControlAssemblyTest, HandleInitMessage) {
     assembly.start();
 
     // Wait for thread to start - increased wait time for CI environment
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send an init message via ZMQ
     zmq::socket_t sender(*context, ZMQ_PUB);
@@ -144,24 +150,20 @@ TEST_F(ControlAssemblyTest, HandleInitMessage) {
 
     // Send init message multiple times
     std::string message = "init;";
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(150));
     }
 
-    // Wait for message to be received and processed - increased wait time
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    // Wait for both values to be reset with a timeout
+    bool valuesReset = waitForCondition([&]() {
+        return mockBackMotors->getCurrentSpeed() == 0 && mockFServo->getSteeringAngle() == 0;
+    }, 5000);  // 5 second timeout, much more generous for CI
 
-    // Allow test to pass if either the value is correct or we're in CI (GitHub Actions)
-    // CI environments often have network timing issues with ZMQ
-    if (std::getenv("CI") != nullptr) {
-        // We're in CI environment, skip this check
-        GTEST_SKIP() << "Skipping init message check in CI environment due to network timing inconsistencies";
-    } else {
-        // Check that values were reset to 0
-        EXPECT_EQ(mockBackMotors->getCurrentSpeed(), 0);
-        EXPECT_EQ(mockFServo->getSteeringAngle(), 0);
-    }
+    // Use real assertion that will fail if the condition isn't met
+    EXPECT_TRUE(valuesReset) << "Init message was not processed within the timeout period. "
+                            << "Current speed: " << mockBackMotors->getCurrentSpeed()
+                            << ", Current angle: " << mockFServo->getSteeringAngle();
 
     // Stop the assembly
     assembly.stop();
@@ -175,14 +177,14 @@ TEST_F(ControlAssemblyTest, HandleMalformedMessages) {
     assembly.start();
 
     // Wait for thread to start
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send a malformed message via ZMQ
     zmq::socket_t sender(*context, ZMQ_PUB);
     sender.bind("tcp://*:5558");
 
     // Give the subscriber time to connect
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Send various malformed messages
     std::vector<std::string> malformedMessages = {
@@ -198,11 +200,11 @@ TEST_F(ControlAssemblyTest, HandleMalformedMessages) {
     for (const auto& message : malformedMessages) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
         // Wait for message to be processed
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 
     // Wait for all messages to be received and processed
-    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // The test passes if handling malformed messages doesn't crash
     // We could also check that mockBackMotors and mockFServo values haven't changed

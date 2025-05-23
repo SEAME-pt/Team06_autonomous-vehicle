@@ -53,7 +53,7 @@ jobs:
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
             chmod +x /repo/run_tests.sh && \
-            ./run_tests.sh
+            ./run_tests.sh || exit 1
             "
 
   build:
@@ -80,7 +80,7 @@ jobs:
       - name: Pull Jetson Nano Ubuntu Docker image
         run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
 
-      - name: Build project
+      - name: Build project and create version file
         run: |
           docker run --rm --platform linux/arm64 \
             -v ${{ github.workspace }}:/repo \
@@ -88,13 +88,13 @@ jobs:
             /bin/bash -c "
             chmod +x /repo/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \
-            ./build.sh
+            ./build.sh && \
+            # Create version file inside the Docker container
+            mkdir -p build/bin && \
+            echo '${{ env.APP_VERSION }}' > build/bin/version.txt && \
+            # Fix permissions for the GitHub runner
+            chmod -R 777 build
             "
-
-      - name: Create version file
-        run: |
-          mkdir -p build/bin
-          echo "${{ env.APP_VERSION }}" > build/bin/version.txt
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

@@ -2,6 +2,7 @@
 #include "ControlAssembly.hpp"
 #include "MockBackMotors.hpp"
 #include "MockFServo.hpp"
+#include "TestUtils.hpp"
 #include <memory>
 #include <thread>
 #include <chrono>
@@ -50,12 +51,7 @@ TEST_F(ControlAssemblyTest, Initialization) {
 }
 
 TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
-    // In CI environments, skip test or use relaxed assertions
-    if (std::getenv("CI") != nullptr) {
-        std::cout << "Running in CI environment, tests with ZMQ messaging may be unreliable" << std::endl;
-        GTEST_SKIP() << "Skipping in CI environment due to ZMQ connectivity issues";
-        return;
-    }
+    SKIP_IN_CI();
 
     // Create a ControlAssembly with our mocks - use explicit loopback IP
     ControlAssembly assembly("tcp://127.0.0.1:5555", *context, mockBackMotors, mockFServo);
@@ -63,14 +59,14 @@ TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
     // Start the assembly thread
     assembly.start();
 
-    // Wait for thread to start - increased wait time for CI environment
+    // Wait for thread to start
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send a throttle message via ZMQ - use explicit loopback IP
     zmq::socket_t sender(*context, ZMQ_PUB);
     sender.bind("tcp://127.0.0.1:5555");
 
-    // Give the subscriber time to connect - increased wait time
+    // Give the subscriber time to connect
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Send message multiple times to ensure delivery
@@ -94,12 +90,7 @@ TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
 }
 
 TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
-    // In CI environments, skip test or use relaxed assertions
-    if (std::getenv("CI") != nullptr) {
-        std::cout << "Running in CI environment, tests with ZMQ messaging may be unreliable" << std::endl;
-        GTEST_SKIP() << "Skipping in CI environment due to ZMQ connectivity issues";
-        return;
-    }
+    SKIP_IN_CI();
 
     // Create a ControlAssembly with our mocks - use explicit loopback IP
     ControlAssembly assembly("tcp://127.0.0.1:5557", *context, mockBackMotors, mockFServo);
@@ -107,14 +98,14 @@ TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
     // Start the assembly thread
     assembly.start();
 
-    // Wait for thread to start - increased wait time
+    // Wait for thread to start
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send a steering message via ZMQ - use explicit loopback IP
     zmq::socket_t sender(*context, ZMQ_PUB);
     sender.bind("tcp://127.0.0.1:5557");
 
-    // Give the subscriber time to connect - increased wait time
+    // Give the subscriber time to connect
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Send message multiple times to ensure delivery
@@ -138,12 +129,7 @@ TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
 }
 
 TEST_F(ControlAssemblyTest, HandleInitMessage) {
-    // In CI environments, skip test or use relaxed assertions
-    if (std::getenv("CI") != nullptr) {
-        std::cout << "Running in CI environment, tests with ZMQ messaging may be unreliable" << std::endl;
-        GTEST_SKIP() << "Skipping in CI environment due to ZMQ connectivity issues";
-        return;
-    }
+    SKIP_IN_CI();
 
     // Set up mock components with some initial values
     mockBackMotors->open_i2c_bus();
@@ -160,14 +146,14 @@ TEST_F(ControlAssemblyTest, HandleInitMessage) {
     // Start the assembly thread
     assembly.start();
 
-    // Wait for thread to start - increased wait time
+    // Wait for thread to start
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
     // Send an init message via ZMQ - use explicit loopback IP
     zmq::socket_t sender(*context, ZMQ_PUB);
     sender.bind("tcp://127.0.0.1:5556");
 
-    // Give the subscriber time to connect - increased wait time
+    // Give the subscriber time to connect
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
     // Send init message multiple times

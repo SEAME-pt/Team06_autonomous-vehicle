@@ -1,14 +1,17 @@
 #include <gtest/gtest.h>
 #include "BackMotors.hpp"
+#include "TestUtils.hpp"
 
 // Test subclass that overrides the hardware-specific methods
-class TestableBackMotors : public BackMotors {
+class TestableBackMotors : public BackMotors, public OutputSuppressor {
 public:
     TestableBackMotors() :
         BackMotors(),
         _i2cBusOpen(false),
         _motorsInitialized(false),
-        _currentSpeed(0) {}
+        _currentSpeed(0) {
+        suppressOutput();
+    }
 
     // Override hardware-specific methods
     void open_i2c_bus() override {

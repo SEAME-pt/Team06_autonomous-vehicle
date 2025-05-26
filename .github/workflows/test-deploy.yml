@@ -1,0 +1,40 @@
+name: Test Deployment
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+  push:
+    branches:
+      - zm/cicd
+    paths:
+      - '.github/workflows/cicd.yml'  # Only trigger on workflow changes
+
+jobs:
+  test-deploy:
+    runs-on: [seame]  # Same runner as main workflow
+    steps:
+      # Create a test binary
+      - name: Create test binary
+        run: |
+          mkdir -p ./bin
+          echo "Test binary" > ./bin/test.txt
+          echo "${{ github.run_number }}" > ./bin/version.txt
+          chmod +x ./bin/*
+
+      # Deploy the binaries to Jetson Nano
+      - name: Ship binary to Jetson
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          scp -r ./bin/* \
+          "${{ secrets.JETSON_HOST }}:${{ secrets.JETSON_TARGET_DIR }}/bin/"
+
+      # Set executable permissions on deployed files
+      - name: Give binaries permission to execute
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          ssh "${{ secrets.JETSON_HOST }}" "chmod +x ${{ secrets.JETSON_TARGET_DIR }}/bin/*"
+
+      # Verify successful deployment
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          ssh "${{ secrets.JETSON_HOST }}" "test -f ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt && cat ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt"

@@ -17,7 +17,6 @@ on:
     branches:
       - main
       - dev
-      - zm/cicd
 
 jobs:
   # Test job: Runs all unit tests in a Docker container
@@ -116,14 +115,14 @@ jobs:
       - name: Ship binary to Jetson
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          scp -r ./bin \
-          "${{ secrets.JETSON_HOST }}:${{ secrets.JETSON_TARGET_DIR }}/"
+          scp -r ./bin/* \
+          "${{ secrets.JETSON_HOST }}:${{ secrets.JETSON_TARGET_DIR }}/bin/"
 
       # Set executable permissions on deployed files
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh "${{ secrets.JETSON_HOST }}" 'chmod +x ${{ secrets.JETSON_TARGET_DIR }}/bin/*'
+          ssh "${{ secrets.JETSON_HOST }}" "chmod +x ${{ secrets.JETSON_TARGET_DIR }}/bin/*"
 
       # Record deployment in history log
       - name: Create deployment record

@@ -36,3 +36,9 @@ jobs:
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           ssh "${{ secrets.JETSON_HOST }}" 'test -f ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt && cat ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt'
+
+      # Debug secrets
+      - name: Debug secrets
+        run: |
+          echo "HOST: '${{ secrets.JETSON_HOST }}'"
+          echo "DIR: '${{ secrets.JETSON_TARGET_DIR }}'"

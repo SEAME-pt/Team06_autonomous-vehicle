@@ -17,7 +17,7 @@ on:
     branches:
       - main
       - dev
-      - zm/cicd
+      # - zm/cicd
 
 jobs:
   # Test job: Runs all unit tests in a Docker container
@@ -117,25 +117,25 @@ jobs:
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
-          ${{ env.JETSON_HOST }}:${{ env.JETSON_TARGET_DIR }}/
+          ${{ secrets.JETSON_HOST }}:${{ secrets.JETSON_TARGET_DIR }}/
 
       # Set executable permissions on deployed files
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh ${{ env.JETSON_HOST }} 'chmod +x ${{ env.JETSON_TARGET_DIR }}/bin/*'
+          ssh ${{ secrets.JETSON_HOST }} 'chmod +x ${{ secrets.JETSON_TARGET_DIR }}/bin/*'
 
       # Record deployment in history log
       - name: Create deployment record
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh ${{ env.JETSON_HOST }} "echo 'Deployed version ${{ env.APP_VERSION }} on $(date)' >> ${{ env.JETSON_TARGET_DIR }}/deployment-history.log"
+          ssh ${{ secrets.JETSON_HOST }} "echo 'Deployed version ${{ env.APP_VERSION }} on $(date)' >> ${{ secrets.JETSON_TARGET_DIR }}/deployment-history.log"
 
       # Verify successful deployment
       - name: Verify deployment
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh ${{ env.JETSON_HOST }} "test -f ${{ env.JETSON_TARGET_DIR }}/bin/version.txt"
+          ssh ${{ secrets.JETSON_HOST }} "test -f ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt"
 
       # Notify on successful deployment
       - name: Notify deployment status

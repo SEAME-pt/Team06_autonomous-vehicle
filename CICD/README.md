@@ -30,7 +30,6 @@ The CI/CD pipeline automates the testing, building, and deployment process for t
 **Key Steps**:
 - Sets up QEMU for ARM64 emulation
 - Configures Docker Buildx for multi-platform builds
-- Creates and manages build cache
 - Pulls Jetson Nano Ubuntu Docker image
 - Runs all tests in ARM64 Docker container
 
@@ -91,16 +90,6 @@ The pipeline is triggered by:
 - ZeroMQ libraries and dependencies
 - CMake and build essentials
 - Qt libraries and dependencies
-
-## Caching Strategy
-
-### Docker Layer Caching
-**Purpose**: Reduce build times and improve performance
-
-**Benefits**:
-- Up to 70% reduction in build times
-- Reduced network usage
-- Improved pipeline reliability
 
 
 ## File Structure

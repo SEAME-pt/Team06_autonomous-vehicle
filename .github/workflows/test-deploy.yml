@@ -5,8 +5,6 @@ on:
   push:
     branches:
       - zm/cicd
-    paths:
-      - '.github/workflows/cicd.yml'  # Only trigger on workflow changes
 
 jobs:
   test-deploy:

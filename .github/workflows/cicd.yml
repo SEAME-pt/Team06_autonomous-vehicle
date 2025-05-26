@@ -17,7 +17,7 @@ on:
     branches:
       - main
       - dev
-      # - zm/cicd
+      - zm/cicd
 
 jobs:
   # Test job: Runs all unit tests in a Docker container

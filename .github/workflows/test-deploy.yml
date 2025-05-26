@@ -24,17 +24,17 @@ jobs:
       - name: Ship binary to Jetson
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          scp -r ./bin/* \
-          "${{ secrets.JETSON_HOST }}:${{ secrets.JETSON_TARGET_DIR }}/bin/"
+          scp -r ./bin \
+          team06@10.21.221.56:/home/team06/
 
       # Set executable permissions on deployed files
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh "${{ secrets.JETSON_HOST }}" "chmod +x ${{ secrets.JETSON_TARGET_DIR }}/bin/*"
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'
 
       # Verify successful deployment
       - name: Verify deployment
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh "${{ secrets.JETSON_HOST }}" "test -f ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt && cat ${{ secrets.JETSON_TARGET_DIR }}/bin/version.txt"
+          ssh team06@10.21.221.56 'test -f /home/team06/bin/version.txt && cat /home/team06/bin/version.txt'

@@ -103,8 +103,6 @@ jobs:
   deploy:
     runs-on: [seame]  # Custom runner for deployment
     needs: build  # Only run if build succeeds
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'  # Only deploy on main or dev branches
-    environment: production
     steps:
       # Prepare deployment directory
       - name: Ensure target directory exists

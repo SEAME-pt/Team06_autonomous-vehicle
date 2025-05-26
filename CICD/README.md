@@ -63,20 +63,6 @@ The CI/CD pipeline automates the testing, building, and deployment process for t
 - Verifies deployment
 - Logs deployment history
 
-## Triggers
-
-The pipeline is triggered by:
-
-### Pull Requests
-- **Target Branch**: `main`
-- **Jobs Executed**: `test` and `build` only
-- **Purpose**: Validate changes before merge
-
-### Push Events
-- **Target Branches**: `main`, `dev`
-- **Jobs Executed**: All jobs (`test`, `build`, `deploy`)
-- **Purpose**: Full CI/CD pipeline with deployment
-
 
 ## Docker Configuration
 

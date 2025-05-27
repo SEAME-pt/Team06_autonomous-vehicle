@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get the project root directory (parent of scripts directory)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 # Parse command line arguments
 ENABLE_COVERAGE=0
 
@@ -14,8 +17,8 @@ do
 done
 
 # Create build directory if it doesn't exist
-mkdir -p build
-cd build
+mkdir -p "$PROJECT_ROOT/build"
+cd "$PROJECT_ROOT/build"
 
 # CMake options
 CMAKE_OPTIONS="-Wno-dev"
@@ -38,7 +41,7 @@ fi
 
 # Run CMake with options
 echo "Running CMake with options: $CMAKE_OPTIONS"
-cmake $CMAKE_OPTIONS ..
+cmake $CMAKE_OPTIONS "$PROJECT_ROOT"
 
 # Build the project
 make

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get the project root directory (parent of scripts directory)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
@@ -16,11 +19,11 @@ if [ ! -f "/usr/include/zmq.h" ]; then
 fi
 
 # Create and navigate to build directory
-mkdir -p build
-cd build
+mkdir -p "$PROJECT_ROOT/build"
+cd "$PROJECT_ROOT/build"
 
 # Configure CMake with coverage enabled
-cmake .. -DCODE_COVERAGE=ON
+cmake "$PROJECT_ROOT" -DCODE_COVERAGE=ON
 
 # Build the project
 make

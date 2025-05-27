@@ -52,8 +52,8 @@ jobs:
             -e CI=true \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            chmod +x /repo/run_tests.sh && \
-            ./run_tests.sh || exit 1
+            chmod +x /repo/scripts/run_tests.sh && \
+            ./scripts/run_tests.sh || exit 1
             "
 
   # Build job: Compiles the project and creates artifacts
@@ -81,10 +81,10 @@ jobs:
             -w /repo \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            chmod +x /repo/build.sh && \
+            chmod +x /repo/scripts/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \
             export CMAKE_FLAGS='-DBUILD_TESTS=OFF' && \
-            ./build.sh && \
+            ./scripts/build.sh && \
             mkdir -p build/bin && \
             echo '${{ env.APP_VERSION }}' > build/bin/version.txt && \
             # Only copy production binaries

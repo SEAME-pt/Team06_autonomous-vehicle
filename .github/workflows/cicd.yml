@@ -83,6 +83,11 @@ jobs:
             ./build.sh && \
             mkdir -p build/bin && \
             echo '${{ env.APP_VERSION }}' > build/bin/version.txt && \
+            # Only copy production binaries
+            cd build/bin && \
+            rm -f *_test && \
+            rm -rf reports coverage && \
+            cd ../.. && \
             chmod -R 777 build
             "
 

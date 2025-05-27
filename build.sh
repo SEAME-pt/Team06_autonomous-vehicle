@@ -28,10 +28,16 @@ fi
 
 # Add any additional CMake flags from environment
 if [ ! -z "$CMAKE_FLAGS" ]; then
-    CMAKE_OPTIONS="$CMAKE_OPTIONS $CMAKE_FLAGS"
+    # Split CMAKE_FLAGS into array and add each flag
+    IFS=' ' read -ra FLAGS <<< "$CMAKE_FLAGS"
+    for flag in "${FLAGS[@]}"; do
+        CMAKE_OPTIONS="$CMAKE_OPTIONS $flag"
+    done
+    echo "Adding CMake flags: $CMAKE_FLAGS"
 fi
 
 # Run CMake with options
+echo "Running CMake with options: $CMAKE_OPTIONS"
 cmake $CMAKE_OPTIONS ..
 
 # Build the project

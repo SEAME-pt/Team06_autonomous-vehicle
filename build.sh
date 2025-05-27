@@ -26,6 +26,11 @@ if [ $ENABLE_COVERAGE -eq 1 ]; then
     echo "Enabling code coverage"
 fi
 
+# Add any additional CMake flags from environment
+if [ ! -z "$CMAKE_FLAGS" ]; then
+    CMAKE_OPTIONS="$CMAKE_OPTIONS $CMAKE_FLAGS"
+fi
+
 # Run CMake with options
 cmake $CMAKE_OPTIONS ..
 

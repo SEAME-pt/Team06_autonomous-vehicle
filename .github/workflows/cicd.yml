@@ -79,6 +79,7 @@ jobs:
             /bin/bash -c "
             chmod +x /repo/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \
+            export CMAKE_FLAGS='-DBUILD_TESTS=OFF' && \
             ./build.sh && \
             mkdir -p build/bin && \
             echo '${{ env.APP_VERSION }}' > build/bin/version.txt && \

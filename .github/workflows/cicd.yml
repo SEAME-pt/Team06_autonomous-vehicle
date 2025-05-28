@@ -39,7 +39,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Pull Jetson Nano Ubuntu Docker image
-        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
 
       - name: Run linters
         run: |
@@ -72,7 +72,7 @@ jobs:
 
       # Pull the base Docker image for Jetson Nano
       - name: Pull Jetson Nano Ubuntu Docker image
-        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
 
       # Run all tests in the Docker container
       - name: Run tests
@@ -128,7 +128,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Pull Jetson Nano Ubuntu Docker image
-        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
 
       # Build the project and create version file
       - name: Build project and create version file

@@ -53,21 +53,11 @@ jobs:
             -e CI=true \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            echo 'Debug: Listing /repo directory structure' && \
-            ls -la /repo && \
-            echo 'Debug: Configuring git safe directories' && \
             git config --global --add safe.directory /repo && \
             git config --global --add safe.directory /repo/modules/cluster-display && \
             git config --global --add safe.directory /repo/modules/lane-detection && \
             git config --global --add safe.directory /repo/modules/object-detection && \
-            echo 'Debug: Initializing git submodules' && \
             git submodule update --init --recursive && \
-            echo 'Debug: Listing /repo/modules directory' && \
-            ls -la /repo/modules && \
-            echo 'Debug: Listing /repo/modules/cluster-display directory' && \
-            ls -la /repo/modules/cluster-display && \
-            echo 'Debug: Current working directory' && \
-            pwd && \
             chmod +x /repo/scripts/run_tests.sh && \
             ./scripts/run_tests.sh || exit 1
             "
@@ -97,19 +87,11 @@ jobs:
             -w /repo \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            echo 'Debug: Listing /repo directory structure' && \
-            ls -la /repo && \
-            echo 'Debug: Configuring git safe directories' && \
             git config --global --add safe.directory /repo && \
             git config --global --add safe.directory /repo/modules/cluster-display && \
             git config --global --add safe.directory /repo/modules/lane-detection && \
             git config --global --add safe.directory /repo/modules/object-detection && \
-            echo 'Debug: Initializing git submodules' && \
             git submodule update --init --recursive && \
-            echo 'Debug: Listing /repo/modules directory' && \
-            ls -la /repo/modules && \
-            echo 'Debug: Listing /repo/modules/cluster-display directory' && \
-            ls -la /repo/modules/cluster-display && \
             chmod +x /repo/scripts/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \
             export CMAKE_FLAGS='-DBUILD_TESTS=OFF' && \

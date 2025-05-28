@@ -102,7 +102,7 @@ jobs:
             /bin/bash -c "
             git config --global --add safe.directory /repo && \
             chmod +x /repo/scripts/run_coverage.sh && \
-            ./scripts/run_coverage.sh --output=./coverage --html
+            ./scripts/run_coverage.sh --html
             "
 
       # Upload coverage as artifact instead of to Codecov

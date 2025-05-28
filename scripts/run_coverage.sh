@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Default output directory
-OUTPUT_DIR="build/coverage"
+# Default output directory - changing to match what's expected in CI/CD workflow
+OUTPUT_DIR="coverage"
 HTML_REPORT=false
 
 # Parse arguments
@@ -35,19 +35,19 @@ for test_bin in *_test; do
 done
 cd ..
 
-# Create output directory
-mkdir -p "$OUTPUT_DIR"
+# Create output directory - ensure absolute path
+mkdir -p "../$OUTPUT_DIR"
 
 # Generate coverage report
 echo "Generating coverage reports..."
-lcov --capture --directory . --output-file "$OUTPUT_DIR/coverage.info"
-lcov --remove "$OUTPUT_DIR/coverage.info" '/usr/*' --output-file "$OUTPUT_DIR/coverage.info"
-lcov --list "$OUTPUT_DIR/coverage.info"
+lcov --capture --directory . --output-file "../$OUTPUT_DIR/coverage.info"
+lcov --remove "../$OUTPUT_DIR/coverage.info" '/usr/*' --output-file "../$OUTPUT_DIR/coverage.info"
+lcov --list "../$OUTPUT_DIR/coverage.info"
 
 # Generate HTML report if requested
 if [ "$HTML_REPORT" = true ]; then
     echo "Generating HTML report..."
-    genhtml "$OUTPUT_DIR/coverage.info" --output-directory "$OUTPUT_DIR/html"
+    genhtml "../$OUTPUT_DIR/coverage.info" --output-directory "../$OUTPUT_DIR/html"
     echo "HTML report generated in $OUTPUT_DIR/html/index.html"
 fi
 

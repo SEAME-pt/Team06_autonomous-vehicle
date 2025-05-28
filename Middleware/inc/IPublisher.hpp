@@ -6,27 +6,27 @@
 
 class IPublisher {
 public:
-    virtual ~IPublisher() = default;
-    virtual void send(const std::string& message) = 0;
+  virtual ~IPublisher() = default;
+  virtual void send(const std::string &message) = 0;
 };
 
 // Concrete implementation using ZeroMQ
 class ZmqPublisher : public IPublisher {
 public:
-    ZmqPublisher(const std::string& address, zmq::context_t& context)
-        : socket(context, zmq::socket_type::pub) {
-        socket.bind(address);
-    }
+  ZmqPublisher(const std::string &address, zmq::context_t &context)
+      : socket(context, zmq::socket_type::pub) {
+    socket.bind(address);
+  }
 
-    ~ZmqPublisher() override = default;
+  ~ZmqPublisher() override = default;
 
-    void send(const std::string& message) override {
-        zmq::message_t zmq_message(message.data(), message.size());
-        socket.send(zmq_message, zmq::send_flags::none);
-    }
+  void send(const std::string &message) override {
+    zmq::message_t zmq_message(message.data(), message.size());
+    socket.send(zmq_message, zmq::send_flags::none);
+  }
 
 private:
-    zmq::socket_t socket;
+  zmq::socket_t socket;
 };
 
 #endif

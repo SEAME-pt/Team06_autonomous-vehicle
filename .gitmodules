@@ -1,9 +1,9 @@
 [submodule "modules/cluster-display"]
 	path = modules/cluster-display
-	url = git@github.com:SEAME-pt/Team06_DES_Instrument-Cluster.git
+	url = https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster.git
 [submodule "modules/lane-detection"]
 	path = modules/lane-detection
-	url = git@github.com:SEAME-pt/Team06_ADS_Autonomous-Lane-Detection.git
+	url = https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection.git
 [submodule "modules/object-detection"]
 	path = modules/object-detection
-	url = git@github.com:SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance.git
+	url = https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance.git

@@ -55,6 +55,8 @@ jobs:
             /bin/bash -c "
             echo 'Debug: Listing /repo directory structure' && \
             ls -la /repo && \
+            echo 'Debug: Initializing git submodules' && \
+            git submodule update --init --recursive && \
             echo 'Debug: Listing /repo/modules directory' && \
             ls -la /repo/modules && \
             echo 'Debug: Listing /repo/modules/cluster-display directory' && \

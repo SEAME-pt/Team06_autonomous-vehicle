@@ -20,7 +20,6 @@ on:
   # Trigger on pushes to specified branches
   push:
     branches:
-      - main
       - dev
 
 jobs:

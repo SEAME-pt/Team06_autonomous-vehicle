@@ -71,7 +71,8 @@ void SensorLogger::logSensorUpdate(
 
     // Only log if the value has actually changed
     if (sensorData->value != sensorData->oldValue) {
-      log_file << getTimestamp() << " - " << "Sensor: " << sensorData->name
+      log_file << getTimestamp() << " - "
+               << "Sensor: " << sensorData->name
                << ", Value: " << sensorData->value
                << ", Old Value: " << sensorData->oldValue
                << ", Critical: " << (sensorData->critical ? "Yes" : "No")
@@ -97,8 +98,9 @@ void SensorLogger::logError(const std::string &sensorName,
       return;
     }
 
-    log_file << getTimestamp() << " - ERROR - " << "Sensor: " << sensorName
-             << ", Error: " << errorMessage << std::endl
+    log_file << getTimestamp() << " - ERROR - "
+             << "Sensor: " << sensorName << ", Error: " << errorMessage
+             << std::endl
              << std::flush;
 
     std::cout << "Logged error for sensor: " << sensorName << std::endl;

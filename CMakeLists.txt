@@ -16,8 +16,11 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 # Places all generated binaries in the designated folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+# Set absolute path for cluster display
+set(CLUSTER_DISPLAY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules/cluster-display/ClusterDisplay)
+
 # Runs the cmake on all these directories
 add_subdirectory(zmq)
-add_subdirectory(modules/cluster-display/ClusterDisplay)
+add_subdirectory(${CLUSTER_DISPLAY_PATH})
 add_subdirectory(Middleware)
 add_subdirectory(Controller)

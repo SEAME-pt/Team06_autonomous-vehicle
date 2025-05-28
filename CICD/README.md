@@ -24,9 +24,14 @@ The pipeline consists of four main jobs:
 - Uses QEMU for ARM64 emulation
 - Executes linting via `scripts/run_linters.sh`
 - Code must pass linting before tests run
-- Checks:
-  - Code formatting (clang-format)
-  - Static analysis (clang-tidy)
+- **Default mode**: Format-only (clang-format)
+- **Static analysis**: Disabled in CI due to header compatibility issues in emulated ARM64 environment
+
+**Checks performed**:
+- Code formatting consistency (clang-format)
+- Style guide compliance
+
+**Note**: Full static analysis (clang-tidy) is available for local development using the `--with-tidy` flag but is disabled in CI to avoid header path issues in the emulated ARM64 Docker environment.
 
 ### Test Job
 - Runs on: ubuntu-latest
@@ -61,10 +66,27 @@ The pipeline consists of four main jobs:
 
 The pipeline uses these main scripts:
 ```bash
-scripts/build.sh      # Handles compilation and build process
-scripts/run_tests.sh  # Executes test suite and generates coverage
-scripts/run_linters.sh # Performs code quality checks
-scripts/run_coverage.sh # Generates code coverage reports
+scripts/build.sh         # Handles compilation and build process
+scripts/run_tests.sh     # Executes test suite and generates coverage
+scripts/run_linters.sh   # Performs code quality checks (format-only by default)
+scripts/run_coverage.sh  # Generates code coverage reports
+```
+
+### Linting Script Options
+
+The `run_linters.sh` script supports multiple modes:
+```bash
+# Default: Check formatting only (CI-safe)
+./scripts/run_linters.sh
+
+# Fix formatting issues
+./scripts/run_linters.sh --fix
+
+# Enable full static analysis (local development)
+./scripts/run_linters.sh --with-tidy
+
+# Explicit format-only mode
+./scripts/run_linters.sh --format-only
 ```
 
 ## Code Coverage

@@ -54,7 +54,6 @@ jobs:
             git config --global --add safe.directory /repo/modules/object-detection && \
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_linters.sh && \
-            chmod +x /repo/scripts/fix_clang_headers.sh && \
             echo 'Running linters...' && \
             ./scripts/run_linters.sh
             "

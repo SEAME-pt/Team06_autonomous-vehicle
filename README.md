@@ -81,16 +81,24 @@ Start components in order:
 
 Run the linter to check code quality:
 ```bash
-# Check for issues (won't modify files)
+# Check for formatting issues only (default, safe for CI)
 ./scripts/run_linters.sh
 
 # Fix formatting issues automatically
 ./scripts/run_linters.sh --fix
+
+# Run full static analysis (clang-tidy) for local development
+./scripts/run_linters.sh --with-tidy
+
+# Combine flags: fix formatting and run static analysis
+./scripts/run_linters.sh --fix --with-tidy
 ```
 
 The linter checks:
-- Code formatting (clang-format)
-- Static analysis (clang-tidy)
+- **Code formatting** (clang-format) - Always enabled
+- **Static analysis** (clang-tidy) - Enabled with `--with-tidy` flag
+
+**Note**: By default, the linter runs in format-only mode to ensure compatibility with CI environments. Use `--with-tidy` for comprehensive static analysis during local development.
 
 ### Testing
 

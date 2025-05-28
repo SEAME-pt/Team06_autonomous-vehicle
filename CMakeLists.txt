@@ -17,7 +17,11 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Set absolute path for cluster display
-set(CLUSTER_DISPLAY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules/cluster-display/ClusterDisplay)
+if(DEFINED ENV{GITHUB_WORKSPACE})
+    set(CLUSTER_DISPLAY_PATH /repo/modules/cluster-display/ClusterDisplay)
+else()
+    set(CLUSTER_DISPLAY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules/cluster-display/ClusterDisplay)
+endif()
 
 # Runs the cmake on all these directories
 add_subdirectory(zmq)

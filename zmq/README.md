@@ -1,86 +1,111 @@
-# SEA:ME Instrument Cluster - ZeroMQ Library
+# ZeroMQ Wrapper Library
 
-This component provides a C++ wrapper around the ZeroMQ (ØMQ) messaging library for the Instrument Cluster system. It implements the publisher-subscriber pattern to facilitate communication between the different components of the system.
+A C++ wrapper library around ZeroMQ (ØMQ) for inter-component communication in our system.
 
-## Features
+## Overview
 
-- Abstracted ZeroMQ functionality through clean interfaces
-- Publisher implementation for sending data
-- Subscriber implementation for receiving data
-- Support for test mode to facilitate unit testing
-- Thread-safe communication
-
-## Classes
-
-### `ZmqPublisher`
-
-A class that implements the `IPublisher` interface to send messages through ZeroMQ sockets.
-
-```cpp
-// Create a publisher
-zmq::context_t context;
-ZmqPublisher publisher("tcp://*:5555", context);
-
-// Send a message
-publisher.send("Hello World");
-```
-
-### `ZmqSubscriber`
-
-A class that implements the `ISubscriber` interface to receive messages from ZeroMQ sockets.
-
-```cpp
-// Create a subscriber
-zmq::context_t context;
-ZmqSubscriber subscriber("tcp://localhost:5555", context);
-
-// Receive a message (with timeout in ms)
-std::string message = subscriber.receive(1000);
-```
-
-## Test Mode
-
-Both publisher and subscriber classes support a test mode that can be used for unit testing:
-
-```cpp
-// Create a subscriber in test mode
-ZmqSubscriber subscriber("", context, true);
-
-// Set a test message
-subscriber.setTestMessage("Test Message");
-
-// Receive the test message
-std::string message = subscriber.receive();
-```
+This library provides:
+- C++ wrapper classes around ZeroMQ functionality
+- Common communication patterns implementation
+- Thread-safe communication interfaces
+- Cross-platform compatibility (with focus on ARM64)
 
 ## Dependencies
 
-- C++17 compatible compiler
+- libzmq3-dev (ZeroMQ core library)
+- cppzmq (C++ bindings)
+- C++17 compiler
 - CMake 3.10+
-- ZeroMQ library (libzmq)
-- cppzmq C++ binding
 
 ## Building
 
-The ZeroMQ wrapper library is built as part of the main build process:
-
+The library is built as part of the main project:
 ```bash
-./build.sh
+./scripts/build.sh
 ```
 
-This produces a static library that is linked by other components of the system.
+For ZMQ-specific development:
+```bash
+cd zmq
+mkdir -p build && cd build
+cmake ..
+make
+```
 
 ## Integration
 
-To use this library in a component:
+To use this library in your component:
 
-1. Include the appropriate header:
-   ```cpp
-   #include "ZmqPublisher.hpp"
-   #include "ZmqSubscriber.hpp"
-   ```
+1. Include the needed headers:
+```cpp
+#include "ZmqPublisher.hpp"   // For publishing messages
+#include "ZmqSubscriber.hpp"  // For subscribing to messages
+```
 
-2. Link against the ZeroMQLib in CMakeLists.txt:
-   ```cmake
-   target_link_libraries(your_target PRIVATE ZeroMQLib)
-   ```
+2. Link in CMakeLists.txt:
+```cmake
+target_link_libraries(your_target PRIVATE ZeroMQLib)
+```
+
+## Directory Structure
+
+- `inc/` - Header files
+  - `ZmqPublisher.hpp` - Publisher implementation
+  - `ZmqSubscriber.hpp` - Subscriber implementation
+- `src/` - Implementation files
+- `CMakeLists.txt` - Build configuration
+
+## CMake Configuration
+
+The build system:
+- Automatically finds ZeroMQ library and headers
+- Supports multiple library versions (3.x-5.x)
+- Handles cross-compilation for ARM64
+- Configures include paths and linking
+
+## Testing
+
+Tests are run as part of the main test suite:
+```bash
+./scripts/run_tests.sh
+```
+
+## Communication Patterns
+
+### Publisher-Subscriber
+- Used for sensor data distribution
+- Real-time telemetry broadcasting
+- System status updates
+
+### Request-Reply
+- Component health checks
+- Configuration updates
+- Command acknowledgments
+
+### Dealer-Router
+- Load-balanced processing
+- Multi-part message handling
+- Asynchronous task distribution
+
+## Message Types
+
+- Vehicle telemetry
+- Sensor readings
+- Control commands
+- System status
+- Configuration updates
+- Error reports
+
+## Performance
+
+- Low latency (< 1ms typical)
+- High throughput
+- Minimal CPU overhead
+- Efficient memory usage
+
+## Security
+
+- Message encryption support
+- Authentication mechanisms
+- Access control
+- Secure protocols

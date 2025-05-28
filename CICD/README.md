@@ -1,92 +1,68 @@
-# CI/CD Workflow Documentation
+# CI/CD Pipeline Documentation
 
-This document describes the GitHub Actions CI/CD pipeline for the Cluster Display project, defined in `../.github/workflows/cicd.yml`.
+This directory contains documentation for our GitHub Actions-based CI/CD pipeline that handles building, testing, and deploying to Jetson Nano hardware.
 
-## Overview
+## Pipeline Overview
 
-The CI/CD pipeline automates the testing, building, and deployment process for the Jetson Nano project. It ensures code quality through comprehensive testing and provides reliable deployment to target hardware.
+The pipeline consists of three main jobs:
+1. Test - Runs unit tests in a Docker container
+2. Build - Compiles the project and creates artifacts
+3. Deploy - Deploys to Jetson Nano hardware
 
-## Pipeline Architecture
+## Environment
 
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│    Test     │───▶│    Build    │───▶│   Deploy    │
-│   Job       │    │    Job      │    │    Job      │
-└─────────────┘    └─────────────┘    └─────────────┘
-      │                    │                  │
-      ▼                    ▼                  ▼
-  Unit Tests         ARM64 Build        Jetson Nano
-  Docker ARM64       Versioned          SSH/SCP
-  QEMU Emulation     Artifacts          Deployment
-```
+- Base Image: `jmoreiraseame/jetson-nano-ubuntu:bionic`
+- Architecture: ARM64 (linux/arm64)
+- Platform: Ubuntu 18.04 Bionic
+- Runner: Custom runner (seame) for deployment
 
 ## Workflow Jobs
 
-### 1. Test Job (`test`)
-**Purpose**: Validates code quality and functionality
+### Test Job
+- Runs on: ubuntu-latest
+- Uses QEMU for ARM64 emulation
+- Executes all tests via `scripts/run_tests.sh`
+- Must pass before build proceeds
 
-**Platform**: `ubuntu-latest` with ARM64 emulation
-
-**Key Steps**:
-- Sets up QEMU for ARM64 emulation
-- Configures Docker Buildx for multi-platform builds
-- Pulls Jetson Nano Ubuntu Docker image
-- Runs all tests in ARM64 Docker container
-
-
-### 2. Build Job (`build`)
-**Purpose**: Compiles the project for ARM64 architecture
-
-**Dependencies**: Requires `test` job to pass
-
-**Key Steps**:
-- Cross-compiles for Jetson Nano (ARM64)
-- Creates versioned build artifacts
-- Generates version metadata
+### Build Job
+- Runs on: ubuntu-latest
+- Requires successful test job
+- Creates versioned artifacts
+- Disables test compilation for production builds
 - Uploads artifacts for deployment
 
-
-### 3. Deploy Job (`deploy`)
-**Purpose**: Deploys artifacts to Jetson Nano
-
-**Platform**: Custom runner (`seame`)
-
-**Dependencies**: Requires `build` job to pass
-
-**Conditions**: Only runs on `main` and `dev` branches
-
-**Key Steps**:
-- Downloads build artifacts
-- Sets up SSH authentication
-- Transfers files via SCP
+### Deploy Job
+- Runs on: Custom runner [seame]
+- Requires successful build job
+- Only runs on main and dev branches
+- Deploys to Jetson Nano via SCP
 - Sets executable permissions
-- Verifies deployment
-- Logs deployment history
+- Maintains deployment history log
 
+## Version Control
 
-## Docker Configuration
+- Version format: 1.0.{run_number}
+- Version file included in deployment
+- Deployment history logged on target device
 
-### Base Image
-- **Image**: `jmoreiraseame/jetson-nano-ubuntu:bionic`
-- **Architecture**: ARM64 (linux/arm64)
-- **Platform**: Ubuntu 18.04 Bionic
+## Scripts
 
-### Features
-- Pre-installed development tools
-- ZeroMQ libraries and dependencies
-- CMake and build essentials
-- Qt libraries and dependencies
-
-
-## File Structure
-
+The pipeline uses two main scripts:
+```bash
+scripts/build.sh      # Handles compilation and build process
+scripts/run_tests.sh  # Executes test suite
 ```
-.github/workflows/
-└── cicd.yml                 # Main CI/CD workflow
 
-CICD/
-├── README.md
-├── Dockerfile              # Custom Docker image
-├── updatedockerimage.sh    # Docker image update script
-└── *.yml.bak              # Backup workflow files
-```
+## Security
+
+- Deployment credentials stored as GitHub Secrets
+- SSH-based deployment
+- Restricted to specific branches (main, dev)
+
+## Adding New Components
+
+When adding new components:
+1. Ensure tests are added to `run_tests.sh`
+2. Update `build.sh` if needed
+3. Verify ARM64 compatibility
+4. Test in Docker environment first

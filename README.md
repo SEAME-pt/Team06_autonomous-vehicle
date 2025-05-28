@@ -1,146 +1,99 @@
-# SEA:ME Instrument Cluster Display
+# Team06 Autonomous Vehicle Project
 
-A comprehensive digital instrument cluster system for automotive applications developed as part of the SEA:ME course. This project demonstrates the integration of sensor data collection, joystick controls, and a modern digital display for vehicle instrumentation.
-
-![CI/CD Pipeline](https://github.com/your-organization/ClusterDisplay/actions/workflows/ci-cd-with-tests.yml/badge.svg)
+An autonomous vehicle system that combines instrument cluster display, lane detection, and object detection capabilities. The system provides both visual feedback through a modern digital dashboard and autonomous driving features.
 
 ## Project Overview
 
-This system consists of three main components:
+The system integrates several key components:
 
-1. **Controller** - Handles joystick input for user interaction
-2. **Middleware** - Collects and processes sensor data (speed, battery, etc.)
-3. **ClusterDisplay** - Qt-based UI that displays the vehicle information
+1. **Instrument Cluster** - Digital dashboard displaying vehicle telemetry and status
+2. **Lane Detection** - Real-time lane detection and tracking
+3. **Object Detection** - Detection and avoidance of obstacles
+4. **Controller** - Handles vehicle control inputs
+5. **Middleware** - Central data processing and distribution hub
 
 ## Architecture
 
 ```
-┌─────────────┐      ┌────────────┐      ┌────────────────┐
-│ Controller  │────▶ │ Middleware │────▶│ ClusterDisplay │
-└─────────────┘      └────────────┘      └────────────────┘
-   Joystick           Data Processing      Qt-based UI
-   Input              & Publishing         Display
+┌─────────────┐     ┌────────────┐     ┌──────────────────┐
+│ Controller  │────▶│ Middleware │────▶│ Cluster Display  │
+└─────────────┘     └────────────┘     └──────────────────┘
+                         │
+                         │
+              ┌─────────┴──────────┐
+              ▼                    ▼
+    ┌─────────────────┐  ┌─────────────────┐
+    │ Lane Detection  │  │ Object Detection│
+    └─────────────────┘  └─────────────────┘
 ```
 
-- Communication between components uses the ZeroMQ messaging library
-- Publisher-Subscriber pattern for efficient data transfer
-- Modular design allows independent development and testing
-
-## Building the Project
-
-Prerequisites:
-- C++17 compatible compiler
-- CMake 3.10+
-- ZeroMQ library (libzmq3-dev) - **Required**
-- ZeroMQ C++ bindings (cppzmq)
-- Qt 5.9+ (for ClusterDisplay)
-- pthread
-
-Build steps:
-```bash
-# Clone the repository
-git clone https://github.com/your-organization/Team06-SEAME-DES_Instrument-Cluster.git
-cd Team06-SEAME-DES_Instrument-Cluster
-
-# Install required ZeroMQ dependencies if not already installed
-sudo apt-get update
-sudo apt-get install -y libzmq3-dev
-
-# Build using the script
-./build.sh
-
-# For code coverage report
-./build.sh --coverage
-```
-
-### Using Docker for Development
-
-We provide a pre-configured Docker image with all dependencies pre-installed, which ensures consistency between local development and CI/CD:
-
-```bash
-# Pull the Docker image
-docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
-
-# Run a container with the current directory mounted
-docker run -it --rm --platform linux/arm64 -v $(pwd):/app -w /app jmoreiraseame/jetson-nano-ubuntu:bionic bash
-
-# Inside the container, you can build and test
-mkdir -p build && cd build
-cmake .. -DCODE_COVERAGE=ON
-make
-cd bin && ./battery_test  # Run a specific test
-
-# Or use the run_tests.sh script to run all tests
-cd /app && ./run_tests.sh
-```
-
-## Running the Application
-
-After building:
-```bash
-# From the build/bin directory
-./Middleware  # Start the middleware first
-./ClusterDisplay  # Start the display
-```
-
-Connect a compatible joystick to interact with the system.
+- ZeroMQ-based communication between components
+- Modular architecture with independent, replaceable components
+- Real-time data processing and visualization
 
 ## Project Structure
 
-- `/Controller` - Joystick interface implementation
-- `/Middleware` - Sensor data collection and processing
-- `/ClusterDisplay` - Qt/QML-based user interface
-- `/zmq` - ZeroMQ integration files
-- `/build` - Build output directory (created during build)
+- `/Controller` - Vehicle control input processing
+- `/Middleware` - Central data hub and message broker
+- `/modules` - Core autonomous driving modules
+  - `cluster-display` - Digital instrument cluster interface
+  - `lane-detection` - Lane detection and tracking
+  - `object-detection` - Object detection and avoidance
+- `/scripts` - Build and test automation
+- `/zmq` - ZeroMQ communication layer
 
-## Testing & Code Coverage
+## Building
 
-The project includes comprehensive unit tests for all components. Tests can be run using:
+Prerequisites:
+- C++17 compiler
+- CMake 3.10+
+- ZeroMQ (libzmq3-dev)
+- Qt 5.9+ (for display interface)
+- OpenCV (for computer vision)
+- CUDA (for GPU acceleration)
 
+Build steps:
 ```bash
-# Run all tests
-./run_tests.sh
+# Install dependencies
+sudo apt-get update
+sudo apt-get install -y libzmq3-dev qt5-default libopencv-dev
 
-# From the build directory
-cd build
-ctest
+# Initialize and update submodules
+git submodule update --init --recursive
+
+# Build the project
+./scripts/build.sh
 ```
 
-### Continuous Integration/Continuous Deployment
+## Running
 
-This project uses GitHub Actions for a comprehensive CI/CD pipeline:
-
-- **Build**: Compiles the code with test and coverage options
-- **Test**: Runs all unit tests and generates test reports
-- **Coverage**: Generates code coverage reports
-- **Deploy**: Deploys to target hardware if tests pass (main/dev branches only)
-
-The pipeline prevents deployment of broken code by ensuring that all tests pass before deployment occurs.
-
-You can view the latest pipeline results in the [GitHub Actions tab](https://github.com/your-organization/ClusterDisplay/actions).
-
-### Code Coverage Report
-
-Code coverage reports can be generated to visualize test coverage:
-
+Start components in order:
 ```bash
-./build.sh --coverage
+./build/bin/Middleware
+./build/bin/ClusterDisplay
+./build/bin/Controller
 ```
 
-This generates an HTML coverage report in `build/coverage/html/index.html` with:
+## Testing
 
-- Line coverage statistics
-- Function coverage statistics
-- Uncovered code highlighting
+Run the test suite:
+```bash
+./scripts/run_tests.sh
+```
 
-The coverage report helps identify areas of the codebase that need additional testing and ensures the reliability of the system.
+## Continuous Integration
 
+The project uses GitHub Actions for automated:
+- Building on multiple platforms
+- Running unit and integration tests
+- Code coverage analysis
+- Deployment to test environments
 
-## Documentation
+## Module Documentation
 
-Each component has its own README with detailed information:
-- [Controller Documentation](Controller/README.md)
-- [Middleware Documentation](Middleware/README.md)
-- [ClusterDisplay Documentation](ClusterDisplay/README.md)
-- [ZeroMQ Library Documentation](zmq/README.md)
-- [Middleware Tests Documentation](Middleware/test/README.md)
+Each module maintains its own detailed documentation:
+- [Controller](Controller/README.md)
+- [Middleware](Middleware/README.md)
+- [Cluster Display](modules/cluster-display/README.md)
+- [Lane Detection](modules/lane-detection/README.md)
+- [Object Detection](modules/object-detection/README.md)

@@ -1,95 +1,94 @@
-# SEA:ME Instrument Cluster - Middleware
+# Middleware Component
 
-The Middleware component is the central data processing hub for the Instrument Cluster system. It collects sensor data, processes it, and publishes it to the display component using ZeroMQ.
+A component that handles sensor data processing, control signals, and communication between system components.
 
-## Features
+## Overview
 
-- Real-time sensor data collection (speed, battery level, etc.)
-- Data processing and normalization
-- ZeroMQ-based publisher for efficient data distribution
-- Modular design with separation of concerns
-- Comprehensive test coverage
+The Middleware provides:
+- Sensor data collection and processing
+- Control signal handling
+- Data logging
+- ZeroMQ-based communication
+
+## Core Components
+
+### Sensors
+- `Battery` - Battery level monitoring
+- `Speed` - Speed sensor handling
+- `BackMotors` - Motor control and feedback
+- `FServo` - Servo control interface
+- `CanReader` - CAN bus communication
+
+### Processing
+- `SensorHandler` - Manages sensor data collection
+- `ControlAssembly` - Processes control signals
+- `BatteryReader` - Battery data processing
+
+### Logging
+- `SensorLogger` - Sensor data logging
+- `ControlLogger` - Control signal logging
+
+### Interfaces
+- `ISensor` - Base sensor interface
+- `IPublisher` - Publisher interface
 
 ## Dependencies
 
-- C++17 compatible compiler
+- C++17 compiler
 - CMake 3.10+
-- ZeroMQ library
-- GoogleTest (for testing, automatically downloaded)
+- ZeroMQ library (libzmq)
+- cppzmq headers
 - pthread
+- Our ZeroMQ wrapper library
 
 ## Building
 
+Build as part of the main project:
 ```bash
-# From the project root
+./scripts/build.sh
+```
+
+For Middleware-specific development:
+```bash
+cd Middleware
 mkdir -p build && cd build
 cmake ..
 make
 ```
 
-Or use the main build script:
+## Directory Structure
 
-```bash
-./build.sh
-```
+- `inc/`
+  - Core interfaces (`ISensor.hpp`, `IPublisher.hpp`)
+  - Sensor headers (`Battery.hpp`, `Speed.hpp`, etc.)
+  - Processing headers (`SensorHandler.hpp`, etc.)
+  - Mock implementations for testing
+- `src/` - Implementation files
+- `test/` - Unit tests
+- `CMakeLists.txt` - Build configuration
 
-## Running
+## Components
 
-```bash
-# From the build/bin directory
-./Middleware
-```
+The Middleware consists of:
+- Static library (`libmiddleware.a`)
+- Main executable (`Middleware`)
+- Test suite
 
 ## Testing
 
-Tests are built by default. To run the tests:
-
+Tests are run as part of the main test suite:
 ```bash
-# From the build directory
+./scripts/run_tests.sh
+```
+
+For Middleware-specific tests:
+```bash
+cd build
 ctest
-
-# Or run individual tests
-./bin/battery_test
-./bin/sensor_handler_test
 ```
 
-To disable building tests, configure with:
+## Build Options
 
-```bash
-cmake -DBUILD_TESTS=OFF ..
-```
-
-## Code Structure
-
-- `inc/`: Header files
-  - Interfaces for sensors and publishers
-  - Data structures for sensor readings
-- `src/`: Implementation files
-  - Concrete sensor implementations
-  - ZeroMQ publishers
-  - Main application logic
-- `test/`: Unit tests
-
-## Design for Testability
-
-The codebase is designed with testability in mind:
-
-1. **Dependency Injection**: Components accept their dependencies through constructors
-2. **Interfaces**: Hardware components implement interfaces that can be mocked
-3. **Mock Classes**: Mock implementations are provided for testing
-4. **Unit Tests**: Tests verify component behavior in isolation
-
-## Communication Protocol
-
-The Middleware uses ZeroMQ's publisher-subscriber pattern to distribute data:
-
-- Each sensor type has its own topic (e.g., "speed", "battery")
-- Data is serialized before publishing
-- Components can subscribe to specific topics they need
-
-## Adding New Sensors
-
-1. Define a new sensor interface or extend an existing one
-2. Implement the sensor logic
-3. Register the sensor with the main sensor handler
-4. Add appropriate tests
+CMake options:
+- `BUILD_TESTS` - Enable/disable test building (ON by default)
+- `CODE_COVERAGE` - Enable coverage reporting (OFF by default)

@@ -55,8 +55,11 @@ jobs:
             /bin/bash -c "
             echo 'Debug: Listing /repo directory structure' && \
             ls -la /repo && \
-            echo 'Debug: Configuring git safe directory' && \
+            echo 'Debug: Configuring git safe directories' && \
             git config --global --add safe.directory /repo && \
+            git config --global --add safe.directory /repo/modules/cluster-display && \
+            git config --global --add safe.directory /repo/modules/lane-detection && \
+            git config --global --add safe.directory /repo/modules/object-detection && \
             echo 'Debug: Initializing git submodules' && \
             git submodule update --init --recursive && \
             echo 'Debug: Listing /repo/modules directory' && \

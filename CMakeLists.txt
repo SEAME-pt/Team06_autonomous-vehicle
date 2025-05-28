@@ -10,12 +10,14 @@ option(BUILD_TESTS "Build test binaries" ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Find Qt packages required by cluster display
+find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 # Places all generated binaries in the designated folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Runs the cmake on all these directories
 add_subdirectory(zmq)
-# add_subdirectory(ClusterDisplay/SourceCode)
+add_subdirectory(modules/cluster-display/ClusterDisplay)
 add_subdirectory(Middleware)
 add_subdirectory(Controller)

@@ -54,10 +54,6 @@ Prerequisites:
 
 Build steps:
 ```bash
-# Install dependencies
-sudo apt-get update
-sudo apt-get install -y libzmq3-dev qt5-default libopencv-dev
-
 # Initialize and update submodules
 git submodule update --init --recursive
 
@@ -81,13 +77,28 @@ Run the test suite:
 ./scripts/run_tests.sh
 ```
 
+### Test Coverage
+
+To generate and view test coverage reports:
+```bash
+# Generate coverage report
+./scripts/run_tests.sh --coverage
+
+# Coverage reports will be generated in build/coverage/
+
+The coverage report provides detailed information about:
+- Line coverage
+- Branch coverage
+- Function coverage
+- Uncovered code regions
+
 ## Continuous Integration
 
 The project uses GitHub Actions for automated:
 - Building on multiple platforms
 - Running unit and integration tests
 - Code coverage analysis
-- Deployment to test environments
+- Deployment
 
 ## Module Documentation
 

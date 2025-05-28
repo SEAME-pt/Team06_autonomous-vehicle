@@ -16,7 +16,9 @@ RUN apt-get update && apt-get install -y \
     # ZeroMQ dependencies
     libzmq3-dev \
 
-    # Test coverage tools
+    # Linting and coverage tools
+    clang-format \
+    clang-tidy \
     lcov \
     gcovr \
 

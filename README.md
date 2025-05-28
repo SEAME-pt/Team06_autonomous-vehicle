@@ -40,7 +40,12 @@ The system integrates several key components:
   - `lane-detection` - Lane detection and tracking
   - `object-detection` - Object detection and avoidance
 - `/scripts` - Build and test automation
+  - `build.sh` - Main build script
+  - `run_tests.sh` - Test execution script
+  - `run_linters.sh` - Code quality checks
+  - `run_coverage.sh` - Coverage report generation
 - `/zmq` - ZeroMQ communication layer
+- `/CICD` - Continuous Integration configuration
 
 ## Building
 
@@ -70,7 +75,24 @@ Start components in order:
 ./build/bin/Controller
 ```
 
-## Testing
+## Code Quality
+
+### Linting
+
+Run the linter to check code quality:
+```bash
+# Check for issues (won't modify files)
+./scripts/run_linters.sh
+
+# Fix formatting issues automatically
+./scripts/run_linters.sh --fix
+```
+
+The linter checks:
+- Code formatting (clang-format)
+- Static analysis (clang-tidy)
+
+### Testing
 
 Run the test suite:
 ```bash
@@ -81,10 +103,15 @@ Run the test suite:
 
 To generate and view test coverage reports:
 ```bash
-# Generate coverage report
-./scripts/run_tests.sh --coverage
+# Generate basic coverage report
+./scripts/run_coverage.sh
 
-# Coverage reports will be generated in build/coverage/
+# Generate HTML coverage report
+./scripts/run_coverage.sh --html
+
+# Specify custom output directory
+./scripts/run_coverage.sh --output=./my-coverage-reports --html
+```
 
 The coverage report provides detailed information about:
 - Line coverage
@@ -92,13 +119,25 @@ The coverage report provides detailed information about:
 - Function coverage
 - Uncovered code regions
 
+#### Accessing CI Coverage Reports
+
+Coverage reports from CI runs are available:
+1. Go to your GitHub repository
+2. Click on "Actions"
+3. Select a workflow run
+4. Scroll to "Artifacts"
+5. Download "coverage-reports-[run-number]"
+
 ## Continuous Integration
 
 The project uses GitHub Actions for automated:
+- Code linting and style checking
 - Building on multiple platforms
 - Running unit and integration tests
 - Code coverage analysis
-- Deployment
+- Deployment to Jetson Nano hardware
+
+See [CICD Documentation](CICD/README.md) for details.
 
 ## Module Documentation
 

@@ -1,9 +1,10 @@
 # CI/CD Pipeline for Jetson Nano Project
 #
 # This workflow handles the complete CI/CD pipeline for the Jetson Nano project:
-# 1. Testing: Runs all unit tests in a Docker container
-# 2. Building: Compiles the project and creates versioned artifacts
-# 3. Deployment: Deploys the built artifacts to the Jetson Nano device
+# 1. Linting: Runs code quality checks on C++ code
+# 2. Testing: Runs all unit tests and generates coverage reports
+# 3. Building: Compiles the project and creates versioned artifacts
+# 4. Deployment: Deploys the built artifacts to the Jetson Nano device
 
 name: CI/CD
 
@@ -21,11 +22,40 @@ on:
     branches:
       - main
       - dev
-      - zm/cmake
+      - zm/lint
 
 jobs:
-  # Test job: Runs all unit tests in a Docker container
+  # Lint job: Runs code quality checks
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Pull Jetson Nano Ubuntu Docker image
+        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+
+      - name: Run linters
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            git config --global --add safe.directory /repo && \
+            chmod +x /repo/scripts/run_linters.sh && \
+            ./scripts/run_linters.sh
+            "
+
+  # Test job: Runs all unit tests and generates coverage
   test:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository
@@ -61,6 +91,27 @@ jobs:
             chmod +x /repo/scripts/run_tests.sh && \
             ./scripts/run_tests.sh || exit 1
             "
+
+      # Generate code coverage report
+      - name: Generate coverage report
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            git config --global --add safe.directory /repo && \
+            chmod +x /repo/scripts/run_coverage.sh && \
+            ./scripts/run_coverage.sh --output=./coverage --html
+            "
+
+      # Upload coverage as artifact instead of to Codecov
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ github.run_number }}
+          path: ${{ github.workspace }}/coverage/
+          retention-days: 14
 
   # Build job: Compiles the project and creates artifacts
   build:

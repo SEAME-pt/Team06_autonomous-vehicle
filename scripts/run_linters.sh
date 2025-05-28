@@ -3,12 +3,12 @@ set -e
 
 # Default behavior: check mode
 MODE="check"
-FIX_FLAG="--dry-run --Werror"
+FIX_FLAG="-i"
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    --fix) MODE="fix"; FIX_FLAG="-i"; shift ;;
+    --fix) MODE="fix"; shift ;;
     *) echo "Unknown parameter: $1"; exit 1 ;;
   esac
 done
@@ -43,8 +43,42 @@ for dir in "${SOURCE_DIRS[@]}"; do
     FILES=$(find "$dir" -type f \( -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.cc' \))
     if [ -n "$FILES" ]; then
       FOUND_FILES=1
-      echo "Formatting files in $dir..."
-      echo "$FILES" | xargs clang-format $FIX_FLAG
+      echo "Checking files in $dir..."
+
+      # For check mode, we'll create a temporary directory and compare files
+      if [ "$MODE" == "check" ]; then
+        TEMP_DIR=$(mktemp -d)
+        echo "Creating temporary copies in $TEMP_DIR"
+
+        # Process each file
+        FORMATTING_ISSUES=0
+        for file in $FILES; do
+          # Copy file to temp dir
+          mkdir -p "$TEMP_DIR/$(dirname "$file")"
+          cp "$file" "$TEMP_DIR/$file"
+
+          # Format the copy
+          clang-format -i "$TEMP_DIR/$file"
+
+          # Compare with original
+          if ! diff -u "$file" "$TEMP_DIR/$file" > /dev/null; then
+            echo "Formatting issues in $file"
+            FORMATTING_ISSUES=1
+          fi
+        done
+
+        # Clean up
+        rm -rf "$TEMP_DIR"
+
+        # Exit with error if formatting issues found
+        if [ $FORMATTING_ISSUES -eq 1 ]; then
+          echo "Formatting issues detected. Run with --fix to fix them."
+          exit 1
+        fi
+      else
+        # Fix mode - directly modify files
+        echo "$FILES" | xargs clang-format -i
+      fi
     fi
   else
     echo "Warning: Directory $dir not found, skipping."

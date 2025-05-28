@@ -21,6 +21,7 @@ on:
     branches:
       - main
       - dev
+      - zm/cmake
 
 jobs:
   # Test job: Runs all unit tests in a Docker container
@@ -81,6 +82,12 @@ jobs:
             -w /repo \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
+            echo 'Debug: Listing /repo directory structure' && \
+            ls -la /repo && \
+            echo 'Debug: Listing /repo/modules directory' && \
+            ls -la /repo/modules && \
+            echo 'Debug: Listing /repo/modules/cluster-display directory' && \
+            ls -la /repo/modules/cluster-display && \
             chmod +x /repo/scripts/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \
             export CMAKE_FLAGS='-DBUILD_TESTS=OFF' && \

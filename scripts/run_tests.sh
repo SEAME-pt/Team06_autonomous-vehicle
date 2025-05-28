@@ -1,10 +1,18 @@
 #!/bin/bash
 
-# Get the project root directory (parent of scripts directory)
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
 # Exit immediately if a command exits with a non-zero status.
 set -e
+
+# Debug information
+echo "Debug: Current directory: $(pwd)"
+echo "Debug: Listing current directory:"
+ls -la
+
+# Get the project root directory (parent of scripts directory)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+echo "Debug: PROJECT_ROOT set to: $PROJECT_ROOT"
+echo "Debug: Listing PROJECT_ROOT directory:"
+ls -la "$PROJECT_ROOT"
 
 # Check if we need to install dependencies
 if [ ! -f "/usr/include/zmq.h" ]; then

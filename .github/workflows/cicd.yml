@@ -53,6 +53,14 @@ jobs:
             -e CI=true \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
+            echo 'Debug: Listing /repo directory structure' && \
+            ls -la /repo && \
+            echo 'Debug: Listing /repo/modules directory' && \
+            ls -la /repo/modules && \
+            echo 'Debug: Listing /repo/modules/cluster-display directory' && \
+            ls -la /repo/modules/cluster-display && \
+            echo 'Debug: Current working directory' && \
+            pwd && \
             chmod +x /repo/scripts/run_tests.sh && \
             ./scripts/run_tests.sh || exit 1
             "

@@ -1,18 +1,31 @@
-# GitHub hosted runner with QEMU + Docker Buildx
-# Runs Docker custom ARM64 image to compile repo and uploads binary
-# Deploys to Jetson Nano via a self-hosted runner.
+# CI/CD Pipeline for Jetson Nano Project
+#
+# This workflow handles the complete CI/CD pipeline for the Jetson Nano project:
+# 1. Linting: Runs code quality checks on C++ code
+# 2. Testing: Runs all unit tests and generates coverage reports
+# 3. Building: Compiles the project and creates versioned artifacts
+# 4. Deployment: Deploys the built artifacts to the Jetson Nano device
 
 name: CI/CD
 
+# Add environment variables at workflow level
+env:
+  APP_VERSION: 1.0.${{ github.run_number }}
+
 on:
+  # Trigger on pull requests to main branch
+  pull_request:
+    branches:
+      - main
+  # Trigger on pushes to specified branches
   push:
-    # branches:
-    #   - main
+    branches:
+      - dev
 
 jobs:
-  build:
+  # Lint job: Runs code quality checks
+  lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,50 +37,170 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Pull Jetson Nano Ubuntu Docker image
-        run: docker pull jmoreiraseame/jetson-nano-ubuntu:bionic
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
 
-      - name: Build project
+      - name: Run linters
         run: |
           docker run --rm --platform linux/arm64 \
             -v ${{ github.workspace }}:/repo \
-            -w /repo jmoreiraseame/jetson-nano-ubuntu:bionic \
+            -w /repo \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            mkdir -p /repo/build && \
-            cd /repo/build && \
-            cmake .. && \
-            make && \
-            mkdir -p /repo/bin && \
-            cp jetson06 /repo/bin/ && \
-            ldd jetson06
+            git config --global --add safe.directory /repo && \
+            git config --global --add safe.directory /repo/modules/cluster-display && \
+            git config --global --add safe.directory /repo/modules/lane-detection && \
+            git config --global --add safe.directory /repo/modules/object-detection && \
+            git submodule update --init --recursive && \
+            chmod +x /repo/scripts/run_linters.sh && \
+            echo 'Running linters...' && \
+            ./scripts/run_linters.sh
             "
 
+  # Test job: Runs all unit tests and generates coverage
+  test:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up QEMU for ARM64 emulation
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+
+      # Set up Docker Buildx for multi-platform builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Pull the base Docker image for Jetson Nano
+      - name: Pull Jetson Nano Ubuntu Docker image
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
+
+      # Run tests and generate coverage in a single step
+      - name: Run tests with coverage
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            -e CI=true \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            git config --global --add safe.directory /repo && \
+            git config --global --add safe.directory /repo/modules/cluster-display && \
+            git config --global --add safe.directory /repo/modules/lane-detection && \
+            git config --global --add safe.directory /repo/modules/object-detection && \
+            git submodule update --init --recursive && \
+            chmod +x /repo/scripts/run_tests.sh && \
+            chmod +x /repo/scripts/run_coverage.sh && \
+            # First run tests with coverage instrumentation
+            ./scripts/run_coverage.sh --html || exit 1
+            "
+
+      # Upload coverage as artifact
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports-${{ github.run_number }}
+          path: ${{ github.workspace }}/coverage/
+          retention-days: 14
+
+  # Build job: Compiles the project and creates artifacts
+  build:
+    runs-on: ubuntu-latest
+    needs: test  # Only run if tests pass
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Pull Jetson Nano Ubuntu Docker image
+        run: docker pull --platform linux/arm64 jmoreiraseame/jetson-nano-ubuntu:bionic
+
+      # Build the project and create version file
+      - name: Build project and create version file
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            git config --global --add safe.directory /repo && \
+            git config --global --add safe.directory /repo/modules/cluster-display && \
+            git config --global --add safe.directory /repo/modules/lane-detection && \
+            git config --global --add safe.directory /repo/modules/object-detection && \
+            git submodule update --init --recursive && \
+            chmod +x /repo/scripts/build.sh && \
+            export APP_VERSION='${{ env.APP_VERSION }}' && \
+            export CMAKE_FLAGS='-DBUILD_TESTS=OFF' && \
+            ./scripts/build.sh && \
+            mkdir -p build/bin && \
+            echo '${{ env.APP_VERSION }}' > build/bin/version.txt && \
+            # Only copy production binaries
+            cd build/bin && \
+            rm -f *_test && \
+            rm -rf reports coverage && \
+            cd ../.. && \
+            chmod -R 777 build
+            "
+
+      # Upload build artifacts for deployment
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
-          path: bin/jetson06
+          name: build-artifact-${{ env.APP_VERSION }}
+          path: build/bin
+          retention-days: 7
 
+  # Deploy job: Deploys the built artifacts to the Jetson Nano
   deploy:
-    runs-on: [seame]
-    needs: build
-
+    runs-on: [seame]  # Custom runner for deployment
+    needs: build  # Only run if build succeeds
     steps:
+      # Prepare deployment directory
       - name: Ensure target directory exists
-        run: mkdir -p ./team06/bin
+        run: |
+          mkdir -p ./team06/bin \
+          && rm -rf ./bin/*
 
+      # Download the build artifacts
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-artifact
+          name: build-artifact-${{ env.APP_VERSION }}
           path: ./bin
 
-      - name: SSH to Jetson and copy binary
+      # Deploy the binaries to Jetson Nano
+      - name: Ship binary to Jetson
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
           team06@10.21.221.56:/home/team06/
 
-      - name: SSH to Jetson and run binary
+      # Set executable permissions on deployed files
+      - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/jetson06 && /home/team06/bin/jetson06'
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'
+
+      # Record deployment in history log
+      - name: Create deployment record
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          ssh team06@10.21.221.56 "echo 'Deployed version ${{ github.run_number }} on $(date)' >> /home/team06/deployment-history.log"
+
+      # Verify successful deployment
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
+          ssh team06@10.21.221.56 'test -f /home/team06/bin/version.txt'
+
+      # Notify on successful deployment
+      - name: Notify deployment status
+        if: ${{ success() }}
+        run: echo "::notice::Successfully deployed version ${{ env.APP_VERSION }} to Jetson Nano"

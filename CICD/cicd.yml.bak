@@ -5,13 +5,17 @@
 name: CI/CD
 
 on:
+  pull_request:
+    branches:
+      - main
+# for testing
   push:
-    # branches:
-    #   - main
+    branches:
+        - dev
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # change delivery runner flag here [seame]
 
     steps:
       - name: Checkout repository
@@ -35,25 +39,24 @@ jobs:
             mkdir -p /repo/build && \
             cd /repo/build && \
             cmake .. && \
-            make && \
-            mkdir -p /repo/bin && \
-            cp jetson06 /repo/bin/ && \
-            ldd jetson06
+            cmake --build .
             "
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: bin/jetson06
+          path: build/bin
 
   deploy:
-    runs-on: [seame]
+    runs-on: [seame] # change delivery runner flag here
     needs: build
 
     steps:
       - name: Ensure target directory exists
-        run: mkdir -p ./team06/bin
+        run: |
+          mkdir -p ./team06/bin \
+          && rm -rf ./bin/*
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -61,13 +64,13 @@ jobs:
           name: build-artifact
           path: ./bin
 
-      - name: SSH to Jetson and copy binary
+      - name: Ship binary to Jetson
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
           team06@10.21.221.56:/home/team06/
 
-      - name: SSH to Jetson and run binary
+      - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/jetson06 && /home/team06/bin/jetson06'
+          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'

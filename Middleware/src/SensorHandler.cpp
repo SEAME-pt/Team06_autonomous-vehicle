@@ -83,6 +83,7 @@ void SensorHandler::sortSensorData() {
       continue;
     }
 
+    // Get a copy of the sensor data map to avoid iterator invalidation
     auto sensorDataMap = sensor->getSensorData();
     for (const auto &[data_name, data] : sensorDataMap) {
       if (!data) {
@@ -91,18 +92,22 @@ void SensorHandler::sortSensorData() {
         continue;
       }
 
-      // Create a copy of the shared_ptr to ensure proper reference counting
-      std::shared_ptr<SensorData> dataCopy = data;
+      // Make a local copy to ensure we have a strong reference
+      auto dataCopy = data;
+      if (!dataCopy) {
+        continue; // Skip if somehow the copy is null
+      }
 
+      // Use emplace to avoid unnecessary copies and potential analyzer confusion
       if (dataCopy->critical) {
-        newCriticalData[data_name] = dataCopy;
+        newCriticalData.emplace(data_name, dataCopy);
       } else {
-        newNonCriticalData[data_name] = dataCopy;
+        newNonCriticalData.emplace(data_name, dataCopy);
       }
     }
   }
 
-  // Swap the new maps with the old ones
+  // Atomic replacement of the maps
   _criticalData = std::move(newCriticalData);
   _nonCriticalData = std::move(newNonCriticalData);
 }

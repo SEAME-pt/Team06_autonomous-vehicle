@@ -75,7 +75,8 @@ void SensorHandler::sortSensorData() {
 
   // Create temporary maps to avoid potential use-after-free
   std::unordered_map<std::string, std::shared_ptr<SensorData>> newCriticalData;
-  std::unordered_map<std::string, std::shared_ptr<SensorData>> newNonCriticalData;
+  std::unordered_map<std::string, std::shared_ptr<SensorData>>
+      newNonCriticalData;
 
   for (const auto &[name, sensor] : _sensors) {
     if (!sensor) {
@@ -98,7 +99,8 @@ void SensorHandler::sortSensorData() {
         continue; // Skip if somehow the copy is null
       }
 
-      // Use emplace to avoid unnecessary copies and potential analyzer confusion
+      // Use emplace to avoid unnecessary copies and potential analyzer
+      // confusion
       if (dataCopy->critical) {
         newCriticalData.emplace(data_name, dataCopy);
       } else {

@@ -73,8 +73,9 @@ void SensorHandler::sortSensorData() {
   std::lock_guard<std::mutex> critical_lock(critical_mutex);
   std::lock_guard<std::mutex> non_critical_lock(non_critical_mutex);
 
-  _criticalData.clear();
-  _nonCriticalData.clear();
+  // Create temporary maps to avoid potential use-after-free
+  std::unordered_map<std::string, std::shared_ptr<SensorData>> newCriticalData;
+  std::unordered_map<std::string, std::shared_ptr<SensorData>> newNonCriticalData;
 
   for (const auto &[name, sensor] : _sensors) {
     if (!sensor) {
@@ -90,13 +91,20 @@ void SensorHandler::sortSensorData() {
         continue;
       }
 
-      if (data->critical) {
-        _criticalData[data_name] = data;
+      // Create a copy of the shared_ptr to ensure proper reference counting
+      std::shared_ptr<SensorData> dataCopy = data;
+
+      if (dataCopy->critical) {
+        newCriticalData[data_name] = dataCopy;
       } else {
-        _nonCriticalData[data_name] = data;
+        newNonCriticalData[data_name] = dataCopy;
       }
     }
   }
+
+  // Swap the new maps with the old ones
+  _criticalData = std::move(newCriticalData);
+  _nonCriticalData = std::move(newNonCriticalData);
 }
 
 void SensorHandler::start() {

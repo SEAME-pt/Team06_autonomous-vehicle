@@ -33,6 +33,7 @@ public:
 class BackMotors : public IBackMotors {
 private:
   const int _motorAddr = 0x60;
+  void cleanup();
 
 public:
   int _fdMotor;

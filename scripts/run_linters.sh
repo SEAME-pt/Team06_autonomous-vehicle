@@ -126,6 +126,12 @@ echo "Running clang-tidy..."
 echo "-------------------------------------------"
 FOUND_FILES=0
 
+# Define compiler flags
+COMPILER_FLAGS=(
+  "-std=c++17"
+  "-xc++"
+)
+
 for dir in "${SOURCE_DIRS[@]}"; do
   if [ -d "$dir" ]; then
     FILES=$(find "$dir" -name '*.cpp' -o -name '*.cc')
@@ -134,8 +140,8 @@ for dir in "${SOURCE_DIRS[@]}"; do
       echo "Checking files in $dir..."
       for file in $FILES; do
         echo "Analyzing $file..."
-        # Run clang-tidy directly - let it fail naturally if headers are missing
-        clang-tidy -quiet "$file" -- ${INCLUDE_DIRS[@]} || echo "clang-tidy failed for $file (header issues in CI environment)"
+        # Run clang-tidy with C++17 flags
+        clang-tidy -quiet "$file" -- ${INCLUDE_DIRS[@]} ${COMPILER_FLAGS[@]} || echo "clang-tidy failed for $file (header issues in CI environment)"
       done
     fi
   fi

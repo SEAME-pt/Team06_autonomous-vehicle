@@ -14,8 +14,19 @@ void BackMotors::open_i2c_bus() {
   std::cout << "JetCar inicializado com sucesso!" << std::endl;
 }
 
+void BackMotors::cleanup() {
+  // Stop all motors
+  for (int channel = 0; channel < 9; ++channel) {
+    // Direct PWM writes without virtual calls
+    this->writeByteData(_fdMotor, 0x06 + 4 * channel, 0);
+    this->writeByteData(_fdMotor, 0x07 + 4 * channel, 0);
+    this->writeByteData(_fdMotor, 0x08 + 4 * channel, 0);
+    this->writeByteData(_fdMotor, 0x09 + 4 * channel, 0);
+  }
+}
+
 BackMotors::~BackMotors() {
-  setSpeed(0);
+  cleanup();
   close(_fdMotor);
   std::cout << "destructor call\n";
 }

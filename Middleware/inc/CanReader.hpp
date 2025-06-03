@@ -80,6 +80,8 @@ public:
                           uint16_t id = 0x100);
   void setTestShouldReceive(bool shouldReceive);
 
+  bool initialize();
+
 private:
   int spi_fd = -1;
   bool debug = false;

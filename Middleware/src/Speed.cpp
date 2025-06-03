@@ -8,6 +8,16 @@ Speed::Speed(std::shared_ptr<ICanReader> canReader)
 
   _sensorData["odo"] = std::make_shared<SensorData>("odo", false);
   _sensorData["odo"]->value.store(0);
+
+  // Initialize CanReader if we created it
+  if (!canReader && can) {
+    auto reader = std::dynamic_pointer_cast<CanReader>(can);
+    if (reader) {
+      if (!reader->initialize()) {
+        throw std::runtime_error("Failed to initialize CanReader");
+      }
+    }
+  }
 }
 
 Speed::~Speed() {}

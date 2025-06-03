@@ -21,7 +21,7 @@ on:
   push:
     branches:
       - dev
-
+      - zm/cov
 jobs:
   # Lint job: Runs code quality checks
   lint:
@@ -52,7 +52,6 @@ jobs:
             git config --global --add safe.directory /repo/modules/object-detection && \
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_linters.sh && \
-            echo 'Running linters...' && \
             ./scripts/run_linters.sh
             "
 
@@ -93,7 +92,7 @@ jobs:
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_tests.sh && \
             chmod +x /repo/scripts/run_coverage.sh && \
-            # First run tests with coverage instrumentation
+            # Generate coverage reports
             ./scripts/run_coverage.sh --html || exit 1
             "
 

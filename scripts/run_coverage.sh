@@ -1,7 +1,15 @@
 #!/bin/bash
+# -----------------------------------------------------------------------
+# Code Coverage Generation Script
+#
+# This script runs tests with coverage instrumentation and generates
+# code coverage reports using lcov. It should be used as the primary
+# coverage generation tool for CI/CD pipelines.
+# -----------------------------------------------------------------------
+
 set -e
 
-# Default output directory - changing to match what's expected in CI/CD workflow
+# Default output directory - matching what's expected in CI/CD workflow
 OUTPUT_DIR="coverage"
 HTML_REPORT=false
 
@@ -14,18 +22,25 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-echo "Running code coverage..."
+echo "====================================================="
+echo "RUNNING CODE COVERAGE GENERATION"
+echo "====================================================="
+echo "Coverage data will be stored in: $OUTPUT_DIR"
 
 # Ensure build directory exists
 mkdir -p build
 
 # Configure CMake with coverage flags
 cd build
+echo "Configuring project with coverage enabled..."
 cmake .. -DCODE_COVERAGE=ON -DBUILD_TESTS=ON
+echo "Building project with coverage instrumentation..."
 make -j$(nproc)
 
 # Run tests sequentially to avoid coverage data corruption from parallel execution
-echo "Running tests with coverage instrumentation (sequentially)..."
+echo "====================================================="
+echo "Running tests with coverage instrumentation..."
+echo "====================================================="
 cd bin
 for test_bin in *_test; do
     if [ -x "$test_bin" ]; then
@@ -41,7 +56,10 @@ cd ..
 mkdir -p "../$OUTPUT_DIR"
 
 # Generate coverage report
+echo "====================================================="
 echo "Generating coverage reports..."
+echo "====================================================="
+echo "Capturing raw coverage data..."
 lcov --capture --directory . --output-file "../$OUTPUT_DIR/coverage.info"
 
 # Remove unwanted directories from coverage report
@@ -57,18 +75,26 @@ lcov --remove "../$OUTPUT_DIR/coverage.info" \
     '*Mock*.hpp' \
     --output-file "../$OUTPUT_DIR/coverage_filtered.info"
 
-# Keep only the directories we want to cover - including zmq
+# Keep only the directories we want to cover
+echo "Extracting coverage data for project source directories..."
 lcov --extract "../$OUTPUT_DIR/coverage_filtered.info" \
+    '*/Controller/src/*' \
+    '*/Controller/inc/*' \
     '*/Middleware/src/*' \
     '*/Middleware/inc/*' \
     '*/zmq/src/*' \
     '*/zmq/inc/*' \
+    '*/modules/cluster-display/ClusterDisplay/src/*' \
+    '*/modules/cluster-display/ClusterDisplay/inc/*' \
     --output-file "../$OUTPUT_DIR/coverage.info"
 
 # Clean up temporary file
 rm -f "../$OUTPUT_DIR/coverage_filtered.info"
 
+echo "====================================================="
+echo "Coverage Summary:"
 lcov --list "../$OUTPUT_DIR/coverage.info"
+echo "====================================================="
 
 # Generate HTML report if requested
 if [ "$HTML_REPORT" = true ]; then

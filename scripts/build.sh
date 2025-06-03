@@ -1,7 +1,17 @@
 #!/bin/bash
+# -----------------------------------------------------------------------
+# Build Script
+#
+# This script builds the project and optionally generates coverage reports.
+# Use --coverage flag to build with code coverage enabled.
+# -----------------------------------------------------------------------
+
+# Exit on error
+set -e
 
 # Get the project root directory (parent of scripts directory)
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+echo "Project root: $PROJECT_ROOT"
 
 # Parse command line arguments
 ENABLE_COVERAGE=0
@@ -39,12 +49,19 @@ if [ ! -z "$CMAKE_FLAGS" ]; then
     echo "Adding CMake flags: $CMAKE_FLAGS"
 fi
 
-# Run CMake with options
+echo "====================================================="
+echo "BUILDING PROJECT"
+echo "====================================================="
 echo "Running CMake with options: $CMAKE_OPTIONS"
 cmake $CMAKE_OPTIONS "$PROJECT_ROOT"
 
 # Build the project
+echo "Compiling..."
 make
+
+echo "====================================================="
+echo "BUILD COMPLETED"
+echo "====================================================="
 
 # Run coverage if requested
 if [ $ENABLE_COVERAGE -eq 1 ]; then

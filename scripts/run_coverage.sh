@@ -52,6 +52,7 @@ lcov --remove "../$OUTPUT_DIR/coverage.info" \
     '*/tests/*' \
     '*_test.cpp' \
     '*_test.cc' \
+    '*Mock*.hpp' \
     --output-file "../$OUTPUT_DIR/coverage_filtered.info"
 
 # Keep only the directories we want to cover

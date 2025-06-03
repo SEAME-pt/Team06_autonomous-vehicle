@@ -24,13 +24,15 @@ cd build
 cmake .. -DCODE_COVERAGE=ON -DBUILD_TESTS=ON
 make -j$(nproc)
 
-# Run tests
-echo "Running tests with coverage instrumentation..."
+# Run tests sequentially to avoid coverage data corruption from parallel execution
+echo "Running tests with coverage instrumentation (sequentially)..."
 cd bin
 for test_bin in *_test; do
     if [ -x "$test_bin" ]; then
         echo "Running $test_bin..."
         ./$test_bin
+        # Small delay to ensure coverage data is properly written
+        sleep 0.1
     fi
 done
 cd ..
@@ -55,10 +57,12 @@ lcov --remove "../$OUTPUT_DIR/coverage.info" \
     '*Mock*.hpp' \
     --output-file "../$OUTPUT_DIR/coverage_filtered.info"
 
-# Keep only the directories we want to cover
+# Keep only the directories we want to cover - including zmq
 lcov --extract "../$OUTPUT_DIR/coverage_filtered.info" \
     '*/Middleware/src/*' \
     '*/Middleware/inc/*' \
+    '*/zmq/src/*' \
+    '*/zmq/inc/*' \
     --output-file "../$OUTPUT_DIR/coverage.info"
 
 # Clean up temporary file

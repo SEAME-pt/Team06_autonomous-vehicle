@@ -41,7 +41,28 @@ mkdir -p "../$OUTPUT_DIR"
 # Generate coverage report
 echo "Generating coverage reports..."
 lcov --capture --directory . --output-file "../$OUTPUT_DIR/coverage.info"
-lcov --remove "../$OUTPUT_DIR/coverage.info" '/usr/*' --output-file "../$OUTPUT_DIR/coverage.info"
+
+# Remove unwanted directories from coverage report
+echo "Filtering coverage data to include only relevant source files..."
+lcov --remove "../$OUTPUT_DIR/coverage.info" \
+    '/usr/*' \
+    '*/include/gtest/*' \
+    '*/gtest/*' \
+    '*/test/*' \
+    '*/tests/*' \
+    '*_test.cpp' \
+    '*_test.cc' \
+    --output-file "../$OUTPUT_DIR/coverage_filtered.info"
+
+# Keep only the directories we want to cover
+lcov --extract "../$OUTPUT_DIR/coverage_filtered.info" \
+    '*/Middleware/src/*' \
+    '*/Middleware/inc/*' \
+    --output-file "../$OUTPUT_DIR/coverage.info"
+
+# Clean up temporary file
+rm -f "../$OUTPUT_DIR/coverage_filtered.info"
+
 lcov --list "../$OUTPUT_DIR/coverage.info"
 
 # Generate HTML report if requested

@@ -31,11 +31,10 @@ cd "$PROJECT_ROOT/build"
 
 # Configure CMake with coverage enabled and ignore warnings
 echo "Configuring project with tests enabled..."
-cmake "$PROJECT_ROOT" -DCODE_COVERAGE=ON -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-w"
+cmake "$PROJECT_ROOT" -DCODE_COVERAGE=ON -DBUILD_TESTS=ON
 
 # Build the project with warnings suppressed
 echo "Building project and tests..."
-make CXXFLAGS="-w" -j$(nproc)
 
 # Track test status
 TEST_FAILURES=0

@@ -25,12 +25,12 @@ RUN apt-get update && apt-get install -y \
     lcov \
     gcovr \
 
-    # Qt5 dependencies
-    qtbase5-dev \
-    qtdeclarative5-dev \
-    qml-module-qtquick2 \
-    qml-module-qtquick-window2 \
-    qml-module-qtquick-layouts \
+    # # Qt5 dependencies
+    # qtbase5-dev \
+    # qtdeclarative5-dev \
+    # qml-module-qtquick2 \
+    # qml-module-qtquick-window2 \
+    # qml-module-qtquick-layouts \
 
     # Install CMake latest version
     && curl -fsSL https://apt.kitware.com/keys/kitware-archive-latest.asc \

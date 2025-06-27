@@ -180,25 +180,25 @@ jobs:
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
-          team06@100.93.45.188:/home/team06/
+          jetson@100.93.45.188:/home/team06/
 
       # Set executable permissions on deployed files
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@100.93.45.188 'chmod +x /home/team06/bin/*'
+          ssh jetson@100.93.45.188 'chmod +x /home/team06/bin/*'
 
       # Record deployment in history log
       - name: Create deployment record
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@100.93.45.188 "echo 'Deployed version ${{ github.run_number }} on $(date)' >> /home/team06/deployment-history.log"
+          ssh jetson@100.93.45.188 "echo 'Deployed version ${{ github.run_number }} on $(date)' >> /home/team06/deployment-history.log"
 
       # Verify successful deployment
       - name: Verify deployment
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@100.93.45.188 'test -f /home/team06/bin/version.txt'
+          ssh jetson@100.93.45.188 'test -f /home/team06/bin/version.txt'
 
       # Notify on successful deployment
       - name: Notify deployment status

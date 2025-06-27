@@ -16,35 +16,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 #     -checks=*;
 #     -extra-arg=-std=c++17)
 
-# Find Qt packages required by cluster display
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
-
 # Places all generated binaries in the designated folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-# Set absolute path for cluster display
-if(DEFINED ENV{GITHUB_WORKSPACE})
-    set(CLUSTER_DISPLAY_PATH /repo/modules/cluster-display/ClusterDisplay)
-    message(STATUS "GitHub Actions environment detected")
-    message(STATUS "Looking for ClusterDisplay at: ${CLUSTER_DISPLAY_PATH}")
-    if(EXISTS ${CLUSTER_DISPLAY_PATH})
-        message(STATUS "ClusterDisplay directory found")
-    else()
-        message(FATAL_ERROR "ClusterDisplay directory not found at ${CLUSTER_DISPLAY_PATH}")
-    endif()
-else()
-    set(CLUSTER_DISPLAY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/modules/cluster-display/ClusterDisplay)
-    message(STATUS "Local environment detected")
-    message(STATUS "Looking for ClusterDisplay at: ${CLUSTER_DISPLAY_PATH}")
-    if(EXISTS ${CLUSTER_DISPLAY_PATH})
-        message(STATUS "ClusterDisplay directory found")
-    else()
-        message(FATAL_ERROR "ClusterDisplay directory not found at ${CLUSTER_DISPLAY_PATH}")
-    endif()
-endif()
-
 # Runs the cmake on all these directories
 add_subdirectory(zmq)
-add_subdirectory(${CLUSTER_DISPLAY_PATH})
 add_subdirectory(Middleware)
 add_subdirectory(Controller)

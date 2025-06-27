@@ -1,18 +1,17 @@
 #!/bin/bash
+# -----------------------------------------------------------------------
+# Test Runner Script
+#
+# This script builds and runs all unit tests for the project.
+# It collects test results and returns a non-zero exit code if any tests fail.
+# -----------------------------------------------------------------------
 
 # Exit immediately if a command exits with a non-zero status.
 set -e
 
-# Debug information
-echo "Debug: Current directory: $(pwd)"
-echo "Debug: Listing current directory:"
-ls -la
-
 # Get the project root directory (parent of scripts directory)
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-echo "Debug: PROJECT_ROOT set to: $PROJECT_ROOT"
-echo "Debug: Listing PROJECT_ROOT directory:"
-ls -la "$PROJECT_ROOT"
+echo "Project root: $PROJECT_ROOT"
 
 # Check if we need to install dependencies
 if [ ! -f "/usr/include/zmq.h" ]; then
@@ -30,11 +29,13 @@ fi
 mkdir -p "$PROJECT_ROOT/build"
 cd "$PROJECT_ROOT/build"
 
-# Configure CMake with coverage enabled
-cmake "$PROJECT_ROOT" -DCODE_COVERAGE=ON
+# Configure CMake with coverage enabled and ignore warnings
+echo "Configuring project with tests enabled..."
+cmake "$PROJECT_ROOT" -DCODE_COVERAGE=ON -DBUILD_TESTS=ON -DCMAKE_CXX_FLAGS="-w"
 
-# Build the project
-make
+# Build the project with warnings suppressed
+echo "Building project and tests..."
+make CXXFLAGS="-w" -j$(nproc)
 
 # Track test status
 TEST_FAILURES=0
@@ -45,6 +46,10 @@ cd bin
 
 # Create directory for test reports
 mkdir -p reports
+
+echo "====================================================="
+echo "RUNNING UNIT TESTS"
+echo "====================================================="
 
 # Function to run a test and handle failures gracefully
 run_test() {
@@ -77,14 +82,11 @@ done
 
 cd ..
 
-# Generate coverage report regardless of test results
-echo "Generating coverage report..."
-make coverage || true
-echo "Coverage report generated in build/coverage/html"
-
 # Print test summary
-echo "-------------------------------------------"
-echo "Test Summary: $((TEST_TOTAL - TEST_FAILURES))/$TEST_TOTAL tests passed"
+echo "====================================================="
+echo "TEST SUMMARY"
+echo "====================================================="
+echo "Results: $((TEST_TOTAL - TEST_FAILURES))/$TEST_TOTAL tests passed"
 
 if [ $TEST_FAILURES -gt 0 ]; then
     echo -e "Failed tests:$FAILED_TESTS"

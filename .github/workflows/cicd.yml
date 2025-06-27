@@ -21,6 +21,7 @@ on:
   push:
     branches:
       - dev
+      - zm/cov
 
 jobs:
   # Lint job: Runs code quality checks
@@ -52,7 +53,6 @@ jobs:
             git config --global --add safe.directory /repo/modules/object-detection && \
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_linters.sh && \
-            echo 'Running linters...' && \
             ./scripts/run_linters.sh
             "
 
@@ -93,7 +93,7 @@ jobs:
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_tests.sh && \
             chmod +x /repo/scripts/run_coverage.sh && \
-            # First run tests with coverage instrumentation
+            # Generate coverage reports
             ./scripts/run_coverage.sh --html || exit 1
             "
 
@@ -165,7 +165,7 @@ jobs:
       # Prepare deployment directory
       - name: Ensure target directory exists
         run: |
-          mkdir -p ./team06/bin \
+          mkdir -p ./jetson/bin \
           && rm -rf ./bin/*
 
       # Download the build artifacts
@@ -180,25 +180,25 @@ jobs:
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
           scp -r ./bin \
-          team06@10.21.221.56:/home/team06/
+          jetson@100.93.45.188:/home/jetson/
 
       # Set executable permissions on deployed files
       - name: Give binaries permission to execute
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'chmod +x /home/team06/bin/*'
+          ssh jetson@100.93.45.188 'chmod +x /home/jetson/bin/*'
 
       # Record deployment in history log
       - name: Create deployment record
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 "echo 'Deployed version ${{ github.run_number }} on $(date)' >> /home/team06/deployment-history.log"
+          ssh jetson@100.93.45.188 "echo 'Deployed version ${{ github.run_number }} on $(date)' >> /home/jetson/deployment-history.log"
 
       # Verify successful deployment
       - name: Verify deployment
         run: |
           sshpass -p "${{ secrets.JETSON_PASSWORD }}" \
-          ssh team06@10.21.221.56 'test -f /home/team06/bin/version.txt'
+          ssh jetson@100.93.45.188 'test -f /home/jetson/bin/version.txt'
 
       # Notify on successful deployment
       - name: Notify deployment status

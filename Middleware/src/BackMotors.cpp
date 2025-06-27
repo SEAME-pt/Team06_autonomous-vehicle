@@ -15,7 +15,6 @@ void BackMotors::open_i2c_bus() {
 }
 
 BackMotors::~BackMotors() {
-  setSpeed(0);
   close(_fdMotor);
   std::cout << "destructor call\n";
 }

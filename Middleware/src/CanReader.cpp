@@ -4,9 +4,6 @@ CanReader::CanReader(bool test_mode) : test_mode(test_mode), debug(false) {
   if (!test_mode) {
     try {
       InitSPI();
-      if (!Init()) {
-        std::cerr << "Initialization failed!" << std::endl;
-      }
     } catch (const std::exception &e) {
       std::cerr << "Error initializing CanReader: " << e.what() << std::endl;
     }
@@ -319,4 +316,14 @@ void CanReader::setTestShouldReceive(bool shouldReceive) {
       test_registers[CANINTF] = 0x00;
     }
   }
+}
+
+bool CanReader::initialize() {
+  if (!test_mode) {
+    if (!Init()) {
+      std::cerr << "Initialization failed!" << std::endl;
+      return false;
+    }
+  }
+  return true;
 }

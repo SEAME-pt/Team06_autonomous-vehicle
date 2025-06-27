@@ -24,16 +24,12 @@ target_include_directories(Controller PRIVATE
     "${PROJECT_SOURCE_DIR}/../zmq/inc"
 )
 
-# Set the library path for ZeroMQLib and libzmq
-set(ZMQ_LIB_DIR "${PROJECT_SOURCE_DIR}/../build/zmq")  # Path to the ZeroMQLib build directory
-set(ZMQ_LIB "${ZMQ_LIB_DIR}/libZeroMQLib.a")          # Static library file for ZeroMQLib
-
 # Find and link libzmq (ZeroMQ C library)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ZMQ REQUIRED libzmq)
 
 # Link ZeroMQLib and libzmq (ZeroMQ C library)
-target_link_libraries(Controller PRIVATE ${ZMQ_LIB} ${ZMQ_LIBRARIES})
+target_link_libraries(Controller PRIVATE ZeroMQLib ${ZMQ_LIBRARIES})
 
 # Find and link pthread
 find_package(Threads REQUIRED)

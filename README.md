@@ -152,6 +152,6 @@ See [CICD Documentation](CICD/README.md) for details.
 Each module maintains its own detailed documentation:
 - [Controller](Controller/README.md)
 - [Middleware](Middleware/README.md)
-- [Cluster Display](modules/cluster-display/README.md)
-- [Lane Detection](modules/lane-detection/README.md)
-- [Object Detection](modules/object-detection/README.md)
+- [Cluster Display](https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster/blob/main/README.md)
+- [Lane Detection](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md)
+- [Object Detection](https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance/blob/main/README.md)

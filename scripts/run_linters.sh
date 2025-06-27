@@ -1,4 +1,16 @@
 #!/bin/bash
+# -----------------------------------------------------------------------
+# Code Linting Script
+#
+# This script runs linters (clang-format and optionally clang-tidy) on
+# source files in the project.
+#
+# Use:
+#   --fix: Apply formatting changes rather than just checking
+#   --with-tidy: Enable clang-tidy checks (slower)
+#   --format-only: Only run clang-format (default)
+# -----------------------------------------------------------------------
+
 set -e
 
 # Default behavior: check mode, format-only
@@ -15,7 +27,10 @@ while [[ "$#" -gt 0 ]]; do
   esac
 done
 
-echo "Running linters in $MODE mode..."
+echo "====================================================="
+echo "RUNNING CODE LINTERS"
+echo "====================================================="
+echo "Mode: $MODE"
 if [ "$FORMAT_ONLY" == "true" ]; then
   echo "Format-only mode enabled (use --with-tidy to enable clang-tidy)"
 fi
@@ -28,8 +43,6 @@ SOURCE_DIRS=(
   "Middleware/inc"
   "zmq/src"
   "zmq/inc"
-  "modules/cluster-display/ClusterDisplay/src"
-  "modules/cluster-display/ClusterDisplay/inc"
 )
 
 # Include directories for clang-tidy
@@ -37,11 +50,12 @@ INCLUDE_DIRS=(
   "-IController/inc"
   "-IMiddleware/inc"
   "-Izmq/inc"
-  "-Imodules/cluster-display/ClusterDisplay/inc"
 )
 
 # Run clang-format
+echo "-------------------------------------------"
 echo "Running clang-format..."
+echo "-------------------------------------------"
 FOUND_FILES=0
 for dir in "${SOURCE_DIRS[@]}"; do
   if [ -d "$dir" ]; then
@@ -97,13 +111,23 @@ fi
 
 if [ "$FORMAT_ONLY" == "true" ]; then
   echo "Skipping clang-tidy (format-only mode)"
-  echo "Linting completed successfully!"
+  echo "====================================================="
+  echo "LINTING COMPLETED SUCCESSFULLY"
+  echo "====================================================="
   exit 0
 fi
 
 # Run clang-tidy (only if --with-tidy was specified)
+echo "-------------------------------------------"
 echo "Running clang-tidy..."
+echo "-------------------------------------------"
 FOUND_FILES=0
+
+# Define compiler flags
+COMPILER_FLAGS=(
+  "-std=c++17"
+  "-xc++"
+)
 
 for dir in "${SOURCE_DIRS[@]}"; do
   if [ -d "$dir" ]; then
@@ -113,8 +137,8 @@ for dir in "${SOURCE_DIRS[@]}"; do
       echo "Checking files in $dir..."
       for file in $FILES; do
         echo "Analyzing $file..."
-        # Run clang-tidy directly - let it fail naturally if headers are missing
-        clang-tidy -quiet "$file" -- ${INCLUDE_DIRS[@]} || echo "clang-tidy failed for $file (header issues in CI environment)"
+        # Run clang-tidy with C++17 flags
+        clang-tidy -quiet "$file" -- ${INCLUDE_DIRS[@]} ${COMPILER_FLAGS[@]} || echo "clang-tidy failed for $file (header issues in CI environment)"
       done
     fi
   fi
@@ -125,4 +149,6 @@ if [ $FOUND_FILES -eq 0 ]; then
   exit 1
 fi
 
-echo "Linting completed!"
+echo "====================================================="
+echo "LINTING COMPLETED SUCCESSFULLY"
+echo "====================================================="

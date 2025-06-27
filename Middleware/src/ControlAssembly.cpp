@@ -10,17 +10,27 @@ ControlAssembly::ControlAssembly(const std::string &address,
       _logger("control_updates.log") {
   std::cout << "ControlAssembly initialized with ZMQ address: " << address
             << std::endl;
-  _backMotors->open_i2c_bus();
-  _fServo->open_i2c_bus();
-  if (!_backMotors->init_motors()) {
-    std::cerr << "Failed to initialize BackMotors" << std::endl;
-    return;
+
+  // Initialize motors and servo
+  try {
+    _backMotors->open_i2c_bus();
+    _fServo->open_i2c_bus();
+
+    // Initialize motors
+    if (!_backMotors->init_motors()) {
+      throw std::runtime_error("Failed to initialize BackMotors");
+    }
+
+    // Initialize servo
+    if (!_fServo->init_servo()) {
+      throw std::runtime_error("Failed to initialize FServo");
+    }
+
+    std::cout << "Motors and servo initialized successfully" << std::endl;
+  } catch (const std::exception &e) {
+    std::cerr << "Error during initialization: " << e.what() << std::endl;
+    throw; // Re-throw the exception to notify the caller
   }
-  if (!_fServo->init_servo()) {
-    std::cerr << "Failed to initialize FServo" << std::endl;
-    return;
-  }
-  std::cout << "Motors and servo initialized successfully" << std::endl;
 }
 
 ControlAssembly::~ControlAssembly() {

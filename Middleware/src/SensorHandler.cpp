@@ -73,8 +73,10 @@ void SensorHandler::sortSensorData() {
   std::lock_guard<std::mutex> critical_lock(critical_mutex);
   std::lock_guard<std::mutex> non_critical_lock(non_critical_mutex);
 
-  _criticalData.clear();
-  _nonCriticalData.clear();
+  // Create temporary maps to avoid potential use-after-free
+  std::unordered_map<std::string, std::shared_ptr<SensorData>> newCriticalData;
+  std::unordered_map<std::string, std::shared_ptr<SensorData>>
+      newNonCriticalData;
 
   for (const auto &[name, sensor] : _sensors) {
     if (!sensor) {
@@ -82,6 +84,7 @@ void SensorHandler::sortSensorData() {
       continue;
     }
 
+    // Get a copy of the sensor data map to avoid iterator invalidation
     auto sensorDataMap = sensor->getSensorData();
     for (const auto &[data_name, data] : sensorDataMap) {
       if (!data) {
@@ -90,13 +93,25 @@ void SensorHandler::sortSensorData() {
         continue;
       }
 
-      if (data->critical) {
-        _criticalData[data_name] = data;
+      // Make a local copy to ensure we have a strong reference
+      auto dataCopy = data;
+      if (!dataCopy) {
+        continue; // Skip if somehow the copy is null
+      }
+
+      // Use emplace to avoid unnecessary copies and potential analyzer
+      // confusion
+      if (dataCopy->critical) {
+        newCriticalData.emplace(data_name, dataCopy);
       } else {
-        _nonCriticalData[data_name] = data;
+        newNonCriticalData.emplace(data_name, dataCopy);
       }
     }
   }
+
+  // Atomic replacement of the maps
+  _criticalData = std::move(newCriticalData);
+  _nonCriticalData = std::move(newNonCriticalData);
 }
 
 void SensorHandler::start() {

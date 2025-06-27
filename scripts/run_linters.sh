@@ -43,8 +43,6 @@ SOURCE_DIRS=(
   "Middleware/inc"
   "zmq/src"
   "zmq/inc"
-  "modules/cluster-display/ClusterDisplay/src"
-  "modules/cluster-display/ClusterDisplay/inc"
 )
 
 # Include directories for clang-tidy
@@ -52,7 +50,6 @@ INCLUDE_DIRS=(
   "-IController/inc"
   "-IMiddleware/inc"
   "-Izmq/inc"
-  "-Imodules/cluster-display/ClusterDisplay/inc"
 )
 
 # Run clang-format

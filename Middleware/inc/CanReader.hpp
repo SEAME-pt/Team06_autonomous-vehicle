@@ -10,6 +10,9 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <stdexcept>
+#include <cstring>
+#include <cstdint>
 
 #define CANSTAT 0x0E
 #define CANCTRL 0x0F

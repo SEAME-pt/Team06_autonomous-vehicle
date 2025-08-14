@@ -10,6 +10,7 @@ namespace MCP2515Constants {
     static constexpr uint8_t READ_STATUS_INSTRUCTION = 0xA0;
     static constexpr uint8_t BIT_MODIFY_INSTRUCTION = 0x05;
     static constexpr uint8_t RTS_TXB0_INSTRUCTION = 0x81;
+    static constexpr uint8_t READ_RXB0_INSTRUCTION = 0x90;
 
     // Control Registers
     static constexpr uint8_t CANCTRL = 0x0F;
@@ -57,6 +58,9 @@ namespace MCP2515Constants {
     // Receive Buffer Operating Modes
     static constexpr uint8_t RXM_ALL = 0x60;
     static constexpr uint8_t RXM_VALID_ONLY = 0x00;
+
+    // Status Bits
+    static constexpr uint8_t TXREQ_BIT = 0x04;
 }
 
 using namespace MCP2515Constants;
@@ -206,7 +210,7 @@ bool CanReader::Send(uint16_t canId, uint8_t *data, uint8_t length) {
 
   // Check if TX buffer is available
   uint8_t status = ReadByte(CANSTAT);
-  if (status & 0x04) { // TXREQ bit set
+  if (status & TXREQ_BIT) { // TXREQ bit set
     return false; // Buffer not available
   }
 
@@ -305,7 +309,7 @@ bool CanReader::Receive(uint8_t *buffer, uint8_t &length) {
   }
 
   // Read message using READ RX instruction
-  uint8_t tx[13] = {0x90, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // READ RXB0
+  uint8_t tx[13] = {READ_RXB0_INSTRUCTION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // READ RXB0
   uint8_t rx[13] = {0};
 
   struct spi_ioc_transfer tr;

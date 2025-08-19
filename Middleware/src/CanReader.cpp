@@ -1,70 +1,5 @@
 #include "CanReader.hpp"
 
-
-// MCP2515 Constants (matching the working modules)
-namespace MCP2515Constants {
-    // Instruction Commands
-    static constexpr uint8_t RESET_INSTRUCTION = 0xC0;
-    static constexpr uint8_t READ_INSTRUCTION = 0x03;
-    static constexpr uint8_t WRITE_INSTRUCTION = 0x02;
-    static constexpr uint8_t READ_STATUS_INSTRUCTION = 0xA0;
-    static constexpr uint8_t BIT_MODIFY_INSTRUCTION = 0x05;
-    static constexpr uint8_t RTS_TXB0_INSTRUCTION = 0x81;
-    static constexpr uint8_t READ_RXB0_INSTRUCTION = 0x90;
-
-    // Control Registers
-    static constexpr uint8_t CANCTRL = 0x0F;
-    static constexpr uint8_t CANSTAT = 0x0E;
-    static constexpr uint8_t CNF1 = 0x2A;
-    static constexpr uint8_t CNF2 = 0x29;
-    static constexpr uint8_t CNF3 = 0x28;
-    static constexpr uint8_t TXB0CTRL = 0x30;
-    static constexpr uint8_t RXB0CTRL = 0x60;
-    static constexpr uint8_t RXB1CTRL = 0x70;
-    static constexpr uint8_t CANINTE = 0x2B;
-    static constexpr uint8_t CANINTF = 0x2C;
-
-    // Receive Buffer 0 Registers
-    static constexpr uint8_t RXB0SIDH = 0x61;
-    static constexpr uint8_t RXB0SIDL = 0x62;
-    static constexpr uint8_t RXB0DLC = 0x65;
-    static constexpr uint8_t RXB0D0 = 0x66;
-
-    // Transmit Buffer 0 Registers
-    static constexpr uint8_t TXB0SIDH = 0x31;
-    static constexpr uint8_t TXB0SIDL = 0x32;
-    static constexpr uint8_t TXB0EID8 = 0x33;
-    static constexpr uint8_t TXB0EID0 = 0x34;
-    static constexpr uint8_t TXB0DLC = 0x35;
-    static constexpr uint8_t TXB0D0 = 0x36;
-
-    // Operating Modes
-    static constexpr uint8_t MODE_NORMAL = 0x00;
-    static constexpr uint8_t MODE_SLEEP = 0x20;
-    static constexpr uint8_t MODE_LOOPBACK = 0x40;
-    static constexpr uint8_t MODE_LISTENONLY = 0x60;
-    static constexpr uint8_t MODE_CONFIG = 0x80;
-
-    // Interrupt Flags
-    static constexpr uint8_t RX0IE = 0x01;
-    static constexpr uint8_t RX1IE = 0x02;
-    static constexpr uint8_t TX0IE = 0x04;
-    static constexpr uint8_t TX1IE = 0x08;
-    static constexpr uint8_t TX2IE = 0x10;
-    static constexpr uint8_t ERRIE = 0x20;
-    static constexpr uint8_t WAKIE = 0x40;
-    static constexpr uint8_t MERRE = 0x80;
-
-    // Receive Buffer Operating Modes
-    static constexpr uint8_t RXM_ALL = 0x60;
-    static constexpr uint8_t RXM_VALID_ONLY = 0x00;
-
-    // Status Bits
-    static constexpr uint8_t TXREQ_BIT = 0x04;
-}
-
-using namespace MCP2515Constants;
-
 CanReader::CanReader(bool test_mode) : test_mode(test_mode), debug(false) {
   if (!test_mode) {
     try {
@@ -76,7 +11,7 @@ CanReader::CanReader(bool test_mode) : test_mode(test_mode), debug(false) {
     // Initialize test mode register defaults
     test_registers[CANCTRL] = MODE_NORMAL;
     test_registers[CANSTAT] = MODE_NORMAL;
-    test_registers[RXB0CTRL] = RXM_ALL;
+    test_registers[RXB0CTRL] = RXM_FILTER_ANY;
     test_registers[CANINTF] = 0x00;
   }
 }
@@ -100,7 +35,8 @@ bool CanReader::InitSPI() {
   try {
     uint8_t mode = SPI_MODE_0;
     uint8_t bits = 8;
-    uint32_t speed = 1000000; // 1MHz (matching working modules)
+    // Use 10MHz SPI speed which is compatible with most MCP2515 modules
+    uint32_t speed = 10000000;
 
     if (ioctl(spi_fd, SPI_IOC_WR_MODE, &mode) < 0) {
       throw std::runtime_error("Error setting SPI mode");
@@ -131,7 +67,7 @@ uint8_t CanReader::ReadByte(uint8_t addr) {
     return 0;
   }
 
-  uint8_t tx[3] = {READ_INSTRUCTION, addr, 0};
+  uint8_t tx[3] = {CAN_READ, addr, 0};
   uint8_t rx[3] = {0};
 
   struct spi_ioc_transfer tr;
@@ -139,7 +75,7 @@ uint8_t CanReader::ReadByte(uint8_t addr) {
   tr.tx_buf = (unsigned long)tx;
   tr.rx_buf = (unsigned long)rx;
   tr.len = 3;
-  tr.speed_hz = 1000000;
+  tr.speed_hz = 10000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
@@ -157,14 +93,14 @@ void CanReader::WriteByte(uint8_t addr, uint8_t data) {
     return;
   }
 
-  uint8_t tx[3] = {WRITE_INSTRUCTION, addr, data};
+  uint8_t tx[3] = {CAN_WRITE, addr, data};
 
   struct spi_ioc_transfer tr;
   memset(&tr, 0, sizeof(tr));
   tr.tx_buf = (unsigned long)tx;
   tr.rx_buf = 0;
   tr.len = 3;
-  tr.speed_hz = 1000000;
+  tr.speed_hz = 10000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
@@ -179,25 +115,28 @@ void CanReader::Reset() {
     test_registers.clear();
     test_registers[CANCTRL] = MODE_NORMAL;
     test_registers[CANSTAT] = MODE_NORMAL;
-    test_registers[RXB0CTRL] = RXM_ALL;
+    test_registers[RXB0CTRL] = RXM_FILTER_ANY;
     test_registers[CANINTF] = 0x00;
     return;
   }
 
-  uint8_t tx = RESET_INSTRUCTION;
+  uint8_t tx = CAN_RESET;
 
   struct spi_ioc_transfer tr;
   memset(&tr, 0, sizeof(tr));
   tr.tx_buf = (unsigned long)&tx;
   tr.rx_buf = 0;
   tr.len = 1;
-  tr.speed_hz = 1000000;
+  tr.speed_hz = 10000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
   if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &tr) < 0) {
     std::cerr << "Reset failed" << std::endl;
   }
+
+  // Wait for the chip to reset
+  usleep(10000);
 }
 
 bool CanReader::Send(uint16_t canId, uint8_t *data, uint8_t length) {
@@ -209,8 +148,8 @@ bool CanReader::Send(uint16_t canId, uint8_t *data, uint8_t length) {
   }
 
   // Check if TX buffer is available
-  uint8_t status = ReadByte(CANSTAT);
-  if (status & TXREQ_BIT) { // TXREQ bit set
+  uint8_t status = ReadByte(TXB0CTRL);
+  if (status & TX0IF) { // TX0IF bit set
     return false; // Buffer not available
   }
 
@@ -229,13 +168,13 @@ bool CanReader::Send(uint16_t canId, uint8_t *data, uint8_t length) {
   }
 
   // Request to send
-  uint8_t tx = RTS_TXB0_INSTRUCTION;
+  uint8_t tx = CAN_RTS_TXB0;
   struct spi_ioc_transfer tr;
   memset(&tr, 0, sizeof(tr));
   tr.tx_buf = (unsigned long)&tx;
   tr.rx_buf = 0;
   tr.len = 1;
-  tr.speed_hz = 1000000;
+  tr.speed_hz = 10000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
@@ -258,33 +197,48 @@ bool CanReader::Init() {
 
   // Set configuration mode
   WriteByte(CANCTRL, MODE_CONFIG);
-  usleep(100);
+  usleep(10000); // 10ms delay
 
-  // Configure baud rate (500Kbps)
-  WriteByte(CNF1, 0x00); // 8MHz oscillator, 500Kbps
-  WriteByte(CNF2, 0x90); // PHSEG1_3TQ | PRSEG_1TQ
-  WriteByte(CNF3, 0x02); // PHSEG2_3TQ
+  // Verify we're in config mode
+  uint8_t mode = ReadByte(CANSTAT) & 0xE0;
+  if (mode != MODE_CONFIG) {
+    std::cerr << "Failed to enter config mode. CANSTAT = 0x" << std::hex
+              << (int)mode << std::endl;
+    return false;
+  }
+
+  // Configure baud rate (500Kbps with 8MHz oscillator - same as Arduino)
+  WriteByte(CNF1, CAN_500Kbps);  // 0x00 for 500Kbps with 8MHz
+  WriteByte(CNF2, 0x80 | 0x10 | 0x08);  // BTLMODE=1, SAM=0, PHSEG1=3, PRSEG=1
+  WriteByte(CNF3, 0x05);  // PHSEG2=6 (must be >= PHSEG1)
 
   // Configure RX buffer 0 to receive all messages
-  WriteByte(RXB0CTRL, RXM_ALL);
+  WriteByte(RXB0CTRL, RXM_FILTER_ANY);
 
   // Clear filters and masks (accept all messages)
-  WriteByte(RXB0SIDH, 0x00);
-  WriteByte(RXB0SIDL, 0x00);
+  WriteByte(RXF0SIDH, 0x00);
+  WriteByte(RXF0SIDL, 0x00);
+  WriteByte(RXM0SIDH, 0x00); // Mask that accepts any ID
+  WriteByte(RXM0SIDL, 0x00);
 
   // Configure interrupts
-  WriteByte(CANINTE, RX0IE); // Enable RX0 interrupt only
+  WriteByte(CANINTF, 0x00); // Clear all interrupt flags
+  WriteByte(CANINTE, RX0IF); // Enable RX0 interrupt only
 
   // Set normal mode
   WriteByte(CANCTRL, MODE_NORMAL);
-  usleep(100);
+  usleep(10000); // 10ms delay
 
   // Verify we're in normal mode
-  uint8_t mode = ReadByte(CANSTAT) & 0xE0;
+  mode = ReadByte(CANSTAT) & 0xE0;
   if (mode != MODE_NORMAL) {
     std::cerr << "Failed to enter normal mode. CANSTAT = 0x" << std::hex
               << (int)mode << std::endl;
     return false;
+  }
+
+  if (debug) {
+    std::cout << "MCP2515 initialized in normal mode" << std::endl;
   }
 
   return true;
@@ -302,48 +256,42 @@ bool CanReader::Receive(uint8_t *buffer, uint8_t &length) {
     return true;
   }
 
-  // Check if there's data to receive
-  uint8_t status = ReadByte(CANINTF);
-  if (!(status & RX0IE)) {
-    return false;
+  // Check if there's data to receive by reading interrupt flags
+  uint8_t intf = ReadByte(CANINTF);
+  if (!(intf & RX0IF)) {
+    return false;  // No message available
   }
 
-  // Read message using READ RX instruction
-  uint8_t tx[13] = {READ_RXB0_INSTRUCTION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // READ RXB0
-  uint8_t rx[13] = {0};
+  // Read message length
+  length = ReadByte(RXB0DLC) & 0x0F;  // Lower 4 bits contain data length
+  if (length > 8) {
+    length = 8;  // Limit to 8 bytes
+  }
 
+  // Read data bytes one by one
+  for (uint8_t i = 0; i < length; i++) {
+    buffer[i] = ReadByte(RXB0D0 + i);
+  }
+
+  // Clear the receive flag to allow receiving next message
+  // Use bit modify instruction to clear only RX0IF bit
+  uint8_t tx[4] = {CAN_BIT_MODIFY, CANINTF, RX0IF, 0x00};
   struct spi_ioc_transfer tr;
   memset(&tr, 0, sizeof(tr));
   tr.tx_buf = (unsigned long)tx;
-  tr.rx_buf = (unsigned long)rx;
-  tr.len = 13;
-  tr.speed_hz = 1000000;
+  tr.rx_buf = 0;
+  tr.len = 4;
+  tr.speed_hz = 10000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
   if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &tr) < 0) {
-    std::cerr << "SPI transfer failed during receive" << std::endl;
-    return false;
+    std::cerr << "SPI transfer failed during interrupt clear" << std::endl;
   }
-
-  // Extract CAN ID
-  uint16_t canId = (static_cast<uint16_t>(rx[1]) << 3) | (rx[2] >> 5);
-
-  // Extract data length
-  length = rx[5] & 0x0F;
-  if (length > 8) {
-    length = 8;
-  }
-
-  // Copy data
-  memcpy(buffer, &rx[6], length);
-
-  // Clear interrupt flag
-  WriteByte(CANINTF, 0x00);
 
   if (debug) {
-    std::cout << "Received CAN ID: 0x" << std::hex << canId << std::endl;
-    std::cout << "Data length: " << std::dec << (int)length << std::endl;
+    std::cout << "Received CAN message with ID: 0x" << std::hex << getId()
+              << ", length: " << std::dec << (int)length << std::endl;
   }
 
   return true;
@@ -357,7 +305,9 @@ uint16_t CanReader::getId() {
   // Read the CAN ID from RX buffer
   uint8_t sidh = ReadByte(RXB0SIDH);
   uint8_t sidl = ReadByte(RXB0SIDL);
-  return (static_cast<uint16_t>(sidh) << 3) | (sidl >> 5);
+
+  // Standard ID format: SIDH (8 bits) + SIDL (3 bits)
+  return ((uint16_t)sidh << 3) | ((sidl >> 5) & 0x07);
 }
 
 // Test mode methods
@@ -401,7 +351,7 @@ void CanReader::setTestShouldReceive(bool shouldReceive) {
   if (test_mode) {
     test_should_receive = shouldReceive;
     if (shouldReceive) {
-      test_registers[CANINTF] = RX0IE;
+      test_registers[CANINTF] = RX0IF;
     } else {
       test_registers[CANINTF] = 0x00;
     }

@@ -40,6 +40,7 @@ void SensorHandler::addSensors() {
   std::lock_guard<std::mutex> lock(sensors_mutex);
   _sensors["battery"] = std::make_shared<Battery>();
   _sensors["speed"] = std::make_shared<Speed>(nullptr);
+  _sensors["distance"] = std::make_shared<Distance>(nullptr);
   sortSensorData();
 }
 

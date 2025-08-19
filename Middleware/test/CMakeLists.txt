@@ -35,6 +35,9 @@ target_link_libraries(sensor_handler_test gtest gtest_main middleware ${ZMQ_LIB}
 add_executable(speed_test SpeedTest.cpp)
 target_link_libraries(speed_test gtest gtest_main middleware ${ZMQ_LIB} pthread test_utils)
 
+add_executable(distance_test DistanceTest.cpp)
+target_link_libraries(distance_test gtest gtest_main middleware ${ZMQ_LIB} pthread test_utils)
+
 add_executable(back_motors_test BackMotorsTest.cpp)
 target_link_libraries(back_motors_test gtest gtest_main middleware ${ZMQ_LIB} pthread test_utils)
 
@@ -73,7 +76,7 @@ target_link_libraries(zmq_publisher_test gtest gtest_main middleware ${ZMQ_LIB} 
 
 # Ensure all tests have the C++17 standard
 foreach(TEST_TARGET
-    battery_test sensor_handler_test speed_test back_motors_test
+    battery_test sensor_handler_test speed_test distance_test back_motors_test
     back_motors_direct_test f_servo_test f_servo_direct_test
     control_assembly_test sensor_logger_test control_logger_test
     battery_reader_test battery_reader_direct_test can_reader_test
@@ -91,7 +94,7 @@ set(GTEST_DISCOVER_TESTS_TIMEOUT 60)
 
 # Register tests with parallel execution
 foreach(TEST_NAME
-    battery_test sensor_handler_test speed_test back_motors_test
+    battery_test sensor_handler_test speed_test distance_test back_motors_test
     back_motors_direct_test f_servo_test f_servo_direct_test
     control_assembly_test sensor_logger_test control_logger_test
     battery_reader_test battery_reader_direct_test can_reader_test

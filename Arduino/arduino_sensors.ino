@@ -1,6 +1,6 @@
 /*
- * Enhanced Arduino Sensors with Pulse-Based Odometry
- * Uses CAN_BUS_SHIELD library and working speed calculation
+ * Simplified Arduino Sensors with Speed and Distance
+ * Uses CAN_BUS_SHIELD library for communication
  */
 
 #include <SPI.h>
@@ -33,13 +33,6 @@ unsigned int distance = 0;
 unsigned long lastSRF08Update = 0;
 const unsigned long SRF08_UPDATE_INTERVAL = 50;
 
-// Collision detection parameters
-const unsigned int MIN_SAFE_DISTANCE_CM = 50;
-const unsigned int MAX_DETECTION_RANGE_CM = 400;
-const unsigned int WARNING_RISK_THRESHOLD = 50;
-const unsigned int EMERGENCY_RISK_THRESHOLD = 80;
-const float SAFE_DISTANCE_MULTIPLIER = 2.0;
-
 // Interrupt to count pulses
 void pulseISR() {
     pulseCount++;
@@ -48,7 +41,7 @@ void pulseISR() {
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Initializing enhanced Arduino sensors...");
+    Serial.println("Initializing simplified Arduino sensors...");
 
     // Configure encoder pin as input with internal pull-up
     pinMode(ENCODER_PIN, INPUT_PULLUP);
@@ -75,7 +68,7 @@ void setup() {
     initSRF08();
     Serial.println("OK");
 
-    Serial.println("Enhanced sensors initialized!");
+    Serial.println("Simplified sensors initialized!");
     Serial.println("CAN IDs: Speed=0x100, SRF08=0x101");
 }
 
@@ -85,14 +78,14 @@ void loop() {
     // Update speed sensor
     if (currentTime - lastMeasurementTime >= measurementInterval) {
         updateSpeedSensor();
-        sendEnhancedSpeedData();
+        sendSpeedData();
         lastMeasurementTime = currentTime;
     }
 
     // Update SRF08 sensor
     if (currentTime - lastSRF08Update >= SRF08_UPDATE_INTERVAL) {
         updateSRF08Sensor();
-        sendSRF08Data();
+        sendDistanceData();
         lastSRF08Update = currentTime;
     }
 
@@ -112,14 +105,12 @@ void updateSpeedSensor() {
 
     // Display speed in Serial Monitor (for debugging)
     Serial.print("Speed: ");
-    Serial.print(currentSpeed_mps, 2); // 2 decimal places
-    Serial.print(" m/s (");
     Serial.print(currentSpeed_mps * 3.6, 2); // Convert to km/h
-    Serial.println(" km/h)");
+    Serial.println(" km/h");
 }
 
-void sendEnhancedSpeedData() {
-    // Enhanced CAN message for Speed sensor (CAN ID 0x100)
+void sendSpeedData() {
+    // Simple CAN message for Speed sensor (CAN ID 0x100)
     long id = 0x100;
     byte data[8];
 
@@ -130,31 +121,25 @@ void sendEnhancedSpeedData() {
     data[0] = speedValue & 0xFF;
     data[1] = (speedValue >> 8) & 0xFF;
 
-    // buffer[2-3]: Pulse count since last message (16-bit) - for precise odometry
+    // buffer[2-3]: Pulse count since last message (16-bit) - for odometry
     static unsigned long lastSentPulses = 0;
     uint16_t pulseDelta = (uint16_t)(totalPulses - lastSentPulses);
     data[2] = pulseDelta & 0xFF;
     data[3] = (pulseDelta >> 8) & 0xFF;
     lastSentPulses = totalPulses;
 
-    // buffer[4-5]: Total pulses (low 16 bits) - for absolute odometry reference
-    data[4] = totalPulses & 0xFF;
-    data[5] = (totalPulses >> 8) & 0xFF;
-
-    // buffer[6-7]: Reserved / wheel info
-    data[6] = pulsesPerRevolution; // Pulses per revolution
-    data[7] = (uint8_t)(wheelDiameter_mm); // Wheel diameter (mm)
+    // buffer[4-7]: Reserved for future use
+    for (int i = 4; i < 8; i++) {
+        data[i] = 0;
+    }
 
     // Send the packet
     CAN.sendMsgBuf(id, 0, 8, data);
 
-    Serial.print("Enhanced Speed sent: ");
+    Serial.print("Speed sent: ");
     Serial.print(currentSpeed_mps * 3.6);
     Serial.print(" km/h | Pulses: +");
-    Serial.print(pulseDelta);
-    Serial.print(" (Total: ");
-    Serial.print(totalPulses);
-    Serial.println(")");
+    Serial.println(pulseDelta);
 }
 
 void initSRF08() {
@@ -187,67 +172,25 @@ void updateSRF08Sensor() {
         uint8_t highByte = Wire.read();
         uint8_t lowByte = Wire.read();
         distance = (highByte << 8) | lowByte;
-        if (distance > MAX_DETECTION_RANGE_CM) {
-            distance = MAX_DETECTION_RANGE_CM;
-        }
     }
 }
 
-void sendSRF08Data() {
-    uint8_t riskLevel = calculateCollisionRisk();
-    uint8_t alertFlag = calculateAlertFlag(riskLevel);
-
+void sendDistanceData() {
     long id = 0x101;
     byte data[8];
 
+    // buffer[0-1]: Distance value (16-bit, little endian) - cm
     data[0] = distance & 0xFF;
     data[1] = (distance >> 8) & 0xFF;
-    data[2] = riskLevel;
-    data[3] = alertFlag;
 
-    uint16_t speedValue = (uint16_t)(currentSpeed_mps * 3.6 * 10);
-    data[4] = speedValue & 0xFF;
-    data[5] = (speedValue >> 8) & 0xFF;
-
-    data[6] = 0;
-    data[7] = 0;
+    // buffer[2-7]: Reserved for future use
+    for (int i = 2; i < 8; i++) {
+        data[i] = 0;
+    }
 
     CAN.sendMsgBuf(id, 0, 8, data);
 
-    Serial.print("SRF08 sent - Distance: ");
+    Serial.print("Distance sent: ");
     Serial.print(distance);
-    Serial.print("cm, Risk: ");
-    Serial.print(riskLevel);
-    Serial.print("%, Alert: ");
-    Serial.println(alertFlag);
-}
-
-uint8_t calculateCollisionRisk() {
-    if (distance >= MAX_DETECTION_RANGE_CM) return 0;
-
-    float riskFactor = 0.0;
-    if (distance < MIN_SAFE_DISTANCE_CM) {
-        riskFactor = 100.0;
-    } else if (currentSpeed_mps > 0) {
-        float safeDistance = currentSpeed_mps * 3.6 * SAFE_DISTANCE_MULTIPLIER;
-        if (distance < safeDistance) {
-            float distanceRatio = (safeDistance - distance) / safeDistance;
-            riskFactor = min(100.0, distanceRatio * distanceRatio * 100.0);
-        }
-    } else {
-        if (distance < MIN_SAFE_DISTANCE_CM * 2) {
-            riskFactor = 100.0 * (MIN_SAFE_DISTANCE_CM * 2 - distance) / (MIN_SAFE_DISTANCE_CM * 2);
-        }
-    }
-    return (uint8_t)riskFactor;
-}
-
-uint8_t calculateAlertFlag(uint8_t riskLevel) {
-    if (distance < MIN_SAFE_DISTANCE_CM || riskLevel >= EMERGENCY_RISK_THRESHOLD) {
-        return 2;
-    } else if (riskLevel >= WARNING_RISK_THRESHOLD) {
-        return 1;
-    } else {
-        return 0;
-    }
+    Serial.println(" cm");
 }

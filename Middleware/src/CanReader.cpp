@@ -199,18 +199,10 @@ bool CanReader::Init() {
   WriteByte(CANCTRL, MODE_CONFIG);
   usleep(10000); // 10ms delay
 
-  // Verify we're in config mode
-  uint8_t mode = ReadByte(CANSTAT) & 0xE0;
-  if (mode != MODE_CONFIG) {
-    std::cerr << "Failed to enter config mode. CANSTAT = 0x" << std::hex
-              << (int)mode << std::endl;
-    return false;
-  }
-
-  // Configure baud rate (500Kbps with 8MHz oscillator - same as Arduino)
-  WriteByte(CNF1, CAN_500Kbps);  // 0x00 for 500Kbps with 8MHz
-  WriteByte(CNF2, 0x80 | 0x10 | 0x08);  // BTLMODE=1, SAM=0, PHSEG1=3, PRSEG=1
-  WriteByte(CNF3, 0x05);  // PHSEG2=6 (must be >= PHSEG1)
+  // Configure baud rate (500Kbps)
+  WriteByte(CNF1, CAN_500Kbps);
+  WriteByte(CNF2, 0x90); // PHSEG1_3TQ | PRSEG_1TQ
+  WriteByte(CNF3, 0x02); // PHSEG2_3TQ
 
   // Configure RX buffer 0 to receive all messages
   WriteByte(RXB0CTRL, RXM_FILTER_ANY);
@@ -227,18 +219,14 @@ bool CanReader::Init() {
 
   // Set normal mode
   WriteByte(CANCTRL, MODE_NORMAL);
-  usleep(10000); // 10ms delay
+  usleep(100);
 
   // Verify we're in normal mode
-  mode = ReadByte(CANSTAT) & 0xE0;
+  uint8_t mode = ReadByte(CANSTAT) & 0xE0;
   if (mode != MODE_NORMAL) {
     std::cerr << "Failed to enter normal mode. CANSTAT = 0x" << std::hex
               << (int)mode << std::endl;
     return false;
-  }
-
-  if (debug) {
-    std::cout << "MCP2515 initialized in normal mode" << std::endl;
   }
 
   return true;
@@ -256,42 +244,48 @@ bool CanReader::Receive(uint8_t *buffer, uint8_t &length) {
     return true;
   }
 
-  // Check if there's data to receive by reading interrupt flags
-  uint8_t intf = ReadByte(CANINTF);
-  if (!(intf & RX0IF)) {
-    return false;  // No message available
+  // Check if there's data to receive
+  uint8_t status = ReadByte(CANINTF);
+  if (!(status & RX0IF)) {
+    return false;
   }
 
-  // Read message length
-  length = ReadByte(RXB0DLC) & 0x0F;  // Lower 4 bits contain data length
-  if (length > 8) {
-    length = 8;  // Limit to 8 bytes
-  }
+  // Read message using READ RX instruction
+  uint8_t tx[13] = {CAN_READ_RX, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // READ RX
+  uint8_t rx[13] = {0};
 
-  // Read data bytes one by one
-  for (uint8_t i = 0; i < length; i++) {
-    buffer[i] = ReadByte(RXB0D0 + i);
-  }
-
-  // Clear the receive flag to allow receiving next message
-  // Use bit modify instruction to clear only RX0IF bit
-  uint8_t tx[4] = {CAN_BIT_MODIFY, CANINTF, RX0IF, 0x00};
   struct spi_ioc_transfer tr;
   memset(&tr, 0, sizeof(tr));
   tr.tx_buf = (unsigned long)tx;
-  tr.rx_buf = 0;
-  tr.len = 4;
-  tr.speed_hz = 10000000;
+  tr.rx_buf = (unsigned long)rx;
+  tr.len = 13;
+  tr.speed_hz = 1000000;
   tr.bits_per_word = 8;
   tr.delay_usecs = 0;
 
   if (ioctl(spi_fd, SPI_IOC_MESSAGE(1), &tr) < 0) {
-    std::cerr << "SPI transfer failed during interrupt clear" << std::endl;
+    std::cerr << "SPI transfer failed during receive" << std::endl;
+    return false;
   }
 
+  // Extract CAN ID
+  uint16_t canId = (static_cast<uint16_t>(rx[1]) << 3) | (rx[2] >> 5);
+
+  // Extract data length
+  length = rx[5] & 0x0F;
+  if (length > 8) {
+    length = 8;
+  }
+
+  // Copy data
+  memcpy(buffer, &rx[6], length);
+
+  // Clear interrupt flag
+  WriteByte(CANINTF, 0x00);
+
   if (debug) {
-    std::cout << "Received CAN message with ID: 0x" << std::hex << getId()
-              << ", length: " << std::dec << (int)length << std::endl;
+    std::cout << "Received CAN ID: 0x" << std::hex << canId << std::endl;
+    std::cout << "Data length: " << std::dec << (int)length << std::endl;
   }
 
   return true;
@@ -305,9 +299,7 @@ uint16_t CanReader::getId() {
   // Read the CAN ID from RX buffer
   uint8_t sidh = ReadByte(RXB0SIDH);
   uint8_t sidl = ReadByte(RXB0SIDL);
-
-  // Standard ID format: SIDH (8 bits) + SIDL (3 bits)
-  return ((uint16_t)sidh << 3) | ((sidl >> 5) & 0x07);
+  return (static_cast<uint16_t>(sidh) << 3) | (sidl >> 5);
 }
 
 // Test mode methods

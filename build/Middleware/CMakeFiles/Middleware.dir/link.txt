@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Middleware.dir/src/main.cpp.o -o ../bin/Middleware  libmiddleware.a ../zmq/libZeroMQLib.a -lzmq -lpthread 

@@ -9,29 +9,23 @@
 
 // CAN-Bus Shield definitions
 #define CAN_2515
-#define MCP_16MHZ    0
-#define MCP_8MHZ     1
 const int SPI_CS_PIN = 9;
 const int CAN_INT_PIN = 2;
 mcp2515_can CAN(SPI_CS_PIN);
 
 // Speed sensor definitions
 const int ENCODER_PIN = 3;
-const unsigned int pulsesPerRevolution = 18; // 18 holes in the disc
-const float wheelDiameter_mm = 67.0; // Wheel diameter in millimeters
-const float wheelCircumference_m = (wheelDiameter_mm / 1000.0) * PI; // Circumference in meters
 const unsigned long measurementInterval = 500; // Measurement interval in milliseconds (0.5s)
 
 volatile unsigned long pulseCount = 0;
 volatile unsigned long totalPulses = 0; // Total pulses since startup
 unsigned long lastMeasurementTime = 0;
-float currentSpeed_mps = 0.0; // m/s
 
 // SRF08 variables
 #define SRF08_ADDRESS 0x70
-unsigned int distance = 0;
+unsigned int distance = 100; // Initialize with reasonable default (100cm)
 unsigned long lastSRF08Update = 0;
-const unsigned long SRF08_UPDATE_INTERVAL = 50;
+const unsigned long SRF08_UPDATE_INTERVAL = 500;
 
 // Interrupt to count pulses
 void pulseISR() {
@@ -50,9 +44,9 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(ENCODER_PIN), pulseISR, RISING);
     Serial.println("Speed sensor initialized");
 
-    // Initialize CAN-Bus Shield
-    Serial.print("Initializing CAN... ");
-    while (CAN.begin(CAN_500KBPS, MCP_8MHZ) != CAN_OK) {
+    // Initialize CAN-Bus Shield for 16MHz crystal at 500kbps
+    Serial.print("Initializing CAN (16MHz, 500kbps)... ");
+    while (CAN.begin(CAN_500KBPS, MCP_16MHz) != CAN_OK) {
         Serial.println("CAN BUS Initialization Failed! Retrying...");
         delay(1000);
     }
@@ -75,9 +69,8 @@ void setup() {
 void loop() {
     unsigned long currentTime = millis();
 
-    // Update speed sensor
+    // Send speed sensor data (pulse counts)
     if (currentTime - lastMeasurementTime >= measurementInterval) {
-        updateSpeedSensor();
         sendSpeedData();
         lastMeasurementTime = currentTime;
     }
@@ -92,54 +85,37 @@ void loop() {
     delay(10);
 }
 
-void updateSpeedSensor() {
-    // Calculate the number of pulses in the time interval
-    unsigned long pulsesInInterval = pulseCount;
-
-    // Reset counter for next measurement
-    pulseCount = 0;
-
-    // Calculate speed
-    float revolutions = (float)pulsesInInterval / pulsesPerRevolution;
-    currentSpeed_mps = (revolutions * wheelCircumference_m) / (measurementInterval / 1000.0);
-
-    // Display speed in Serial Monitor (for debugging)
-    Serial.print("Speed: ");
-    Serial.print(currentSpeed_mps * 3.6, 2); // Convert to km/h
-    Serial.println(" km/h");
-}
-
 void sendSpeedData() {
     // Simple CAN message for Speed sensor (CAN ID 0x100)
     long id = 0x100;
     byte data[8];
 
-    // Convert speed to km/h * 10 for precision
-    uint16_t speedValue = (uint16_t)(currentSpeed_mps * 3.6 * 10);
+    // Get pulse count since last message
+    unsigned long pulsesInInterval = pulseCount;
+    pulseCount = 0; // Reset counter for next measurement
 
-    // buffer[0-1]: Speed value (16-bit, little endian) - km/h * 10
-    data[0] = speedValue & 0xFF;
-    data[1] = (speedValue >> 8) & 0xFF;
+    // buffer[0-1]: Pulse count in this interval (16-bit, little endian)
+    uint16_t pulsesDelta = (uint16_t)pulsesInInterval;
+    data[0] = pulsesDelta & 0xFF;
+    data[1] = (pulsesDelta >> 8) & 0xFF;
 
-    // buffer[2-3]: Pulse count since last message (16-bit) - for odometry
-    static unsigned long lastSentPulses = 0;
-    uint16_t pulseDelta = (uint16_t)(totalPulses - lastSentPulses);
-    data[2] = pulseDelta & 0xFF;
-    data[3] = (pulseDelta >> 8) & 0xFF;
-    lastSentPulses = totalPulses;
+    // buffer[2-5]: Total pulse count since startup (32-bit, little endian)
+    data[2] = totalPulses & 0xFF;
+    data[3] = (totalPulses >> 8) & 0xFF;
+    data[4] = (totalPulses >> 16) & 0xFF;
+    data[5] = (totalPulses >> 24) & 0xFF;
 
-    // buffer[4-7]: Reserved for future use
-    for (int i = 4; i < 8; i++) {
-        data[i] = 0;
-    }
+    // buffer[6-7]: Reserved for future use
+    data[6] = 0;
+    data[7] = 0;
 
     // Send the packet
     CAN.sendMsgBuf(id, 0, 8, data);
 
-    Serial.print("Speed sent: ");
-    Serial.print(currentSpeed_mps * 3.6);
-    Serial.print(" km/h | Pulses: +");
-    Serial.println(pulseDelta);
+    Serial.print("Pulses sent: +");
+    Serial.print(pulsesDelta);
+    Serial.print(" | Total: ");
+    Serial.println(totalPulses);
 }
 
 void initSRF08() {
@@ -157,21 +133,40 @@ void initSRF08() {
 }
 
 void updateSRF08Sensor() {
+    // Start ranging command (0x51 = range in cm)
     Wire.beginTransmission(SRF08_ADDRESS);
-    Wire.write(0x00);
-    Wire.write(0x51);
-    Wire.endTransmission();
-    delay(70);
+    Wire.write(0x00);  // Command register
+    Wire.write(0x51);  // Range in cm
+    if (Wire.endTransmission() != 0) {
+        Serial.println("SRF08 command failed");
+        return;
+    }
 
+    delay(70);  // Wait for ranging to complete
+
+    // Read the result
     Wire.beginTransmission(SRF08_ADDRESS);
-    Wire.write(0x02);
-    Wire.endTransmission();
+    Wire.write(0x02);  // Range high byte register
+    if (Wire.endTransmission() != 0) {
+        Serial.println("SRF08 read request failed");
+        return;
+    }
 
     Wire.requestFrom(SRF08_ADDRESS, 2);
     if (Wire.available() >= 2) {
         uint8_t highByte = Wire.read();
         uint8_t lowByte = Wire.read();
-        distance = (highByte << 8) | lowByte;
+        unsigned int newDistance = (highByte << 8) | lowByte;
+
+        // Only update if we get a reasonable reading (not 0 and not max range)
+        if (newDistance > 0 && newDistance < 6000) {  // SRF08 max range is ~6m
+            distance = newDistance;
+        } else {
+            Serial.print("SRF08 invalid reading: ");
+            Serial.println(newDistance);
+        }
+    } else {
+        Serial.println("SRF08 no data available");
     }
 }
 

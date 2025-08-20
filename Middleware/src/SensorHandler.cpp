@@ -38,9 +38,27 @@ SensorHandler::~SensorHandler() { stop(); }
 
 void SensorHandler::addSensors() {
   std::lock_guard<std::mutex> lock(sensors_mutex);
+
+  // Initialize CAN Message Bus
+  auto& canBus = CanMessageBus::getInstance();
+  if (!canBus.start(false)) { // false = production mode
+    std::cerr << "Failed to start CAN Message Bus!" << std::endl;
+    throw std::runtime_error("CAN Message Bus initialization failed");
+  }
+
+  // Create sensors
   _sensors["battery"] = std::make_shared<Battery>();
-  _sensors["speed"] = std::make_shared<Speed>(nullptr);
-  _sensors["distance"] = std::make_shared<Distance>(nullptr);
+
+  auto speed_sensor = std::make_shared<Speed>();
+  auto distance_sensor = std::make_shared<Distance>();
+
+  _sensors["speed"] = speed_sensor;
+  _sensors["distance"] = distance_sensor;
+
+  // Start CAN sensors (this subscribes them to the bus)
+  speed_sensor->start();
+  distance_sensor->start();
+
   sortSensorData();
 }
 
@@ -155,6 +173,25 @@ void SensorHandler::stop() {
   // Set stop flag regardless of previous value
   stop_flag = true;
   data_cv.notify_all();
+
+  // Stop CAN sensors first
+  {
+    std::lock_guard<std::mutex> lock(sensors_mutex);
+    for (auto& [name, sensor] : _sensors) {
+      // Try to cast to CAN-enabled sensors and stop them
+      if (auto speed_sensor = std::dynamic_pointer_cast<Speed>(sensor)) {
+        speed_sensor->stop();
+      } else if (auto distance_sensor = std::dynamic_pointer_cast<Distance>(sensor)) {
+        distance_sensor->stop();
+      }
+    }
+  }
+
+  // Stop CAN Message Bus
+  auto& canBus = CanMessageBus::getInstance();
+  if (canBus.isRunning()) {
+    canBus.stop();
+  }
 
   // Join threads if they're running
   if (sensor_read_thread.joinable()) {

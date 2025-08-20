@@ -2,6 +2,7 @@
 #define SENSORHANDLER_HPP
 
 #include "Battery.hpp"
+#include "CanMessageBus.hpp"
 #include "Distance.hpp"
 #include "IPublisher.hpp"
 #include "ISensor.hpp"

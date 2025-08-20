@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Speed.hpp"
-#include "MockCanReader.hpp"
+#include "CanMessageBus.hpp"
 #include <memory>
 #include <chrono>
 #include <thread>
@@ -8,11 +8,22 @@
 class SpeedTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        mockCanReader = std::make_shared<MockCanReader>();
-        speed = std::make_shared<Speed>(mockCanReader);
+        // Start CAN bus in test mode
+        auto& bus = CanMessageBus::getInstance();
+        bus.start(true); // true = test mode
+
+        speed = std::make_shared<Speed>();
+        speed->start(); // Subscribe to CAN messages
     }
 
-    std::shared_ptr<MockCanReader> mockCanReader;
+    void TearDown() override {
+        if (speed) {
+            speed->stop();
+        }
+        auto& bus = CanMessageBus::getInstance();
+        bus.stop();
+    }
+
     std::shared_ptr<Speed> speed;
 };
 
@@ -45,18 +56,24 @@ TEST_F(SpeedTest, NoDataWhenCanReaderReturnsNoData) {
 }
 
 TEST_F(SpeedTest, UpdateSpeedFromCanData) {
-    // Set up mock to return data
-    std::vector<uint8_t> canData = {100, 0, 0, 0, 0, 0, 0, 0}; // Speed = 100
-    mockCanReader->setReceiveData(canData);
-    mockCanReader->setShouldReceive(true);
-    mockCanReader->setCanId(0x100); // Match the expected CAN ID
+    // Create test speed message with pulse data
+    // 18 pulses in interval, 36 total pulses (simulating 1 full revolution)
+    uint8_t test_data[8] = {18, 0, 36, 0, 0, 0, 0, 0}; // little endian format
+    CanMessage test_message(0x100, test_data, 8);
+
+    // Inject test message
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+
+    // Allow time for message processing
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
     // Update sensor data
     speed->updateSensorData();
 
     // Check values were updated
     auto sensorData = speed->getSensorData();
-    EXPECT_EQ(sensorData["speed"]->value.load(), 100);
+    EXPECT_GT(sensorData["speed"]->value.load(), 0); // Speed should be calculated
     EXPECT_TRUE(sensorData["speed"]->updated.load());
 
     // Odo should be updated but will be 0 on first update (no time elapsed)

@@ -192,6 +192,7 @@ bool CanReader::Init() {
   }
 
   // Reset the chip
+  std::cout << "Resetting MCP2515..." << std::endl;
   Reset();
   usleep(100000); // 100ms delay
 
@@ -199,10 +200,12 @@ bool CanReader::Init() {
   WriteByte(CANCTRL, MODE_CONFIG);
   usleep(10000); // 10ms delay
 
-  // Configure baud rate (500Kbps)
-  WriteByte(CNF1, CAN_500Kbps);
-  WriteByte(CNF2, 0x90); // PHSEG1_3TQ | PRSEG_1TQ
-  WriteByte(CNF3, 0x02); // PHSEG2_3TQ
+  // Configure baud rate (500Kbps) for 8MHz crystal
+  // For 8MHz crystal at 500kbps: TQ = 8MHz / (2 * (BRP+1)) = 8MHz / 2 = 4MHz
+  // Bit time = 8 TQ, so bit rate = 4MHz / 8 = 500kbps
+  WriteByte(CNF1, 0x00); // SJW=1, BRP=0 (divide by 1)
+  WriteByte(CNF2, 0x91); // BTLMODE=1, SAM=0, PHSEG1=2, PRSEG=2
+  WriteByte(CNF3, 0x01); // WAKFIL=0, PHSEG2=2
 
   // Configure RX buffer 0 to receive all messages
   WriteByte(RXB0CTRL, RXM_FILTER_ANY);
@@ -223,12 +226,14 @@ bool CanReader::Init() {
 
   // Verify we're in normal mode
   uint8_t mode = ReadByte(CANSTAT) & 0xE0;
+  std::cout << "MCP2515 CANSTAT = 0x" << std::hex << (int)mode << std::dec << std::endl;
   if (mode != MODE_NORMAL) {
     std::cerr << "Failed to enter normal mode. CANSTAT = 0x" << std::hex
               << (int)mode << std::endl;
     return false;
   }
 
+  std::cout << "MCP2515 initialized successfully in normal mode" << std::endl;
   return true;
 }
 

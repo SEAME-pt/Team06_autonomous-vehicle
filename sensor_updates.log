@@ -1,0 +1,596 @@
+
+=== Sensor Logging Session Started at 2025-08-19 17:45:26.500 ===
+2025-08-19 17:45:27.149 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 17:45:27.149 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 17:45:27.269 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+2025-08-19 17:45:28.341 - Sensor: odo, Value: 6, Old Value: 0, Critical: No
+2025-08-19 17:45:28.342 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.392 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.443 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.450 - Sensor: odo, Value: 6, Old Value: 0, Critical: No
+2025-08-19 17:45:28.451 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.501 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.552 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.563 - Sensor: odo, Value: 6, Old Value: 0, Critical: No
+2025-08-19 17:45:28.565 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.616 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.668 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.678 - Sensor: odo, Value: 6, Old Value: 0, Critical: No
+2025-08-19 17:45:28.678 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.729 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.780 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.786 - Sensor: odo, Value: 6, Old Value: 0, Critical: No
+2025-08-19 17:45:28.787 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.837 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.890 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:28.894 - Sensor: odo, Value: 13, Old Value: 6, Critical: No
+2025-08-19 17:45:28.895 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:28.945 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:28.996 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:28.999 - Sensor: odo, Value: 13, Old Value: 6, Critical: No
+2025-08-19 17:45:28.999 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.050 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.101 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.106 - Sensor: odo, Value: 13, Old Value: 6, Critical: No
+2025-08-19 17:45:29.108 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.159 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.210 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.217 - Sensor: odo, Value: 13, Old Value: 6, Critical: No
+2025-08-19 17:45:29.219 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.269 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.320 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.328 - Sensor: odo, Value: 13, Old Value: 6, Critical: No
+2025-08-19 17:45:29.328 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.379 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.430 - Sensor: speed, Value: 46, Old Value: 47, Critical: Yes
+2025-08-19 17:45:29.434 - Sensor: odo, Value: 19, Old Value: 13, Critical: No
+2025-08-19 17:45:29.543 - Sensor: odo, Value: 19, Old Value: 13, Critical: No
+2025-08-19 17:45:29.651 - Sensor: odo, Value: 19, Old Value: 13, Critical: No
+2025-08-19 17:45:29.761 - Sensor: odo, Value: 19, Old Value: 13, Critical: No
+2025-08-19 17:45:29.870 - Sensor: odo, Value: 19, Old Value: 13, Critical: No
+2025-08-19 17:45:29.976 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:45:30.084 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:45:30.193 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:45:30.300 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:45:30.408 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:45:30.515 - Sensor: odo, Value: 31, Old Value: 25, Critical: No
+2025-08-19 17:45:30.620 - Sensor: odo, Value: 31, Old Value: 25, Critical: No
+2025-08-19 17:45:30.728 - Sensor: odo, Value: 31, Old Value: 25, Critical: No
+2025-08-19 17:45:30.840 - Sensor: odo, Value: 31, Old Value: 25, Critical: No
+2025-08-19 17:45:30.949 - Sensor: odo, Value: 31, Old Value: 25, Critical: No
+2025-08-19 17:45:31.056 - Sensor: odo, Value: 37, Old Value: 31, Critical: No
+2025-08-19 17:45:31.161 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.211 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.263 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.269 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.320 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.371 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.378 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.429 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.480 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.488 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.540 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.591 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.600 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.651 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.702 - Sensor: speed, Value: 0, Old Value: 46, Critical: Yes
+2025-08-19 17:45:31.710 - Sensor: odo, Value: 43, Old Value: 37, Critical: No
+2025-08-19 17:45:31.711 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.761 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.813 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.822 - Sensor: odo, Value: 43, Old Value: 37, Critical: No
+2025-08-19 17:45:31.823 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.874 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.930 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.937 - Sensor: odo, Value: 43, Old Value: 37, Critical: No
+2025-08-19 17:45:31.938 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:31.989 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.041 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.046 - Sensor: odo, Value: 43, Old Value: 37, Critical: No
+2025-08-19 17:45:32.046 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.097 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.148 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.159 - Sensor: odo, Value: 43, Old Value: 37, Critical: No
+2025-08-19 17:45:32.159 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.210 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.261 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:45:32.265 - Sensor: odo, Value: 50, Old Value: 43, Critical: No
+2025-08-19 17:45:32.380 - Sensor: odo, Value: 50, Old Value: 43, Critical: No
+2025-08-19 17:45:32.488 - Sensor: odo, Value: 50, Old Value: 43, Critical: No
+2025-08-19 17:45:32.592 - Sensor: odo, Value: 50, Old Value: 43, Critical: No
+2025-08-19 17:45:32.696 - Sensor: odo, Value: 50, Old Value: 43, Critical: No
+2025-08-19 17:45:32.804 - Sensor: odo, Value: 56, Old Value: 50, Critical: No
+2025-08-19 17:45:32.913 - Sensor: odo, Value: 56, Old Value: 50, Critical: No
+2025-08-19 17:45:33.021 - Sensor: odo, Value: 56, Old Value: 50, Critical: No
+2025-08-19 17:45:33.127 - Sensor: odo, Value: 56, Old Value: 50, Critical: No
+2025-08-19 17:45:33.235 - Sensor: odo, Value: 56, Old Value: 50, Critical: No
+2025-08-19 17:45:33.340 - Sensor: odo, Value: 62, Old Value: 56, Critical: No
+2025-08-19 17:45:33.447 - Sensor: odo, Value: 62, Old Value: 56, Critical: No
+2025-08-19 17:45:33.551 - Sensor: odo, Value: 62, Old Value: 56, Critical: No
+2025-08-19 17:45:33.655 - Sensor: odo, Value: 62, Old Value: 56, Critical: No
+2025-08-19 17:45:33.759 - Sensor: odo, Value: 62, Old Value: 56, Critical: No
+2025-08-19 17:45:33.864 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:33.866 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:33.917 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:33.968 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:33.971 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:33.971 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.022 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.073 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.077 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:34.077 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.128 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.179 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.185 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:34.185 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.236 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.286 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.294 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:34.295 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.347 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.398 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.406 - Sensor: odo, Value: 67, Old Value: 62, Critical: No
+2025-08-19 17:45:34.406 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.457 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.508 - Sensor: speed, Value: 41, Old Value: 46, Critical: Yes
+2025-08-19 17:45:34.514 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.565 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.616 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.623 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.674 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.725 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.732 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.783 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.834 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.839 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.890 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.941 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.946 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:34.997 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:35.049 - Sensor: speed, Value: 0, Old Value: 41, Critical: Yes
+2025-08-19 17:45:35.053 - Sensor: odo, Value: 74, Old Value: 67, Critical: No
+2025-08-19 17:45:35.054 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+2025-08-19 17:45:35.104 - Sensor: speed, Value: 47, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-19 17:45:35.184 ===
+
+=== Sensor Logging Session Started at 2025-08-19 17:54:40.399 ===
+2025-08-19 17:54:41.053 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 17:54:41.054 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 17:54:41.159 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+2025-08-19 17:54:41.908 - Sensor: odo, Value: 19, Old Value: 0, Critical: No
+2025-08-19 17:54:41.909 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:41.960 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.011 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.014 - Sensor: odo, Value: 19, Old Value: 0, Critical: No
+2025-08-19 17:54:42.014 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.064 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.115 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.119 - Sensor: odo, Value: 19, Old Value: 0, Critical: No
+2025-08-19 17:54:42.119 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.169 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.220 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.228 - Sensor: odo, Value: 19, Old Value: 0, Critical: No
+2025-08-19 17:54:42.228 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.280 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.331 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.338 - Sensor: odo, Value: 19, Old Value: 0, Critical: No
+2025-08-19 17:54:42.338 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.389 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.440 - Sensor: speed, Value: 46, Old Value: 0, Critical: Yes
+2025-08-19 17:54:42.445 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:42.552 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:42.659 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:42.767 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:42.872 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:42.978 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.083 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.190 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.294 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.405 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.511 - Sensor: odo, Value: 25, Old Value: 19, Critical: No
+2025-08-19 17:54:43.618 - Sensor: odo, Value: 39, Old Value: 25, Critical: No
+2025-08-19 17:54:43.725 - Sensor: odo, Value: 39, Old Value: 25, Critical: No
+2025-08-19 17:54:43.833 - Sensor: odo, Value: 39, Old Value: 25, Critical: No
+2025-08-19 17:54:43.940 - Sensor: odo, Value: 39, Old Value: 25, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 17:54:44.069 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:00:37.143 ===
+2025-08-19 21:00:37.793 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:00:37.795 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:00:47.832 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:08:42.105 ===
+2025-08-19 21:08:42.769 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:08:42.770 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:09:14.805 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:17:48.751 ===
+2025-08-19 21:17:49.406 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 21:17:49.407 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:17:49.512 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:17:59.448 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:18:12.492 ===
+2025-08-19 21:18:13.266 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:18:28.292 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:21:48.276 ===
+2025-08-19 21:21:48.927 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:21:48.928 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:22:02.907 ===
+2025-08-19 21:22:03.571 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:22:03.572 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:22:10.694 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:22:52.180 ===
+2025-08-19 21:22:52.854 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:22:52.854 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:25:39.310 ===
+2025-08-19 21:25:39.971 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:25:39.972 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:26:14.103 ===
+2025-08-19 21:26:14.755 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:26:14.755 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:26:44.812 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:27:58.160 ===
+2025-08-19 21:27:58.809 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:27:58.812 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:29:04.754 ===
+2025-08-19 21:29:05.406 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 21:29:05.407 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:29:05.510 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:32:11.715 ===
+2025-08-19 21:32:12.384 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:32:12.385 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:32:37.957 ===
+2025-08-19 21:32:38.619 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:32:38.619 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:33:08.679 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:43:57.987 ===
+2025-08-19 21:43:58.641 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:43:58.642 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:44:24.842 ===
+2025-08-19 21:44:25.501 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:44:25.501 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:47:34.130 ===
+2025-08-19 21:47:34.785 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:47:34.786 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-19 21:48:04.869 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:53:38.062 ===
+2025-08-19 21:53:38.716 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:53:38.717 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:53:38.921 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:38.927 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:38.978 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.029 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.030 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.081 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.131 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.133 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.183 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.233 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.236 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.287 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.338 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.340 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:53:39.390 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Started at 2025-08-19 21:54:06.170 ===
+2025-08-19 21:54:06.824 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:06.825 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:54:06.825 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:06.875 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:06.927 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:06.929 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:06.980 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:07.031 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:07.035 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:07.086 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Started at 2025-08-19 21:54:26.507 ===
+2025-08-19 21:54:27.160 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 21:54:27.160 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:27.161 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:27.211 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:27.265 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Started at 2025-08-19 21:54:37.273 ===
+2025-08-19 21:54:37.936 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-19 21:54:37.936 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:37.936 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:37.987 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.039 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+2025-08-19 21:54:38.041 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.091 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.142 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.198 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.248 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:38.299 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:54:48.359 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.361 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.412 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.465 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.520 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.566 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.617 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.670 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.722 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.772 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.823 - Sensor: distance, Value: 7, Old Value: 38, Critical: Yes
+2025-08-19 21:54:48.874 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:48.925 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:48.976 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.029 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.084 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.136 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.189 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.242 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.293 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.345 - Sensor: distance, Value: 4, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.396 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.454 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.506 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.557 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.607 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.660 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.710 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.764 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.813 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.871 - Sensor: distance, Value: 7, Old Value: 4, Critical: Yes
+2025-08-19 21:54:49.916 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:49.968 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.021 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.022 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.073 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.125 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.126 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.178 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.235 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.239 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.293 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.346 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.400 - Sensor: distance, Value: 9, Old Value: 7, Critical: Yes
+2025-08-19 21:54:50.446 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.497 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.548 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.599 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.651 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.702 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.753 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.806 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.856 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.909 - Sensor: distance, Value: 11, Old Value: 9, Critical: Yes
+2025-08-19 21:54:50.959 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.013 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.062 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.114 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.165 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.220 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.267 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.318 - Sensor: distance, Value: 3, Old Value: 11, Critical: Yes
+2025-08-19 21:54:51.884 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:51.886 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:51.937 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:51.992 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.043 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.092 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.143 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.194 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.197 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.248 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.299 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.351 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:52.402 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.453 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.505 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.557 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.610 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.616 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.668 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.719 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.774 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.822 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.873 - Sensor: distance, Value: 4, Old Value: 5, Critical: Yes
+2025-08-19 21:54:52.925 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:52.926 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:52.979 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.030 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.083 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.133 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.187 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.236 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.287 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.340 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.399 - Sensor: distance, Value: 3, Old Value: 4, Critical: Yes
+2025-08-19 21:54:53.444 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.496 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.547 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.549 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.600 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.651 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.702 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.753 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.808 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.857 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:53.909 - Sensor: distance, Value: 5, Old Value: 3, Critical: Yes
+2025-08-19 21:54:54.374 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.382 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.434 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.484 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.536 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.588 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.639 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.691 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.742 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.795 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.798 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.849 - Sensor: speed, Value: 27, Old Value: 0, Critical: Yes
+2025-08-19 21:54:54.900 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:54.901 - Sensor: odo, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:54.902 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:54.953 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.004 - Sensor: odo, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:55.005 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.056 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.107 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.110 - Sensor: odo, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:55.111 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.163 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.213 - Sensor: odo, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:54:55.214 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.265 - Sensor: speed, Value: 51, Old Value: 27, Critical: Yes
+2025-08-19 21:54:55.316 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.317 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.367 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.418 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.419 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.471 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.522 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.573 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.624 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.676 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.726 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.778 - Sensor: speed, Value: 52, Old Value: 51, Critical: Yes
+2025-08-19 21:54:55.828 - Sensor: odo, Value: 2, Old Value: 1, Critical: No
+2025-08-19 21:54:55.932 - Sensor: odo, Value: 2, Old Value: 1, Critical: No
+2025-08-19 21:54:56.034 - Sensor: odo, Value: 2, Old Value: 1, Critical: No
+2025-08-19 21:54:56.138 - Sensor: odo, Value: 2, Old Value: 1, Critical: No
+2025-08-19 21:54:56.242 - Sensor: odo, Value: 2, Old Value: 1, Critical: No
+2025-08-19 21:54:56.345 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.396 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.450 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.453 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.507 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.556 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.607 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.658 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.663 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.717 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.764 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.816 - Sensor: speed, Value: 26, Old Value: 52, Critical: Yes
+2025-08-19 21:54:56.866 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:56.867 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:56.918 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:56.969 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:56.969 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.020 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.021 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.075 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.075 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.078 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.079 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.130 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.133 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.181 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.181 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.232 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.232 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.283 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.285 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.339 - Sensor: speed, Value: 0, Old Value: 26, Critical: Yes
+2025-08-19 21:54:57.339 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.388 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.440 - Sensor: distance, Value: 35, Old Value: 5, Critical: Yes
+2025-08-19 21:54:57.495 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.547 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.595 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.648 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.700 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.752 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.807 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.809 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+2025-08-19 21:54:57.860 - Sensor: distance, Value: 38, Old Value: 35, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-19 21:54:58.044 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:55:15.569 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:55:55.803 ===
+2025-08-19 21:55:56.475 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:55:56.476 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:55:56.477 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:55:56.477 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:55:56.528 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:55:56.580 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:55:56.581 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:55:56.632 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:55:56.683 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:55:56.686 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:55:56.735 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-19 21:56:04.551 ===
+
+=== Sensor Logging Session Started at 2025-08-19 21:56:20.386 ===
+2025-08-19 21:56:21.045 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.050 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-19 21:56:21.050 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-19 21:56:21.050 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:56:21.101 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.149 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.149 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:56:21.203 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.253 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.255 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:56:21.306 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.355 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+2025-08-19 21:56:21.356 - Sensor: odo, Value: 2, Old Value: 0, Critical: No
+2025-08-19 21:56:21.406 - Sensor: distance, Value: 38, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-19 21:56:22.104 ===
+
+=== Sensor Logging Session Started at 2025-08-20 13:23:34.911 ===
+2025-08-20 13:23:35.591 - Sensor: battery, Value: 97, Old Value: 0, Critical: No
+2025-08-20 13:23:35.592 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 13:23:35.597 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.652 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.696 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.747 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.799 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.804 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+2025-08-20 13:23:35.856 - Sensor: distance, Value: 34, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-20 13:23:39.700 ===
+
+=== Sensor Logging Session Started at 2025-08-20 16:40:29.180 ===
+2025-08-20 16:40:29.834 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-20 16:40:29.835 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 16:40:29.835 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:40:29.886 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-20 16:40:30.910 ===
+
+=== Sensor Logging Session Started at 2025-08-20 16:52:58.122 ===
+2025-08-20 16:52:58.791 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-20 16:52:58.791 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 16:52:58.795 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:58.847 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:58.893 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:58.895 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+2025-08-20 16:52:58.952 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:59.001 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:59.059 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:59.103 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+2025-08-20 16:52:59.155 - Sensor: distance, Value: 29, Old Value: 0, Critical: Yes
+
+=== Sensor Logging Session Ended at 2025-08-20 16:53:00.919 ===

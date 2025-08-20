@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "Distance.hpp"
-#include "MockCanReader.hpp"
+#include "CanMessageBus.hpp"
 #include <memory>
 #include <chrono>
 #include <thread>
@@ -8,11 +8,22 @@
 class DistanceTest : public ::testing::Test {
 protected:
     void SetUp() override {
-        mockCanReader = std::make_shared<MockCanReader>();
-        distance = std::make_shared<Distance>(mockCanReader);
+        // Start CAN bus in test mode
+        auto& bus = CanMessageBus::getInstance();
+        bus.start(true); // true = test mode
+
+        distance = std::make_shared<Distance>();
+        distance->start(); // Subscribe to CAN messages
     }
 
-    std::shared_ptr<MockCanReader> mockCanReader;
+    void TearDown() override {
+        if (distance) {
+            distance->stop();
+        }
+        auto& bus = CanMessageBus::getInstance();
+        bus.stop();
+    }
+
     std::shared_ptr<Distance> distance;
 };
 

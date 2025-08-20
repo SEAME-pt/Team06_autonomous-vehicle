@@ -1,0 +1,21 @@
+
+=== Sensor Logging Session Started at 2025-08-20 11:29:48.307 ===
+2025-08-20 11:29:48.985 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-20 11:29:48.986 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 11:29:49.198 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-20 11:29:55.121 ===
+
+=== Sensor Logging Session Started at 2025-08-20 11:31:21.453 ===
+2025-08-20 11:31:22.118 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-20 11:31:22.119 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 11:31:22.223 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-20 11:31:52.175 ===
+
+=== Sensor Logging Session Started at 2025-08-20 11:34:10.000 ===
+2025-08-20 11:34:10.668 - Sensor: battery, Value: 96, Old Value: 0, Critical: No
+2025-08-20 11:34:10.668 - Sensor: charging, Value: 1, Old Value: 0, Critical: No
+2025-08-20 11:34:10.775 - Sensor: battery, Value: 97, Old Value: 96, Critical: No
+
+=== Sensor Logging Session Ended at 2025-08-20 11:34:12.751 ===

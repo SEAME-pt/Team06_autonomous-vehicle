@@ -1,0 +1,61 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-ruZYph
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_ed072/fast && /usr/bin/make  -f CMakeFiles/cmTC_ed072.dir/build.make CMakeFiles/cmTC_ed072.dir/build
+make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-ruZYph'
+Building C object CMakeFiles/cmTC_ed072.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_ed072.dir/src.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-ruZYph/src.c
+Linking C executable cmTC_ed072
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_ed072.dir/link.txt --verbose=1
+/usr/bin/cc CMakeFiles/cmTC_ed072.dir/src.c.o -o cmTC_ed072 
+/usr/bin/ld: CMakeFiles/cmTC_ed072.dir/src.c.o: in function `main':
+src.c:(.text+0x48): undefined reference to `pthread_create'
+/usr/bin/ld: src.c:(.text+0x50): undefined reference to `pthread_detach'
+/usr/bin/ld: src.c:(.text+0x58): undefined reference to `pthread_cancel'
+/usr/bin/ld: src.c:(.text+0x64): undefined reference to `pthread_join'
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_ed072.dir/build.make:99: cmTC_ed072] Error 1
+make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-ruZYph'
+make: *** [Makefile:127: cmTC_ed072/fast] Error 2
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-2EZZeh
+
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_1dd1f/fast && /usr/bin/make  -f CMakeFiles/cmTC_1dd1f.dir/build.make CMakeFiles/cmTC_1dd1f.dir/build
+make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-2EZZeh'
+Building C object CMakeFiles/cmTC_1dd1f.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_1dd1f.dir/CheckFunctionExists.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-2EZZeh/CheckFunctionExists.c
+Linking C executable cmTC_1dd1f
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1dd1f.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_1dd1f.dir/CheckFunctionExists.c.o -o cmTC_1dd1f  -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+make[1]: *** [CMakeFiles/cmTC_1dd1f.dir/build.make:99: cmTC_1dd1f] Error 1
+make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-2EZZeh'
+make: *** [Makefile:127: cmTC_1dd1f/fast] Error 2
+
+
+

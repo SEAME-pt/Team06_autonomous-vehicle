@@ -360,6 +360,30 @@ src/FServo.cpp.s:
 	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/FServo.cpp.s
 .PHONY : src/FServo.cpp.s
 
+src/LaneKeepingHandler.o: src/LaneKeepingHandler.cpp.o
+.PHONY : src/LaneKeepingHandler.o
+
+# target to build an object file
+src/LaneKeepingHandler.cpp.o:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o
+.PHONY : src/LaneKeepingHandler.cpp.o
+
+src/LaneKeepingHandler.i: src/LaneKeepingHandler.cpp.i
+.PHONY : src/LaneKeepingHandler.i
+
+# target to preprocess a source file
+src/LaneKeepingHandler.cpp.i:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.i
+.PHONY : src/LaneKeepingHandler.cpp.i
+
+src/LaneKeepingHandler.s: src/LaneKeepingHandler.cpp.s
+.PHONY : src/LaneKeepingHandler.s
+
+# target to generate assembly for a file
+src/LaneKeepingHandler.cpp.s:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.s
+.PHONY : src/LaneKeepingHandler.cpp.s
+
 src/SensorHandler.o: src/SensorHandler.cpp.o
 .PHONY : src/SensorHandler.o
 
@@ -493,6 +517,9 @@ help:
 	@echo "... src/FServo.o"
 	@echo "... src/FServo.i"
 	@echo "... src/FServo.s"
+	@echo "... src/LaneKeepingHandler.o"
+	@echo "... src/LaneKeepingHandler.i"
+	@echo "... src/LaneKeepingHandler.s"
 	@echo "... src/SensorHandler.o"
 	@echo "... src/SensorHandler.i"
 	@echo "... src/SensorHandler.s"

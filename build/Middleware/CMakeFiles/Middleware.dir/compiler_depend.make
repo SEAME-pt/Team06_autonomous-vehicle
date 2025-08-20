@@ -341,6 +341,8 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: /home/jetson/Team06_autonom
   /usr/include/c++/8/bits/node_handle.h \
   /usr/include/c++/8/bits/unordered_map.h \
   /usr/include/c++/8/cstdarg \
+  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/LaneKeepingHandler.hpp \
+  /usr/include/c++/8/condition_variable \
   /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorHandler.hpp \
   /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Battery.hpp \
   /home/jetson/Team06_autonomous-vehicle/Middleware/inc/BatteryReader.hpp \
@@ -353,7 +355,6 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: /home/jetson/Team06_autonom
   /home/jetson/Team06_autonomous-vehicle/Middleware/inc/CanReader.hpp \
   /home/jetson/Team06_autonomous-vehicle/Middleware/inc/MockCanReader.hpp \
   /usr/include/linux/spi/spidev.h \
-  /usr/include/c++/8/condition_variable \
   /usr/include/c++/8/queue \
   /usr/include/c++/8/deque \
   /usr/include/c++/8/bits/stl_deque.h \
@@ -375,8 +376,6 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: /home/jetson/Team06_autonom
 
 /usr/include/c++/8/queue:
 
-/usr/include/c++/8/condition_variable:
-
 /home/jetson/Team06_autonomous-vehicle/Middleware/inc/CanReader.hpp:
 
 /home/jetson/Team06_autonomous-vehicle/Middleware/inc/CanMessageBus.hpp:
@@ -390,6 +389,10 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: /home/jetson/Team06_autonom
 /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Battery.hpp:
 
 /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorHandler.hpp:
+
+/usr/include/c++/8/condition_variable:
+
+/home/jetson/Team06_autonomous-vehicle/Middleware/inc/LaneKeepingHandler.hpp:
 
 /usr/include/c++/8/cstdarg:
 

@@ -17,6 +17,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/middleware.dir/src/Distance.cpp.o.d"
   "CMakeFiles/middleware.dir/src/FServo.cpp.o"
   "CMakeFiles/middleware.dir/src/FServo.cpp.o.d"
+  "CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o"
+  "CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o.d"
   "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o"
   "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o.d"
   "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o"

@@ -287,4 +287,5 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Distance.hpp \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/IPublisher.hpp \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorLogger.hpp \
- /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Speed.hpp
+ /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Speed.hpp \
+ /home/jetson/Team06_autonomous-vehicle/Middleware/inc/IPublisher.hpp

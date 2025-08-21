@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <sstream>
 #include <memory>
+#include <stdexcept>
 
 // LaneKeepingData implementation
 std::string LaneKeepingData::toString() const {
@@ -45,16 +46,21 @@ LaneKeepingData LaneKeepingData::fromString(const std::string& data) {
 LaneKeepingHandler::LaneKeepingHandler(const std::string &lkas_subscriber_address,
                                      zmq::context_t &zmq_context,
                                      std::shared_ptr<IPublisher> nc_publisher_ptr,
-                                     bool test_mode,
-                                     const std::string &nc_address)
+                                     bool test_mode)
     : stop_flag(false), has_new_data(false), _test_mode(test_mode) {
 
   // Initialize subscriber for Lane Keeping Assistance Software
   lkas_subscriber = std::make_unique<ZmqSubscriber>(lkas_subscriber_address, zmq_context, test_mode);
 
-  // Initialize publisher - create one if not provided (like SensorHandler pattern)
-  nc_publisher = nc_publisher_ptr ? nc_publisher_ptr
-                                  : std::make_shared<ZmqPublisher>(nc_address, zmq_context);
+  // Initialize publisher - must be provided when not in test mode
+  if (nc_publisher_ptr) {
+    nc_publisher = nc_publisher_ptr;
+  } else if (test_mode) {
+    // In test mode, we can create a dummy publisher or use nullptr
+    nc_publisher = nullptr;
+  } else {
+    throw std::runtime_error("LaneKeepingHandler: Publisher must be provided in production mode");
+  }
 
   // Initialize with default "no deviation" state
   latest_data.lane_status = 0;
@@ -174,7 +180,11 @@ void LaneKeepingHandler::publishLaneData(const std::string& original_data, const
       std::cout << "Publishing lane data: " << data_to_publish << " (internal status=" << parsed_data.lane_status << ")" << std::endl;
       nc_publisher->send(data_to_publish);
     } else {
-      std::cerr << "Error: No non-critical publisher available" << std::endl;
+      if (_test_mode) {
+        std::cout << "TEST MODE: Would publish lane data: " << data_to_publish << " (internal status=" << parsed_data.lane_status << ")" << std::endl;
+      } else {
+        std::cerr << "Error: No non-critical publisher available" << std::endl;
+      }
     }
 
   } catch (const std::exception& e) {

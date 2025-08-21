@@ -38,9 +38,17 @@ ZmqPublisher::~ZmqPublisher() {
   if (_is_connected && !_test_mode) {
     try {
       _socket.unbind(_address);
+      _socket.close();  // Explicitly close the socket
     } catch (const std::exception &e) {
       std::cerr << "Error during ZmqPublisher shutdown: " << e.what()
                 << std::endl;
+    }
+  } else if (!_test_mode) {
+    // Even if not connected, close the socket if it exists
+    try {
+      _socket.close();
+    } catch (const std::exception &e) {
+      // Ignore errors during cleanup
     }
   }
 }

@@ -29,8 +29,7 @@ public:
   explicit LaneKeepingHandler(const std::string &lkas_subscriber_address,
                              zmq::context_t &zmq_context,
                              std::shared_ptr<IPublisher> nc_publisher = nullptr,
-                             bool test_mode = false,
-                             const std::string &nc_address = "tcp://127.0.0.1:5556");
+                             bool test_mode = false);
   ~LaneKeepingHandler();
 
   // Delete copy and move operations

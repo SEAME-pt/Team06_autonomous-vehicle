@@ -17,9 +17,12 @@ mcp2515_can CAN(SPI_CS_PIN);
 const int ENCODER_PIN = 3;
 const unsigned long measurementInterval = 500; // Measurement interval in milliseconds (0.5s)
 
-volatile unsigned long pulseCount = 0;
+// Speed measurement variables (based on working code)
+volatile unsigned int interruptCount = 0; // Counter for interrupts
+unsigned long lastMeasurementTime = 0; // Time of last measurement
+const unsigned long debounceDelay = 0; // Debounce time in milliseconds
+volatile unsigned long lastInterruptTime = 0; // Time of last interrupt
 volatile unsigned long totalPulses = 0; // Total pulses since startup
-unsigned long lastMeasurementTime = 0;
 
 // SRF08 variables
 #define SRF08_ADDRESS 0x70
@@ -27,10 +30,14 @@ unsigned int distance = 100; // Initialize with reasonable default (100cm)
 unsigned long lastSRF08Update = 0;
 const unsigned long SRF08_UPDATE_INTERVAL = 500;
 
-// Interrupt to count pulses
+// Interrupt to count pulses (based on working code)
 void pulseISR() {
-    pulseCount++;
-    totalPulses++;
+    unsigned long currentTime = millis();
+    if (currentTime - lastInterruptTime > debounceDelay) { // Ignore interrupts within debounce delay
+        interruptCount++; // Increment counter
+        totalPulses++; // Increment total counter
+        lastInterruptTime = currentTime; // Update last interrupt time
+    }
 }
 
 void setup() {
@@ -90,9 +97,17 @@ void sendSpeedData() {
     long id = 0x100;
     byte data[8];
 
-    // Get pulse count since last message
-    unsigned long pulsesInInterval = pulseCount;
-    pulseCount = 0; // Reset counter for next measurement
+    // Get pulse count since last message (based on working code)
+    noInterrupts(); // Disable interrupts during reading
+    unsigned int rawInterruptCount = interruptCount; // Store current count
+    interruptCount = 0; // Reset counter for next measurement
+    interrupts(); // Re-enable interrupts
+
+    // Assume 2 interrupts per physical event (from working code)
+    unsigned int pulsesInInterval = rawInterruptCount / 2; // Estimate physical events
+
+    // Update total pulses with the corrected count (physical events, not raw interrupts)
+    unsigned long correctedTotalPulses = totalPulses / 2; // Convert total interrupts to physical events
 
     // buffer[0-1]: Pulse count in this interval (16-bit, little endian)
     uint16_t pulsesDelta = (uint16_t)pulsesInInterval;
@@ -100,10 +115,10 @@ void sendSpeedData() {
     data[1] = (pulsesDelta >> 8) & 0xFF;
 
     // buffer[2-5]: Total pulse count since startup (32-bit, little endian)
-    data[2] = totalPulses & 0xFF;
-    data[3] = (totalPulses >> 8) & 0xFF;
-    data[4] = (totalPulses >> 16) & 0xFF;
-    data[5] = (totalPulses >> 24) & 0xFF;
+    data[2] = correctedTotalPulses & 0xFF;
+    data[3] = (correctedTotalPulses >> 8) & 0xFF;
+    data[4] = (correctedTotalPulses >> 16) & 0xFF;
+    data[5] = (correctedTotalPulses >> 24) & 0xFF;
 
     // buffer[6-7]: Reserved for future use
     data[6] = 0;

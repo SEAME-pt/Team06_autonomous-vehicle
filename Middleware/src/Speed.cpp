@@ -32,8 +32,6 @@ void Speed::start() {
     if (!subscribed.load()) {
         auto& bus = CanMessageBus::getInstance();
 
-
-
         std::vector<uint16_t> canIds = {canId, canId2, canId3};
         bus.subscribeToMultipleIds(shared_from_this(), canIds);
         subscribed.store(true);
@@ -79,13 +77,18 @@ void Speed::readSensor() {
     std::lock_guard<std::mutex> lock(data_mutex);
 
     if (latest_length >= 6) {
-        // Extract pulse data from CAN message
+        // Extract pulse data from CAN message (Arduino format)
         // buffer[0-1]: Pulse count in this interval (16-bit, little endian)
         uint16_t pulse_delta = latest_data[0] | (latest_data[1] << 8);
 
         // buffer[2-5]: Total pulse count since startup (32-bit, little endian)
         uint32_t new_total_pulses = latest_data[2] | (latest_data[3] << 8) |
                                    (latest_data[4] << 16) | (latest_data[5] << 24);
+
+        // Validate pulse data
+        if (new_total_pulses < total_pulses) {
+            std::cout << "Warning: Total pulse count decreased (possible Arduino reset)" << std::endl;
+        }
 
         last_pulse_delta = pulse_delta;
         total_pulses = new_total_pulses;
@@ -111,15 +114,19 @@ void Speed::calculateSpeed() {
 
     if (time_diff_seconds > 0 && last_pulse_delta > 0) {
         // Calculate revolutions from pulse count
+        // Each revolution = pulsesPerRevolution pulses (18 pulses per revolution)
         double revolutions = static_cast<double>(last_pulse_delta) / pulsesPerRevolution;
 
         // Calculate distance traveled in meters
+        // wheelCircumference_m = π * diameter = π * 67mm = 0.2105m
         double distance_m = revolutions * wheelCircumference_m;
 
-        // Calculate speed in m/s, then convert to km/h * 10 for precision
+        // Calculate speed: distance/time in m/s, then convert to km/h
         double speed_mps = distance_m / time_diff_seconds;
-        double speed_kmh = speed_mps * 3.6;
-        uint32_t speed_value = static_cast<uint32_t>(speed_kmh * 10); // km/h * 10
+        double speed_kmh = speed_mps * 3.6; // Convert m/s to km/h
+
+        // Store as rounded km/h (integer resolution)
+        uint32_t speed_value = static_cast<uint32_t>(speed_kmh + 0.5);
 
         // Update speed sensor data
         auto old_speed = _sensorData["speed"]->value.load();
@@ -128,25 +135,40 @@ void Speed::calculateSpeed() {
         _sensorData["speed"]->timestamp = current_time;
         _sensorData["speed"]->updated.store(true);
 
-        std::cout << "Speed calculated: " << (speed_value / 10.0) << " km/h" << std::endl;
+        std::cout << "Speed calculated: " << speed_value << " km/h"
+                  << " (from " << last_pulse_delta << " pulses in " << time_diff_seconds << "s)" << std::endl;
     } else {
-        // No movement or invalid time
+        // No movement or invalid time difference
         auto old_speed = _sensorData["speed"]->value.load();
         _sensorData["speed"]->oldValue.store(old_speed);
         _sensorData["speed"]->value.store(0);
         _sensorData["speed"]->timestamp = current_time;
         _sensorData["speed"]->updated.store(true);
+
+        if (time_diff_seconds <= 0) {
+            std::cout << "Speed: Invalid time difference: " << time_diff_seconds << "s" << std::endl;
+        } else {
+            std::cout << "Speed: No movement detected (0 pulses)" << std::endl;
+        }
     }
 
     last_measurement_time = current_time;
 }
 
 void Speed::calculateOdo() {
-    // Calculate total distance from total pulses
+    // Calculate total distance from total pulses since startup
+    // Each revolution = pulsesPerRevolution pulses (18 pulses per revolution)
     double total_revolutions = static_cast<double>(total_pulses) / pulsesPerRevolution;
+
+    // Calculate total distance in meters
+    // wheelCircumference_m = π * diameter = π * 67mm = 0.2105m
     double total_distance_m = total_revolutions * wheelCircumference_m;
+
+    // Convert to kilometers
     double total_distance_km = total_distance_m / 1000.0;
-    uint32_t odo_value = static_cast<uint32_t>(total_distance_km * 1000); // km * 1000 for precision
+
+    // Store as km * 1000 for precision (allows 1m resolution)
+    uint32_t odo_value = static_cast<uint32_t>(total_distance_km * 1000.0);
 
     // Update odometer sensor data
     auto old_odo = _sensorData["odo"]->value.load();
@@ -157,7 +179,8 @@ void Speed::calculateOdo() {
     // Mark as updated if value changed or this is the first calculation
     if (old_odo != odo_value || old_odo == 0) {
         _sensorData["odo"]->updated.store(true);
-        std::cout << "Odometer updated: " << (odo_value / 1000.0) << " km" << std::endl;
+        std::cout << "Odometer updated: " << (odo_value / 1000.0) << " km"
+                  << " (from " << total_pulses << " total pulses)" << std::endl;
     }
 }
 

@@ -44,10 +44,10 @@ int main() {
   try {
     setupSignalHandlers();
 
-    // Configuration
-    const std::string zmq_c_address = "tcp://127.0.0.1:5555"; // critical addr
-    const std::string zmq_nc_address =
-        "tcp://127.0.0.1:5556"; // non-critical addr
+      // Configuration
+  const std::string zmq_c_address = "tcp://100.93.45.188:5555"; // critical addr
+  const std::string zmq_nc_address =
+      "tcp://100.93.45.188:5556"; // non-critical addr
     const std::string zmq_control_address =
         "tcp://127.0.0.1:5557"; // control addr
     const std::string zmq_lkas_address =

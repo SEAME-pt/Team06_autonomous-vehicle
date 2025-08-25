@@ -269,7 +269,9 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: \
  /usr/include/c++/8/unordered_map /usr/include/c++/8/bits/hashtable.h \
  /usr/include/c++/8/bits/hashtable_policy.h \
  /usr/include/c++/8/bits/node_handle.h \
- /usr/include/c++/8/bits/unordered_map.h /usr/include/c++/8/cstdarg \
+ /usr/include/c++/8/bits/unordered_map.h \
+ /home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc/ZmqPublisher.hpp \
+ /usr/include/c++/8/cstdarg \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/LaneKeepingHandler.hpp \
  /usr/include/c++/8/condition_variable \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorHandler.hpp \
@@ -285,7 +287,6 @@ Middleware/CMakeFiles/Middleware.dir/src/main.cpp.o: \
  /usr/include/c++/8/deque /usr/include/c++/8/bits/stl_deque.h \
  /usr/include/c++/8/bits/deque.tcc /usr/include/c++/8/bits/stl_queue.h \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Distance.hpp \
- /home/jetson/Team06_autonomous-vehicle/Middleware/inc/IPublisher.hpp \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorLogger.hpp \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Speed.hpp \
- /home/jetson/Team06_autonomous-vehicle/Middleware/inc/IPublisher.hpp
+ /home/jetson/Team06_autonomous-vehicle/Middleware/inc/TrafficSignHandler.hpp

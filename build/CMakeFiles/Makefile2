@@ -160,12 +160,12 @@ zmq/CMakeFiles/ZeroMQLib.dir/clean:
 Middleware/CMakeFiles/middleware.dir/all:
 	$(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/depend
 	$(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18,19,20,21,22,23 "Built target middleware"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles --progress-num=10,11,12,13,14,15,16,17,18,19,20,21,22,23,24 "Built target middleware"
 .PHONY : Middleware/CMakeFiles/middleware.dir/all
 
 # Build rule for subdir invocation for target.
 Middleware/CMakeFiles/middleware.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 14
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 15
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Middleware/CMakeFiles/middleware.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 0
 .PHONY : Middleware/CMakeFiles/middleware.dir/rule
@@ -191,7 +191,7 @@ Middleware/CMakeFiles/Middleware.dir/all: Middleware/CMakeFiles/middleware.dir/a
 
 # Build rule for subdir invocation for target.
 Middleware/CMakeFiles/Middleware.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 16
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 17
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Middleware/CMakeFiles/Middleware.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles 0
 .PHONY : Middleware/CMakeFiles/Middleware.dir/rule

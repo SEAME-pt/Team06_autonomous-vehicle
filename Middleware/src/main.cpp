@@ -2,7 +2,7 @@
 #include "LaneKeepingHandler.hpp"
 #include "SensorHandler.hpp"
 #include "TrafficSignHandler.hpp"
-#include "IPublisher.hpp"
+#include "ZmqPublisher.hpp"
 #include <chrono>
 #include <csignal>
 #include <cstdlib>

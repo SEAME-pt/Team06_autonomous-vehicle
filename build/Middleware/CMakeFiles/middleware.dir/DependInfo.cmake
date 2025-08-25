@@ -21,6 +21,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorHandler.cpp" "Middleware/CMakeFiles/middleware.dir/src/SensorHandler.cpp.o" "gcc" "Middleware/CMakeFiles/middleware.dir/src/SensorHandler.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorLogger.cpp" "Middleware/CMakeFiles/middleware.dir/src/SensorLogger.cpp.o" "gcc" "Middleware/CMakeFiles/middleware.dir/src/SensorLogger.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp" "Middleware/CMakeFiles/middleware.dir/src/Speed.cpp.o" "gcc" "Middleware/CMakeFiles/middleware.dir/src/Speed.cpp.o.d"
+  "/home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp" "Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o" "gcc" "Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o.d"
   )
 
 # Targets to which this target links.

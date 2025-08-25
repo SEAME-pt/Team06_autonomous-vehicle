@@ -456,6 +456,30 @@ src/Speed.cpp.s:
 	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/Speed.cpp.s
 .PHONY : src/Speed.cpp.s
 
+src/TrafficSignHandler.o: src/TrafficSignHandler.cpp.o
+.PHONY : src/TrafficSignHandler.o
+
+# target to build an object file
+src/TrafficSignHandler.cpp.o:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o
+.PHONY : src/TrafficSignHandler.cpp.o
+
+src/TrafficSignHandler.i: src/TrafficSignHandler.cpp.i
+.PHONY : src/TrafficSignHandler.i
+
+# target to preprocess a source file
+src/TrafficSignHandler.cpp.i:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i
+.PHONY : src/TrafficSignHandler.cpp.i
+
+src/TrafficSignHandler.s: src/TrafficSignHandler.cpp.s
+.PHONY : src/TrafficSignHandler.s
+
+# target to generate assembly for a file
+src/TrafficSignHandler.cpp.s:
+	cd /home/jetson/Team06_autonomous-vehicle/build && $(MAKE) $(MAKESILENT) -f Middleware/CMakeFiles/middleware.dir/build.make Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s
+.PHONY : src/TrafficSignHandler.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -529,6 +553,9 @@ help:
 	@echo "... src/Speed.o"
 	@echo "... src/Speed.i"
 	@echo "... src/Speed.s"
+	@echo "... src/TrafficSignHandler.o"
+	@echo "... src/TrafficSignHandler.i"
+	@echo "... src/TrafficSignHandler.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

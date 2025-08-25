@@ -25,6 +25,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o.d"
   "CMakeFiles/middleware.dir/src/Speed.cpp.o"
   "CMakeFiles/middleware.dir/src/Speed.cpp.o.d"
+  "CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o"
+  "CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o.d"
   "libmiddleware.a"
   "libmiddleware.pdb"
 )

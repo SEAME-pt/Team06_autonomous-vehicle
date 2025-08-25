@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/jetson/Team06_autonomous-vehicle/Middleware/inc -I/home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc -I/usr/include/pgm-5.2
+CXX_INCLUDES = -I/home/jetson/Team06_autonomous-vehicle/Middleware/inc -I/home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc -I/usr/include/pgm-5.2 -I/usr/include/mit-krb5
 
 CXX_FLAGS = -std=gnu++17
 

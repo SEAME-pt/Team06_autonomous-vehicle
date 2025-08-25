@@ -269,4 +269,6 @@ Middleware/CMakeFiles/middleware.dir/src/ControlAssembly.cpp.o: \
  /usr/include/c++/8/unordered_map /usr/include/c++/8/bits/hashtable.h \
  /usr/include/c++/8/bits/hashtable_policy.h \
  /usr/include/c++/8/bits/node_handle.h \
- /usr/include/c++/8/bits/unordered_map.h /usr/include/c++/8/cstdarg
+ /usr/include/c++/8/bits/unordered_map.h \
+ /home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc/ZmqPublisher.hpp \
+ /usr/include/c++/8/cstdarg

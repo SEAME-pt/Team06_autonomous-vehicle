@@ -4,7 +4,6 @@
 #include "Battery.hpp"
 #include "CanMessageBus.hpp"
 #include "Distance.hpp"
-#include "IPublisher.hpp"
 #include "ISensor.hpp"
 #include "SensorLogger.hpp"
 #include "Speed.hpp"

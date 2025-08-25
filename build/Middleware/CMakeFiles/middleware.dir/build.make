@@ -251,6 +251,20 @@ Middleware/CMakeFiles/middleware.dir/src/Speed.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/Speed.cpp.s"
 	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp -o CMakeFiles/middleware.dir/src/Speed.cpp.s
 
+Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: Middleware/CMakeFiles/middleware.dir/flags.make
+Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp
+Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: Middleware/CMakeFiles/middleware.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o"
+	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o -MF CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o.d -o CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp
+
+Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i"
+	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp > CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i
+
+Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s"
+	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp -o CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s
+
 # Object files for target middleware
 middleware_OBJECTS = \
 "CMakeFiles/middleware.dir/src/BackMotors.cpp.o" \
@@ -265,7 +279,8 @@ middleware_OBJECTS = \
 "CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o" \
 "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o" \
 "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o" \
-"CMakeFiles/middleware.dir/src/Speed.cpp.o"
+"CMakeFiles/middleware.dir/src/Speed.cpp.o" \
+"CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o"
 
 # External object files for target middleware
 middleware_EXTERNAL_OBJECTS =
@@ -283,9 +298,10 @@ Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/src/LaneKeeping
 Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/src/SensorHandler.cpp.o
 Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/src/SensorLogger.cpp.o
 Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/src/Speed.cpp.o
+Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o
 Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/build.make
 Middleware/libmiddleware.a: Middleware/CMakeFiles/middleware.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX static library libmiddleware.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX static library libmiddleware.a"
 	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && $(CMAKE_COMMAND) -P CMakeFiles/middleware.dir/cmake_clean_target.cmake
 	cd /home/jetson/Team06_autonomous-vehicle/build/Middleware && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/middleware.dir/link.txt --verbose=$(VERBOSE)
 

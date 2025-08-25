@@ -3,7 +3,7 @@
 
 #include "CanMessageBus.hpp"
 #include "ISensor.hpp"
-#include "IPublisher.hpp"
+#include "ZmqPublisher.hpp"
 #include <memory>
 #include <unordered_map>
 #include <functional>

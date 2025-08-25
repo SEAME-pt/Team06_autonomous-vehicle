@@ -55,6 +55,13 @@ void SensorHandler::addSensors() {
   _sensors["speed"] = speed_sensor;
   _sensors["distance"] = distance_sensor;
 
+  // Set up speed data accessor for distance sensor collision detection
+  distance_sensor->setSpeedDataAccessor([speed_sensor]() -> std::shared_ptr<SensorData> {
+    auto speed_data_map = speed_sensor->getSensorData();
+    auto it = speed_data_map.find("speed");
+    return (it != speed_data_map.end()) ? it->second : nullptr;
+  });
+
   // Start CAN sensors (this subscribes them to the bus)
   speed_sensor->start();
   distance_sensor->start();

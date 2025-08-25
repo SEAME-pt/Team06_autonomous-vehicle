@@ -1,6 +1,7 @@
 #include "ControlAssembly.hpp"
 #include "LaneKeepingHandler.hpp"
 #include "SensorHandler.hpp"
+#include "TrafficSignHandler.hpp"
 #include "IPublisher.hpp"
 #include <chrono>
 #include <csignal>
@@ -17,6 +18,7 @@ std::atomic<int> signal_count(0);
 std::unique_ptr<SensorHandler> sensor_handler;
 std::unique_ptr<ControlAssembly> control_assembly;
 std::unique_ptr<LaneKeepingHandler> lane_keeping_handler;
+std::unique_ptr<TrafficSignHandler> traffic_sign_handler;
 
 void signalHandler(int signal) {
   int count = signal_count.fetch_add(1) + 1;
@@ -52,6 +54,8 @@ int main() {
         "tcp://127.0.0.1:5557"; // control addr
     const std::string zmq_lkas_address =
         "tcp://127.0.0.1:5558"; // lane keeping assistance system addr
+    const std::string zmq_traffic_sign_address =
+        "tcp://127.0.0.1:5559"; // traffic sign detection system addr
 
     // Initialize ZMQ context
     zmq::context_t zmq_context(1);
@@ -76,6 +80,11 @@ int main() {
     lane_keeping_handler = std::make_unique<LaneKeepingHandler>(
         zmq_lkas_address, zmq_context, nc_publisher, false); // Production mode
 
+    std::cout << "Initializing traffic sign handler..." << std::endl;
+    // Share the non-critical publisher with other handlers
+    traffic_sign_handler = std::make_unique<TrafficSignHandler>(
+        zmq_traffic_sign_address, zmq_context, nc_publisher, false); // Production mode
+
     // Start components
     std::cout << "Starting sensor handler..." << std::endl;
     sensor_handler->start();
@@ -85,6 +94,9 @@ int main() {
 
     std::cout << "Starting lane keeping handler..." << std::endl;
     lane_keeping_handler->start();
+
+    std::cout << "Starting traffic sign handler..." << std::endl;
+    traffic_sign_handler->start();
 
     // Main loop
     std::cout << "System running. Press Ctrl+C to stop." << std::endl;
@@ -102,11 +114,15 @@ int main() {
     std::cout << "Stopping lane keeping handler..." << std::endl;
     lane_keeping_handler->stop();
 
+    std::cout << "Stopping traffic sign handler..." << std::endl;
+    traffic_sign_handler->stop();
+
     // Release component resources - this will close ZMQ sockets
     std::cout << "Releasing components..." << std::endl;
     sensor_handler.reset();
     control_assembly.reset();
     lane_keeping_handler.reset();
+    traffic_sign_handler.reset();
 
     // Release publishers to ensure their sockets are closed
     c_publisher.reset();

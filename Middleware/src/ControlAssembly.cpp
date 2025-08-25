@@ -4,7 +4,7 @@ ControlAssembly::ControlAssembly(const std::string &address,
                                  zmq::context_t &context,
                                  std::shared_ptr<IBackMotors> backMotors,
                                  std::shared_ptr<IFServo> fServo)
-    : zmq_subscriber(address, context), stop_flag(false),
+    : zmq_subscriber(address, context), stop_flag(false), emergency_brake_active(false),
       _backMotors(backMotors ? backMotors : std::make_shared<BackMotors>()),
       _fServo(fServo ? fServo : std::make_shared<FServo>()),
       _logger("control_updates.log") {
@@ -95,27 +95,53 @@ void ControlAssembly::handleMessage(const std::string &message) {
   // Handle special 'init' message
   if (message == "init;") {
     std::cout << "Received init message, resetting to zero values" << std::endl;
+    emergency_brake_active.store(false);
     _fServo->set_steering(0);
     _backMotors->setSpeed(0);
     _logger.logControlUpdate("init", 0, 0);
     return;
   }
 
+  // Handle emergency brake commands with highest priority
+  if (values.find("emergency_brake") != values.end()) {
+    bool emergency_brake = (values["emergency_brake"] != 0.0);
+    bool was_active = emergency_brake_active.exchange(emergency_brake);
+
+    if (was_active != emergency_brake) {
+      if (emergency_brake) {
+        std::cout << "EMERGENCY BRAKE ACTIVATED - All motors stopped!" << std::endl;
+        _backMotors->setSpeed(0);
+        _logger.logControlUpdate("emergency_brake_activated", 0, 0);
+      } else {
+        std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
+        _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
+      }
+    }
+    return; // Emergency brake commands are handled immediately and exclusively
+  }
+
   double steering = 0.0;
   double throttle = 0.0;
 
-  // Apply steering if present in the message
+  // Apply steering if present in the message (emergency brake doesn't affect steering)
   if (values.find("steering") != values.end()) {
     steering = values["steering"];
     std::cout << "Setting steering to: " << steering << std::endl;
     _fServo->set_steering(static_cast<int>(steering));
   }
 
-  // Apply throttle if present in the message
+  // Apply throttle if present in the message, but only if emergency brake is NOT active
   if (values.find("throttle") != values.end()) {
     throttle = values["throttle"];
-    std::cout << "Setting throttle to: " << throttle << std::endl;
-    _backMotors->setSpeed(throttle);
+
+    if (emergency_brake_active.load()) {
+      std::cout << "Emergency brake active - ignoring throttle command: " << throttle << std::endl;
+      throttle = 0; // Override throttle to 0
+      _backMotors->setSpeed(0);
+    } else {
+      std::cout << "Setting throttle to: " << throttle << std::endl;
+      _backMotors->setSpeed(throttle);
+    }
   }
 
   // Log the control update

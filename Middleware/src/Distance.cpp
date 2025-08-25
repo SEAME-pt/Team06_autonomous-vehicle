@@ -37,6 +37,11 @@ void Distance::setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()>
     speed_data_accessor = accessor;
 }
 
+void Distance::setEmergencyBrakePublisher(std::shared_ptr<IPublisher> publisher) {
+    emergency_brake_publisher = publisher;
+    std::cout << "Emergency brake publisher set for Distance sensor" << std::endl;
+}
+
 void Distance::start() {
     if (!subscribed.load()) {
         auto& bus = CanMessageBus::getInstance();
@@ -165,6 +170,26 @@ double Distance::calculateTimeToCollision(double distance_cm, double speed_mps, 
     return distance_m / relative_speed; // Time in seconds
 }
 
+void Distance::publishEmergencyBrake(bool emergency_active) {
+    if (!emergency_brake_publisher) {
+        return; // No publisher available
+    }
+
+    bool was_active = emergency_brake_active.exchange(emergency_active);
+
+    // Only publish if state changed
+    if (was_active != emergency_active) {
+        std::string command = emergency_active ? "emergency_brake:1;" : "emergency_brake:0;";
+
+        try {
+            emergency_brake_publisher->send(command);
+            std::cout << "Published emergency brake command: " << command << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Error publishing emergency brake command: " << e.what() << std::endl;
+        }
+    }
+}
+
 void Distance::calculateCollisionRisk() {
     // Get current distance and check if object is approaching
     uint16_t distance_cm = current_distance_cm.load();
@@ -222,8 +247,12 @@ void Distance::calculateCollisionRisk() {
         }
     }
 
-    // Update risk level and sensor data
+        // Update risk level and sensor data
     int old_risk = risk_level.exchange(new_risk_level);
+
+    // Handle emergency braking
+    bool should_emergency_brake = (new_risk_level == 2);
+    publishEmergencyBrake(should_emergency_brake);
 
     std::lock_guard<std::mutex> lock(data_mutex);
     auto old_obs = _sensorData["obs"]->value.load();

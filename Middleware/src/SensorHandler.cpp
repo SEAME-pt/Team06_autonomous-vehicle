@@ -14,6 +14,7 @@ SensorHandler::SensorHandler(const std::string &zmq_c_address,
       zmq_nc_publisher(nc_publisher ? nc_publisher
                                     : std::make_shared<ZmqPublisher>(
                                           zmq_nc_address, zmq_context)),
+      zmq_context(zmq_context),
       _logger("sensor_updates.log") {
 
   if (use_real_sensors) {
@@ -61,6 +62,11 @@ void SensorHandler::addSensors() {
     auto it = speed_data_map.find("speed");
     return (it != speed_data_map.end()) ? it->second : nullptr;
   });
+
+    // Set up emergency brake publisher for distance sensor
+  // Create a ZMQ publisher for emergency brake commands to ControlAssembly
+  auto emergency_brake_publisher = std::make_shared<ZmqPublisher>("tcp://127.0.0.1:5557", zmq_context);
+  distance_sensor->setEmergencyBrakePublisher(emergency_brake_publisher);
 
   // Start CAN sensors (this subscribes them to the bus)
   speed_sensor->start();

@@ -3,6 +3,7 @@
 
 #include "CanMessageBus.hpp"
 #include "ISensor.hpp"
+#include "IPublisher.hpp"
 #include <memory>
 #include <unordered_map>
 #include <functional>
@@ -29,10 +30,14 @@ public:
     // Set speed data accessor
     void setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
 
+    // Set emergency brake publisher
+    void setEmergencyBrakePublisher(std::shared_ptr<IPublisher> publisher);
+
 private:
   void readSensor() override;
   void checkUpdated() override;
   void calculateCollisionRisk();
+  void publishEmergencyBrake(bool emergency_active);
   double calculateStoppingDistance(double speed_mps) const;
   double calculateTimeToCollision(double distance_cm, double speed_mps, double closing_rate_mps) const;
   bool isObjectApproaching() const;
@@ -55,6 +60,9 @@ private:
 
     // Speed data accessor for collision detection
     std::function<std::shared_ptr<SensorData>()> speed_data_accessor;
+
+    // Emergency brake publisher for sending control commands
+    std::shared_ptr<IPublisher> emergency_brake_publisher;
 
     // Collision detection parameters (all in metric units)
     static constexpr double MAX_SPEED_KPH = 13.0;           // Maximum vehicle speed
@@ -80,6 +88,7 @@ private:
     std::atomic<uint16_t> current_distance_cm{0};
     std::atomic<bool> object_approaching{false};
     std::atomic<int> risk_level{0}; // 0 = safe, 1 = warning, 2 = emergency
+    std::atomic<bool> emergency_brake_active{false};
 };
 
 #endif

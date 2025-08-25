@@ -27,6 +27,7 @@ private:
   double _acceleration = 0;
   double _turn = 0;
   bool _onClick = false;
+  bool _auto_mode = false;
 };
 
 #endif

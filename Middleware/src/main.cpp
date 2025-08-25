@@ -73,7 +73,7 @@ int main() {
 
     std::cout << "Initializing control assembly..." << std::endl;
     control_assembly =
-        std::make_unique<ControlAssembly>(zmq_control_address, zmq_context);
+        std::make_unique<ControlAssembly>(zmq_control_address, zmq_context, nullptr, nullptr, nc_publisher);
 
     std::cout << "Initializing lane keeping handler..." << std::endl;
     // Share the non-critical publisher with sensor handler

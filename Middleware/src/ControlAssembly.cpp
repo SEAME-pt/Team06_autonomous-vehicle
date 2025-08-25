@@ -3,13 +3,21 @@
 ControlAssembly::ControlAssembly(const std::string &address,
                                  zmq::context_t &context,
                                  std::shared_ptr<IBackMotors> backMotors,
-                                 std::shared_ptr<IFServo> fServo)
+                                 std::shared_ptr<IFServo> fServo,
+                                 std::shared_ptr<ZmqPublisher> clusterPublisher)
     : zmq_subscriber(address, context), stop_flag(false), emergency_brake_active(false),
+      auto_mode_active(false), _context(context),
       _backMotors(backMotors ? backMotors : std::make_shared<BackMotors>()),
       _fServo(fServo ? fServo : std::make_shared<FServo>()),
+      _clusterPublisher(clusterPublisher),
       _logger("control_updates.log") {
   std::cout << "ControlAssembly initialized with ZMQ address: " << address
             << std::endl;
+
+  // Initialize autonomous control subscriber
+  const std::string autonomous_address = "tcp://127.0.0.1:5560";
+  _autonomousSubscriber = std::make_unique<ZmqSubscriber>(autonomous_address, context);
+  std::cout << "Autonomous control subscriber initialized with address: " << autonomous_address << std::endl;
 
   // Initialize motors and servo
   try {
@@ -31,10 +39,20 @@ ControlAssembly::ControlAssembly(const std::string &address,
     std::cerr << "Error during initialization: " << e.what() << std::endl;
     throw; // Re-throw the exception to notify the caller
   }
+
+  // Send initial mode status (manual mode)
+  sendModeStatus(false);
 }
 
 ControlAssembly::~ControlAssembly() {
   std::cout << "ControlAssembly shutting down" << std::endl;
+
+  // Deactivate auto mode and send status
+  if (auto_mode_active.load()) {
+    auto_mode_active.store(false);
+    sendModeStatus(false);
+  }
+
   stop();
   _backMotors->setSpeed(0);
   _fServo->set_steering(0);
@@ -42,9 +60,10 @@ ControlAssembly::~ControlAssembly() {
 }
 
 void ControlAssembly::start() {
-  std::cout << "Starting ControlAssembly message receiver thread" << std::endl;
+  std::cout << "Starting ControlAssembly message receiver threads" << std::endl;
   stop_flag = false;
   _listenerThread = std::thread(&ControlAssembly::receiveMessages, this);
+  _autonomousListenerThread = std::thread(&ControlAssembly::receiveAutonomousMessages, this);
 }
 
 void ControlAssembly::stop() {
@@ -52,7 +71,11 @@ void ControlAssembly::stop() {
   if (!stop_flag.exchange(true)) {
     if (_listenerThread.joinable()) {
       _listenerThread.join();
-      std::cout << "Message receiver thread joined" << std::endl;
+      std::cout << "Manual control receiver thread joined" << std::endl;
+    }
+    if (_autonomousListenerThread.joinable()) {
+      _autonomousListenerThread.join();
+      std::cout << "Autonomous control receiver thread joined" << std::endl;
     }
   }
 }
@@ -120,30 +143,131 @@ void ControlAssembly::handleMessage(const std::string &message) {
     return; // Emergency brake commands are handled immediately and exclusively
   }
 
+  // Handle AUTO mode toggle commands with second priority
+  if (values.find("auto_mode") != values.end()) {
+    bool new_auto_mode = (values["auto_mode"] != 0.0);
+    bool was_auto_active = auto_mode_active.exchange(new_auto_mode);
+
+    if (was_auto_active != new_auto_mode) {
+      if (new_auto_mode) {
+        std::cout << "AUTO MODE ACTIVATED - Switching to autonomous control" << std::endl;
+        _logger.logControlUpdate("auto_mode_activated", 0, 0);
+      } else {
+        std::cout << "AUTO MODE DEACTIVATED - Switching to manual control" << std::endl;
+        _logger.logControlUpdate("auto_mode_deactivated", 0, 0);
+      }
+      sendModeStatus(new_auto_mode);
+    }
+    return; // Auto mode commands are handled immediately and exclusively
+  }
+
   double steering = 0.0;
   double throttle = 0.0;
 
-  // Apply steering if present in the message (emergency brake doesn't affect steering)
+  // Only process manual control commands if AUTO mode is not active
+  if (!auto_mode_active.load()) {
+    // Apply steering if present in the message (emergency brake doesn't affect steering)
+    if (values.find("steering") != values.end()) {
+      steering = values["steering"];
+      std::cout << "Setting steering to: " << steering << std::endl;
+      _fServo->set_steering(static_cast<int>(steering));
+    }
+
+    // Apply throttle if present in the message, but only if emergency brake is NOT active
+    if (values.find("throttle") != values.end()) {
+      throttle = values["throttle"];
+
+      if (emergency_brake_active.load()) {
+        std::cout << "Emergency brake active - ignoring throttle command: " << throttle << std::endl;
+        throttle = 0; // Override throttle to 0
+        _backMotors->setSpeed(0);
+      } else {
+        std::cout << "Setting throttle to: " << throttle << std::endl;
+        _backMotors->setSpeed(throttle);
+      }
+    }
+
+    // Log the control update
+    _logger.logControlUpdate(message, steering, throttle);
+  } else {
+    std::cout << "AUTO mode active - ignoring manual control commands" << std::endl;
+  }
+}
+
+void ControlAssembly::receiveAutonomousMessages() {
+  std::cout << "Autonomous control receiver thread started" << std::endl;
+  while (!stop_flag) {
+    std::string message = _autonomousSubscriber->receive();
+
+    if (!message.empty()) {
+      std::cout << "Received autonomous control message: " << message << std::endl;
+      handleAutonomousMessage(message);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+  }
+  std::cout << "Autonomous control receiver thread stopping" << std::endl;
+}
+
+void ControlAssembly::handleAutonomousMessage(const std::string &message) {
+  // Only process autonomous commands if AUTO mode is active
+  if (!auto_mode_active.load()) {
+    std::cout << "Manual mode active - ignoring autonomous control commands" << std::endl;
+    return;
+  }
+
+  std::unordered_map<std::string, double> values;
+  std::stringstream ss(message);
+  std::string token;
+  std::cout << "Parsing autonomous message: " << message << std::endl;
+
+  while (std::getline(ss, token, ';')) {
+    if (token.empty())
+      continue;
+
+    std::string key;
+    double value;
+    std::stringstream ss_token(token);
+    std::getline(ss_token, key, ':');
+    ss_token >> value;
+    values[key] = value;
+    std::cout << "Parsed autonomous key: '" << key << "', value: " << value << std::endl;
+  }
+
+  double steering = 0.0;
+  double throttle = 0.0;
+
+  // Apply autonomous steering
   if (values.find("steering") != values.end()) {
     steering = values["steering"];
-    std::cout << "Setting steering to: " << steering << std::endl;
+    std::cout << "Setting autonomous steering to: " << steering << std::endl;
     _fServo->set_steering(static_cast<int>(steering));
   }
 
-  // Apply throttle if present in the message, but only if emergency brake is NOT active
+  // Apply autonomous throttle, but only if emergency brake is NOT active
   if (values.find("throttle") != values.end()) {
     throttle = values["throttle"];
 
     if (emergency_brake_active.load()) {
-      std::cout << "Emergency brake active - ignoring throttle command: " << throttle << std::endl;
+      std::cout << "Emergency brake active - ignoring autonomous throttle command: " << throttle << std::endl;
       throttle = 0; // Override throttle to 0
       _backMotors->setSpeed(0);
     } else {
-      std::cout << "Setting throttle to: " << throttle << std::endl;
+      std::cout << "Setting autonomous throttle to: " << throttle << std::endl;
       _backMotors->setSpeed(throttle);
     }
   }
 
-  // Log the control update
-  _logger.logControlUpdate(message, steering, throttle);
+  // Log the autonomous control update
+  _logger.logControlUpdate("AUTO:" + message, steering, throttle);
+}
+
+void ControlAssembly::sendModeStatus(bool auto_mode_active) {
+  if (_clusterPublisher) {
+    std::string mode_message = "mode:" + std::to_string(auto_mode_active ? 1 : 0) + ";";
+    std::cout << "Sending mode status to cluster: " << mode_message << std::endl;
+    _clusterPublisher->send(mode_message);
+  } else {
+    std::cout << "Warning: Cluster publisher not available, cannot send mode status" << std::endl;
+  }
 }

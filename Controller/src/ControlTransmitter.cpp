@@ -37,6 +37,19 @@ void ControlTransmitter::startTransmitting() {
       std::cout << "X button pressed, sending stop command" << std::endl;
       _zmq_publisher.send("throttle:0;steering:0;");
     }
+    if (_controller.getButton(Y_BUTTON)) {
+      static bool y_button_prev_state = false;
+      bool y_button_current_state = _controller.getButton(Y_BUTTON);
+
+      // Toggle auto mode on Y button press (rising edge)
+      if (y_button_current_state && !y_button_prev_state) {
+        _auto_mode = !_auto_mode;
+        std::cout << "Y button pressed, toggling AUTO mode: " << (_auto_mode ? "ON" : "OFF") << std::endl;
+        std::string auto_mode_msg = "auto_mode:" + std::to_string(_auto_mode ? 1 : 0) + ";";
+        _zmq_publisher.send(auto_mode_msg);
+      }
+      y_button_prev_state = y_button_current_state;
+    }
     if (_controller.getButton(SELECT_BUTTON)) {
       std::cout << "Select button pressed" << std::endl;
     }
@@ -79,9 +92,18 @@ void ControlTransmitter::startTransmitting() {
     steeringAngle = std::max(
         -45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
     std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
-    // _zmq_publisher.send(steeringMsg);
-    std::string combinedMsg = throttleMsg + steeringMsg;
-    _zmq_publisher.send(combinedMsg);
+
+    // Only send manual control commands when AUTO mode is disabled
+    if (!_auto_mode) {
+      std::string combinedMsg = throttleMsg + steeringMsg;
+      _zmq_publisher.send(combinedMsg);
+    } else {
+      // Print periodic status when in AUTO mode
+      static int auto_mode_counter = 0;
+      if (auto_mode_counter++ % 100 == 0) {
+        std::cout << "AUTO MODE ACTIVE - Manual controls disabled" << std::endl;
+      }
+    }
   }
   std::cout << "Exiting transmission loop, sending zero values" << std::endl;
   _zmq_publisher.send("throttle:0;steering:0;");

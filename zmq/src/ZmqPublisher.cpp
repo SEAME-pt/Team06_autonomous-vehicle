@@ -11,9 +11,8 @@ ZmqPublisher::ZmqPublisher(const std::string &address, zmq::context_t &context,
       int hwm = 1;
       _socket.set(zmq::sockopt::sndhwm, hwm);
 
-      // Enable conflate option to only keep most recent message
-      int conflate = 1;
-      _socket.set(zmq::sockopt::conflate, conflate);
+      // NOTE: Conflate option removed from publisher - it should only be used on subscribers
+      // The conflate option on publishers can cause round-robin distribution instead of broadcast
 
       // Set zero linger period for clean exits
       int linger = 0;

@@ -6,8 +6,7 @@ SensorHandler::SensorHandler(const std::string &zmq_c_address,
                              zmq::context_t &zmq_context,
                              std::shared_ptr<IPublisher> c_publisher,
                              std::shared_ptr<IPublisher> nc_publisher,
-                             bool use_real_sensors,
-                             const std::string &zmq_cluster_address)
+                             bool use_real_sensors)
     : stop_flag(false),
       zmq_c_publisher(c_publisher ? c_publisher
                                   : std::make_shared<ZmqPublisher>(

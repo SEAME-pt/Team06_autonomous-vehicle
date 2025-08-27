@@ -224,32 +224,6 @@ sensor_handler_test/fast:
 .PHONY : sensor_handler_test/fast
 
 #=============================================================================
-# Target rules for targets named speed_test
-
-# Build rule for target.
-speed_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 speed_test
-.PHONY : speed_test
-
-# fast build rule for target.
-speed_test/fast:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/speed_test.dir/build.make test/CMakeFiles/speed_test.dir/build
-.PHONY : speed_test/fast
-
-#=============================================================================
-# Target rules for targets named distance_test
-
-# Build rule for target.
-distance_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 distance_test
-.PHONY : distance_test
-
-# fast build rule for target.
-distance_test/fast:
-	$(MAKE) $(MAKESILENT) -f test/CMakeFiles/distance_test.dir/build.make test/CMakeFiles/distance_test.dir/build
-.PHONY : distance_test/fast
-
-#=============================================================================
 # Target rules for targets named back_motors_test
 
 # Build rule for target.
@@ -699,6 +673,30 @@ src/FServo.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/FServo.cpp.s
 .PHONY : src/FServo.cpp.s
 
+src/LaneKeepingHandler.o: src/LaneKeepingHandler.cpp.o
+.PHONY : src/LaneKeepingHandler.o
+
+# target to build an object file
+src/LaneKeepingHandler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o
+.PHONY : src/LaneKeepingHandler.cpp.o
+
+src/LaneKeepingHandler.i: src/LaneKeepingHandler.cpp.i
+.PHONY : src/LaneKeepingHandler.i
+
+# target to preprocess a source file
+src/LaneKeepingHandler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.i
+.PHONY : src/LaneKeepingHandler.cpp.i
+
+src/LaneKeepingHandler.s: src/LaneKeepingHandler.cpp.s
+.PHONY : src/LaneKeepingHandler.s
+
+# target to generate assembly for a file
+src/LaneKeepingHandler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.s
+.PHONY : src/LaneKeepingHandler.cpp.s
+
 src/SensorHandler.o: src/SensorHandler.cpp.o
 .PHONY : src/SensorHandler.o
 
@@ -771,6 +769,30 @@ src/Speed.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/Speed.cpp.s
 .PHONY : src/Speed.cpp.s
 
+src/TrafficSignHandler.o: src/TrafficSignHandler.cpp.o
+.PHONY : src/TrafficSignHandler.o
+
+# target to build an object file
+src/TrafficSignHandler.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o
+.PHONY : src/TrafficSignHandler.cpp.o
+
+src/TrafficSignHandler.i: src/TrafficSignHandler.cpp.i
+.PHONY : src/TrafficSignHandler.i
+
+# target to preprocess a source file
+src/TrafficSignHandler.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i
+.PHONY : src/TrafficSignHandler.cpp.i
+
+src/TrafficSignHandler.s: src/TrafficSignHandler.cpp.s
+.PHONY : src/TrafficSignHandler.s
+
+# target to generate assembly for a file
+src/TrafficSignHandler.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/middleware.dir/build.make CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s
+.PHONY : src/TrafficSignHandler.cpp.s
+
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
@@ -820,7 +842,6 @@ help:
 	@echo "... can_reader_test"
 	@echo "... control_assembly_test"
 	@echo "... control_logger_test"
-	@echo "... distance_test"
 	@echo "... f_servo_direct_test"
 	@echo "... f_servo_test"
 	@echo "... gmock"
@@ -830,7 +851,6 @@ help:
 	@echo "... middleware"
 	@echo "... sensor_handler_test"
 	@echo "... sensor_logger_test"
-	@echo "... speed_test"
 	@echo "... zmq_publisher_test"
 	@echo "... src/BackMotors.o"
 	@echo "... src/BackMotors.i"
@@ -859,6 +879,9 @@ help:
 	@echo "... src/FServo.o"
 	@echo "... src/FServo.i"
 	@echo "... src/FServo.s"
+	@echo "... src/LaneKeepingHandler.o"
+	@echo "... src/LaneKeepingHandler.i"
+	@echo "... src/LaneKeepingHandler.s"
 	@echo "... src/SensorHandler.o"
 	@echo "... src/SensorHandler.i"
 	@echo "... src/SensorHandler.s"
@@ -868,6 +891,9 @@ help:
 	@echo "... src/Speed.o"
 	@echo "... src/Speed.i"
 	@echo "... src/Speed.s"
+	@echo "... src/TrafficSignHandler.o"
+	@echo "... src/TrafficSignHandler.i"
+	@echo "... src/TrafficSignHandler.s"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"

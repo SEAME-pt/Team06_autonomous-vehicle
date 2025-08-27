@@ -200,34 +200,6 @@ sensor_handler_test/fast:
 .PHONY : sensor_handler_test/fast
 
 # Convenience name for target.
-test/CMakeFiles/speed_test.dir/rule:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/speed_test.dir/rule
-.PHONY : test/CMakeFiles/speed_test.dir/rule
-
-# Convenience name for target.
-speed_test: test/CMakeFiles/speed_test.dir/rule
-.PHONY : speed_test
-
-# fast build rule for target.
-speed_test/fast:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/speed_test.dir/build.make test/CMakeFiles/speed_test.dir/build
-.PHONY : speed_test/fast
-
-# Convenience name for target.
-test/CMakeFiles/distance_test.dir/rule:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/distance_test.dir/rule
-.PHONY : test/CMakeFiles/distance_test.dir/rule
-
-# Convenience name for target.
-distance_test: test/CMakeFiles/distance_test.dir/rule
-.PHONY : distance_test
-
-# fast build rule for target.
-distance_test/fast:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/distance_test.dir/build.make test/CMakeFiles/distance_test.dir/build
-.PHONY : distance_test/fast
-
-# Convenience name for target.
 test/CMakeFiles/back_motors_test.dir/rule:
 	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test/CMakeFiles/back_motors_test.dir/rule
 .PHONY : test/CMakeFiles/back_motors_test.dir/rule
@@ -663,30 +635,6 @@ ControlLoggerTest.cpp.s:
 	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/control_logger_test.dir/build.make test/CMakeFiles/control_logger_test.dir/ControlLoggerTest.cpp.s
 .PHONY : ControlLoggerTest.cpp.s
 
-DistanceTest.o: DistanceTest.cpp.o
-.PHONY : DistanceTest.o
-
-# target to build an object file
-DistanceTest.cpp.o:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/distance_test.dir/build.make test/CMakeFiles/distance_test.dir/DistanceTest.cpp.o
-.PHONY : DistanceTest.cpp.o
-
-DistanceTest.i: DistanceTest.cpp.i
-.PHONY : DistanceTest.i
-
-# target to preprocess a source file
-DistanceTest.cpp.i:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/distance_test.dir/build.make test/CMakeFiles/distance_test.dir/DistanceTest.cpp.i
-.PHONY : DistanceTest.cpp.i
-
-DistanceTest.s: DistanceTest.cpp.s
-.PHONY : DistanceTest.s
-
-# target to generate assembly for a file
-DistanceTest.cpp.s:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/distance_test.dir/build.make test/CMakeFiles/distance_test.dir/DistanceTest.cpp.s
-.PHONY : DistanceTest.cpp.s
-
 FServoDirectTest.o: FServoDirectTest.cpp.o
 .PHONY : FServoDirectTest.o
 
@@ -783,30 +731,6 @@ SensorLoggerTest.cpp.s:
 	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/sensor_logger_test.dir/build.make test/CMakeFiles/sensor_logger_test.dir/SensorLoggerTest.cpp.s
 .PHONY : SensorLoggerTest.cpp.s
 
-SpeedTest.o: SpeedTest.cpp.o
-.PHONY : SpeedTest.o
-
-# target to build an object file
-SpeedTest.cpp.o:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/speed_test.dir/build.make test/CMakeFiles/speed_test.dir/SpeedTest.cpp.o
-.PHONY : SpeedTest.cpp.o
-
-SpeedTest.i: SpeedTest.cpp.i
-.PHONY : SpeedTest.i
-
-# target to preprocess a source file
-SpeedTest.cpp.i:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/speed_test.dir/build.make test/CMakeFiles/speed_test.dir/SpeedTest.cpp.i
-.PHONY : SpeedTest.cpp.i
-
-SpeedTest.s: SpeedTest.cpp.s
-.PHONY : SpeedTest.s
-
-# target to generate assembly for a file
-SpeedTest.cpp.s:
-	cd /home/jetson/Team06_autonomous-vehicle/Middleware/build && $(MAKE) $(MAKESILENT) -f test/CMakeFiles/speed_test.dir/build.make test/CMakeFiles/speed_test.dir/SpeedTest.cpp.s
-.PHONY : SpeedTest.cpp.s
-
 ZmqPublisherTest.o: ZmqPublisherTest.cpp.o
 .PHONY : ZmqPublisherTest.o
 
@@ -855,12 +779,10 @@ help:
 	@echo "... can_reader_test"
 	@echo "... control_assembly_test"
 	@echo "... control_logger_test"
-	@echo "... distance_test"
 	@echo "... f_servo_direct_test"
 	@echo "... f_servo_test"
 	@echo "... sensor_handler_test"
 	@echo "... sensor_logger_test"
-	@echo "... speed_test"
 	@echo "... zmq_publisher_test"
 	@echo "... BackMotorsDirectTest.o"
 	@echo "... BackMotorsDirectTest.i"
@@ -892,9 +814,6 @@ help:
 	@echo "... ControlLoggerTest.o"
 	@echo "... ControlLoggerTest.i"
 	@echo "... ControlLoggerTest.s"
-	@echo "... DistanceTest.o"
-	@echo "... DistanceTest.i"
-	@echo "... DistanceTest.s"
 	@echo "... FServoDirectTest.o"
 	@echo "... FServoDirectTest.i"
 	@echo "... FServoDirectTest.s"
@@ -907,9 +826,6 @@ help:
 	@echo "... SensorLoggerTest.o"
 	@echo "... SensorLoggerTest.i"
 	@echo "... SensorLoggerTest.s"
-	@echo "... SpeedTest.o"
-	@echo "... SpeedTest.i"
-	@echo "... SpeedTest.s"
 	@echo "... ZmqPublisherTest.o"
 	@echo "... ZmqPublisherTest.i"
 	@echo "... ZmqPublisherTest.s"

@@ -9,8 +9,6 @@
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles/install/strip.dir
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/battery_test.dir
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/sensor_handler_test.dir
-/home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/speed_test.dir
-/home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/distance_test.dir
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/back_motors_test.dir
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/back_motors_direct_test.dir
 /home/jetson/Team06_autonomous-vehicle/Middleware/build/test/CMakeFiles/f_servo_test.dir

@@ -209,4 +209,38 @@ CMakeFiles/middleware.dir/src/Distance.cpp.o: \
  /usr/include/c++/8/queue /usr/include/c++/8/deque \
  /usr/include/c++/8/bits/stl_deque.h /usr/include/c++/8/bits/deque.tcc \
  /usr/include/c++/8/bits/stl_queue.h /usr/include/c++/8/thread \
- /home/jetson/Team06_autonomous-vehicle/Middleware/inc/ISensor.hpp
+ /home/jetson/Team06_autonomous-vehicle/Middleware/inc/ISensor.hpp \
+ /home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc/ZmqPublisher.hpp \
+ /usr/local/include/zmq.hpp /usr/include/zmq.h /usr/include/c++/8/cassert \
+ /usr/include/assert.h /usr/include/c++/8/algorithm \
+ /usr/include/c++/8/iomanip /usr/include/c++/8/locale \
+ /usr/include/c++/8/bits/locale_facets_nonio.h \
+ /usr/include/aarch64-linux-gnu/c++/8/bits/time_members.h \
+ /usr/include/aarch64-linux-gnu/c++/8/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/8/bits/codecvt.h \
+ /usr/include/c++/8/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/8/bits/locale_conv.h \
+ /usr/include/c++/8/bits/quoted_string.h /usr/include/c++/8/sstream \
+ /usr/include/c++/8/bits/sstream.tcc /usr/include/c++/8/cmath \
+ /usr/include/math.h /usr/include/aarch64-linux-gnu/bits/math-vector.h \
+ /usr/include/aarch64-linux-gnu/bits/libm-simd-decl-stubs.h \
+ /usr/include/aarch64-linux-gnu/bits/flt-eval-method.h \
+ /usr/include/aarch64-linux-gnu/bits/fp-logb.h \
+ /usr/include/aarch64-linux-gnu/bits/fp-fast.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls-helper-functions.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls.h \
+ /usr/include/aarch64-linux-gnu/bits/mathcalls-narrow.h \
+ /usr/include/aarch64-linux-gnu/bits/iscanonical.h \
+ /usr/include/c++/8/bits/specfun.h /usr/include/c++/8/tr1/gamma.tcc \
+ /usr/include/c++/8/tr1/special_function_util.h \
+ /usr/include/c++/8/tr1/bessel_function.tcc \
+ /usr/include/c++/8/tr1/special_function_util.h \
+ /usr/include/c++/8/tr1/beta_function.tcc \
+ /usr/include/c++/8/tr1/ell_integral.tcc \
+ /usr/include/c++/8/tr1/exp_integral.tcc \
+ /usr/include/c++/8/tr1/hypergeometric.tcc \
+ /usr/include/c++/8/tr1/legendre_function.tcc \
+ /usr/include/c++/8/tr1/modified_bessel_func.tcc \
+ /usr/include/c++/8/tr1/poly_hermite.tcc \
+ /usr/include/c++/8/tr1/poly_laguerre.tcc \
+ /usr/include/c++/8/tr1/riemann_zeta.tcc

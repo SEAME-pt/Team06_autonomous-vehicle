@@ -36,16 +36,20 @@ private:
   void handleMessage(const std::string &message);
   void receiveAutonomousMessages();
   void handleAutonomousMessage(const std::string &message);
+  void receiveEmergencyBrakeMessages();
+  void handleEmergencyBrakeMessage(const std::string &message);
   void sendModeStatus(bool auto_mode_active);
 
   std::thread _listenerThread;
   std::thread _autonomousListenerThread;
+  std::thread _emergencyBrakeListenerThread;
   std::atomic<bool> stop_flag;
   std::atomic<bool> emergency_brake_active;
   std::atomic<bool> auto_mode_active;
 
   // ZMQ components
   std::unique_ptr<ZmqSubscriber> _autonomousSubscriber;
+  std::unique_ptr<ZmqSubscriber> _emergencyBrakeSubscriber;
   std::shared_ptr<ZmqPublisher> _clusterPublisher;
   zmq::context_t &_context;
 

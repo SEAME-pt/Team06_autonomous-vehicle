@@ -104,7 +104,7 @@ void Distance::readSensor() {
         }
 
         current_distance_cm.store(new_distance);
-        std::cout << "Distance sensor reading: " << new_distance << " cm" << std::endl;
+        std::cout << "Distance updated: " << new_distance << " cm" << std::endl;
     } else {
         std::cerr << "Distance: Invalid CAN message length: " << (int)latest_length << std::endl;
     }
@@ -142,7 +142,8 @@ bool Distance::isObjectApproaching() const {
 
     if (valid_rates > 0) {
         double avg_rate = total_rate / valid_rates;
-        return avg_rate > 2.0; // Object approaching at > 2 cm/s
+        std::cout << "DEBUG: Approach rate = " << avg_rate << " cm/s" << std::endl;
+        return avg_rate > 1.0; // Object approaching at > 1 cm/s (reduced from 2.0)
     }
 
     return false;
@@ -207,6 +208,10 @@ void Distance::calculateCollisionRisk() {
 
     int new_risk_level = 0; // Default: safe
 
+    // Debug output for troubleshooting
+    std::cout << "DEBUG: distance=" << distance_cm << "cm, speed=" << speed_kmh
+              << "km/h, approaching=" << (approaching ? "YES" : "NO") << std::endl;
+
     // Only calculate collision risk if we have valid distance reading within sensor range
     if (distance_cm > 0 && distance_cm <= MAX_DISTANCE_CM) {
         if (speed_kmh > 0 && approaching) {
@@ -220,6 +225,17 @@ void Distance::calculateCollisionRisk() {
             // Convert to centimeters for comparison
             double warning_distance_cm = warning_stopping_distance * 100.0;
             double emergency_distance_cm = emergency_stopping_distance * 100.0;
+
+            // Debug output for thresholds
+            std::cout << "DEBUG: warning_threshold=" << warning_distance_cm
+                      << "cm, emergency_threshold=" << emergency_distance_cm << "cm" << std::endl;
+
+            // Check if emergency threshold exceeds sensor range - if so, use reduced threshold
+            if (emergency_distance_cm > MAX_DISTANCE_CM) {
+                emergency_distance_cm = MAX_DISTANCE_CM * 0.8; // Use 80% of sensor range as emergency
+                std::cout << "DEBUG: Emergency threshold exceeded sensor range, using "
+                          << emergency_distance_cm << "cm instead" << std::endl;
+            }
 
             if (distance_cm <= emergency_distance_cm) {
                 new_risk_level = 2; // Emergency braking required
@@ -237,15 +253,22 @@ void Distance::calculateCollisionRisk() {
                          << (approaching ? "YES" : "NO") << std::endl;
             }
         } else if (distance_cm < 30) {
-            // Very close object regardless of speed or movement
-            new_risk_level = 1; // Warning for very close objects
+            // Very close object regardless of speed or movement - increased from 30cm to 50cm
+            new_risk_level = 2; // Emergency for very close objects
+            std::cout << "EMERGENCY: Very close proximity! Distance: " << distance_cm << "cm" << std::endl;
+        } else if (distance_cm < 100) {
+            // Close object warning
+            new_risk_level = 1; // Warning for close objects
             std::cout << "Close proximity warning: " << distance_cm << "cm" << std::endl;
         } else {
             std::cout << "No collision risk. Distance: " << distance_cm
                      << "cm, Speed: " << speed_kmh << "km/h, Approaching: "
                      << (approaching ? "YES" : "NO") << std::endl;
         }
-    }
+    } /* else {
+        std::cout << "DEBUG: Invalid distance reading or out of range. Distance: "
+                  << distance_cm << "cm, Max range: " << MAX_DISTANCE_CM << "cm" << std::endl;
+    } */
 
         // Update risk level and sensor data
     int old_risk = risk_level.exchange(new_risk_level);

@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/jetson/Team06_autonomous-vehicle/Middleware/inc -I/home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc -I/usr/include/pgm-5.2 -I/usr/include/mit-krb5 -isystem /home/jetson/Team06_autonomous-vehicle/Middleware/build/_deps/googletest-src/googletest/include -isystem /home/jetson/Team06_autonomous-vehicle/Middleware/build/_deps/googletest-src/googletest
+CXX_INCLUDES = -I/home/jetson/Team06_autonomous-vehicle/Middleware/inc -I/home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc -I/usr/include/pgm-5.2 -isystem /home/jetson/Team06_autonomous-vehicle/Middleware/build/_deps/googletest-src/googletest/include -isystem /home/jetson/Team06_autonomous-vehicle/Middleware/build/_deps/googletest-src/googletest
 
 CXX_FLAGS = -Wall -Wshadow -Werror -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wno-error -std=c++11
 

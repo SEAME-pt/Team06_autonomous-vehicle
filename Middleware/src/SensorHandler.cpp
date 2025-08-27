@@ -6,7 +6,8 @@ SensorHandler::SensorHandler(const std::string &zmq_c_address,
                              zmq::context_t &zmq_context,
                              std::shared_ptr<IPublisher> c_publisher,
                              std::shared_ptr<IPublisher> nc_publisher,
-                             bool use_real_sensors)
+                             bool use_real_sensors,
+                             const std::string &zmq_cluster_address)
     : stop_flag(false),
       zmq_c_publisher(c_publisher ? c_publisher
                                   : std::make_shared<ZmqPublisher>(
@@ -65,7 +66,8 @@ void SensorHandler::addSensors() {
 
     // Set up emergency brake publisher for distance sensor
   // Create a ZMQ publisher for emergency brake commands to ControlAssembly
-  auto emergency_brake_publisher = std::make_shared<ZmqPublisher>("tcp://127.0.0.1:5557", zmq_context);
+  // Use a dedicated port to avoid conflicts with manual control messages
+  auto emergency_brake_publisher = std::make_shared<ZmqPublisher>("tcp://127.0.0.1:5561", zmq_context);
   distance_sensor->setEmergencyBrakePublisher(emergency_brake_publisher);
 
   // Start CAN sensors (this subscribes them to the bus)

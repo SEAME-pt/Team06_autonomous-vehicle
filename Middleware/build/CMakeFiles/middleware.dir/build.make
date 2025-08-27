@@ -195,10 +195,24 @@ CMakeFiles/middleware.dir/src/FServo.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/FServo.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/FServo.cpp -o CMakeFiles/middleware.dir/src/FServo.cpp.s
 
+CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o: CMakeFiles/middleware.dir/flags.make
+CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/LaneKeepingHandler.cpp
+CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o: CMakeFiles/middleware.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o -MF CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o.d -o CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/LaneKeepingHandler.cpp
+
+CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jetson/Team06_autonomous-vehicle/Middleware/src/LaneKeepingHandler.cpp > CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.i
+
+CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/LaneKeepingHandler.cpp -o CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.s
+
 CMakeFiles/middleware.dir/src/SensorHandler.cpp.o: CMakeFiles/middleware.dir/flags.make
 CMakeFiles/middleware.dir/src/SensorHandler.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorHandler.cpp
 CMakeFiles/middleware.dir/src/SensorHandler.cpp.o: CMakeFiles/middleware.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/middleware.dir/src/SensorHandler.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/middleware.dir/src/SensorHandler.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/middleware.dir/src/SensorHandler.cpp.o -MF CMakeFiles/middleware.dir/src/SensorHandler.cpp.o.d -o CMakeFiles/middleware.dir/src/SensorHandler.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorHandler.cpp
 
 CMakeFiles/middleware.dir/src/SensorHandler.cpp.i: cmake_force
@@ -212,7 +226,7 @@ CMakeFiles/middleware.dir/src/SensorHandler.cpp.s: cmake_force
 CMakeFiles/middleware.dir/src/SensorLogger.cpp.o: CMakeFiles/middleware.dir/flags.make
 CMakeFiles/middleware.dir/src/SensorLogger.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorLogger.cpp
 CMakeFiles/middleware.dir/src/SensorLogger.cpp.o: CMakeFiles/middleware.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/middleware.dir/src/SensorLogger.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/middleware.dir/src/SensorLogger.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/middleware.dir/src/SensorLogger.cpp.o -MF CMakeFiles/middleware.dir/src/SensorLogger.cpp.o.d -o CMakeFiles/middleware.dir/src/SensorLogger.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorLogger.cpp
 
 CMakeFiles/middleware.dir/src/SensorLogger.cpp.i: cmake_force
@@ -226,7 +240,7 @@ CMakeFiles/middleware.dir/src/SensorLogger.cpp.s: cmake_force
 CMakeFiles/middleware.dir/src/Speed.cpp.o: CMakeFiles/middleware.dir/flags.make
 CMakeFiles/middleware.dir/src/Speed.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp
 CMakeFiles/middleware.dir/src/Speed.cpp.o: CMakeFiles/middleware.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/middleware.dir/src/Speed.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/middleware.dir/src/Speed.cpp.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/middleware.dir/src/Speed.cpp.o -MF CMakeFiles/middleware.dir/src/Speed.cpp.o.d -o CMakeFiles/middleware.dir/src/Speed.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp
 
 CMakeFiles/middleware.dir/src/Speed.cpp.i: cmake_force
@@ -236,6 +250,20 @@ CMakeFiles/middleware.dir/src/Speed.cpp.i: cmake_force
 CMakeFiles/middleware.dir/src/Speed.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/Speed.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp -o CMakeFiles/middleware.dir/src/Speed.cpp.s
+
+CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: CMakeFiles/middleware.dir/flags.make
+CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp
+CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o: CMakeFiles/middleware.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o -MF CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o.d -o CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o -c /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp
+
+CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp > CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.i
+
+CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp -o CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.s
 
 # Object files for target middleware
 middleware_OBJECTS = \
@@ -248,9 +276,11 @@ middleware_OBJECTS = \
 "CMakeFiles/middleware.dir/src/ControlLogger.cpp.o" \
 "CMakeFiles/middleware.dir/src/Distance.cpp.o" \
 "CMakeFiles/middleware.dir/src/FServo.cpp.o" \
+"CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o" \
 "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o" \
 "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o" \
-"CMakeFiles/middleware.dir/src/Speed.cpp.o"
+"CMakeFiles/middleware.dir/src/Speed.cpp.o" \
+"CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o"
 
 # External object files for target middleware
 middleware_EXTERNAL_OBJECTS =
@@ -264,12 +294,14 @@ libmiddleware.a: CMakeFiles/middleware.dir/src/ControlAssembly.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/ControlLogger.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/Distance.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/FServo.cpp.o
+libmiddleware.a: CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/SensorHandler.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/SensorLogger.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/src/Speed.cpp.o
+libmiddleware.a: CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o
 libmiddleware.a: CMakeFiles/middleware.dir/build.make
 libmiddleware.a: CMakeFiles/middleware.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX static library libmiddleware.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/jetson/Team06_autonomous-vehicle/Middleware/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX static library libmiddleware.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/middleware.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/middleware.dir/link.txt --verbose=$(VERBOSE)
 

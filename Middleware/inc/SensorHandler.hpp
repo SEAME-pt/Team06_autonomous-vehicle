@@ -23,7 +23,8 @@ public:
                          zmq::context_t &zmq_context,
                          std::shared_ptr<IPublisher> c_publisher = nullptr,
                          std::shared_ptr<IPublisher> nc_publisher = nullptr,
-                         bool use_real_sensors = true);
+                         bool use_real_sensors = true,
+                         const std::string &zmq_cluster_address = "tcp://127.0.0.1:5555");
   ~SensorHandler();
 
   // Delete copy and move operations
@@ -63,6 +64,7 @@ private:
 
   std::shared_ptr<IPublisher> zmq_c_publisher;
   std::shared_ptr<IPublisher> zmq_nc_publisher;
+  std::shared_ptr<IPublisher> zmq_cluster_publisher;
   zmq::context_t& zmq_context;
   SensorLogger _logger;
 

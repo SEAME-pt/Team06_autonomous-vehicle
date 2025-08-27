@@ -19,6 +19,11 @@ ControlAssembly::ControlAssembly(const std::string &address,
   _autonomousSubscriber = std::make_unique<ZmqSubscriber>(autonomous_address, context);
   std::cout << "Autonomous control subscriber initialized with address: " << autonomous_address << std::endl;
 
+  // Initialize emergency brake subscriber
+  const std::string emergency_brake_address = "tcp://127.0.0.1:5561";
+  _emergencyBrakeSubscriber = std::make_unique<ZmqSubscriber>(emergency_brake_address, context);
+  std::cout << "Emergency brake subscriber initialized with address: " << emergency_brake_address << std::endl;
+
   // Initialize motors and servo
   try {
     _backMotors->open_i2c_bus();
@@ -64,6 +69,7 @@ void ControlAssembly::start() {
   stop_flag = false;
   _listenerThread = std::thread(&ControlAssembly::receiveMessages, this);
   _autonomousListenerThread = std::thread(&ControlAssembly::receiveAutonomousMessages, this);
+  _emergencyBrakeListenerThread = std::thread(&ControlAssembly::receiveEmergencyBrakeMessages, this);
 }
 
 void ControlAssembly::stop() {
@@ -76,6 +82,10 @@ void ControlAssembly::stop() {
     if (_autonomousListenerThread.joinable()) {
       _autonomousListenerThread.join();
       std::cout << "Autonomous control receiver thread joined" << std::endl;
+    }
+    if (_emergencyBrakeListenerThread.joinable()) {
+      _emergencyBrakeListenerThread.join();
+      std::cout << "Emergency brake receiver thread joined" << std::endl;
     }
   }
 }
@@ -156,7 +166,11 @@ void ControlAssembly::handleMessage(const std::string &message) {
         std::cout << "AUTO MODE DEACTIVATED - Switching to manual control" << std::endl;
         _logger.logControlUpdate("auto_mode_deactivated", 0, 0);
       }
-      sendModeStatus(new_auto_mode);
+
+      // Spam the mode change message to ensure cluster receives it
+      for (int i = 0; i < 10; i++) {
+        sendModeStatus(new_auto_mode);
+      }
     }
     return; // Auto mode commands are handled immediately and exclusively
   }
@@ -189,6 +203,9 @@ void ControlAssembly::handleMessage(const std::string &message) {
 
     // Log the control update
     _logger.logControlUpdate(message, steering, throttle);
+
+    // Send mode status continuously (manual mode)
+    sendModeStatus(false);
   } else {
     std::cout << "AUTO mode active - ignoring manual control commands" << std::endl;
   }
@@ -211,10 +228,13 @@ void ControlAssembly::receiveAutonomousMessages() {
 
 void ControlAssembly::handleAutonomousMessage(const std::string &message) {
   // Only process autonomous commands if AUTO mode is active
-  if (!auto_mode_active.load()) {
-    std::cout << "Manual mode active - ignoring autonomous control commands" << std::endl;
+  bool current_auto_mode = auto_mode_active.load();
+  if (!current_auto_mode) {
+    std::cout << "MANUAL MODE ACTIVE - Ignoring autonomous control command: " << message << std::endl;
     return;
   }
+
+  std::cout << "AUTO MODE ACTIVE - Processing autonomous control command: " << message << std::endl;
 
   std::unordered_map<std::string, double> values;
   std::stringstream ss(message);
@@ -260,14 +280,78 @@ void ControlAssembly::handleAutonomousMessage(const std::string &message) {
 
   // Log the autonomous control update
   _logger.logControlUpdate("AUTO:" + message, steering, throttle);
+
+  // Send mode status continuously (auto mode)
+  sendModeStatus(true);
 }
 
 void ControlAssembly::sendModeStatus(bool auto_mode_active) {
   if (_clusterPublisher) {
     std::string mode_message = "mode:" + std::to_string(auto_mode_active ? 1 : 0) + ";";
-    std::cout << "Sending mode status to cluster: " << mode_message << std::endl;
+
+    // Only print status occasionally to avoid spam
+    static int mode_counter = 0;
+    if (mode_counter++ % 100 == 0) {
+      std::cout << "Sending mode status to cluster: " << mode_message << std::endl;
+    }
+
     _clusterPublisher->send(mode_message);
   } else {
-    std::cout << "Warning: Cluster publisher not available, cannot send mode status" << std::endl;
+    static int warning_counter = 0;
+    if (warning_counter++ % 1000 == 0) {
+      std::cout << "Warning: Cluster publisher not available, cannot send mode status" << std::endl;
+    }
+  }
+}
+
+void ControlAssembly::receiveEmergencyBrakeMessages() {
+  std::cout << "Emergency brake receiver thread started" << std::endl;
+  while (!stop_flag) {
+    std::string message = _emergencyBrakeSubscriber->receive();
+
+    if (!message.empty()) {
+      std::cout << "Received emergency brake message: " << message << std::endl;
+      handleEmergencyBrakeMessage(message);
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Faster polling for emergency brake
+  }
+  std::cout << "Emergency brake receiver thread stopping" << std::endl;
+}
+
+void ControlAssembly::handleEmergencyBrakeMessage(const std::string &message) {
+  std::unordered_map<std::string, double> values;
+  std::stringstream ss(message);
+  std::string token;
+  std::cout << "Parsing emergency brake message: " << message << std::endl;
+
+  while (std::getline(ss, token, ';')) {
+    if (token.empty())
+      continue;
+
+    std::string key;
+    double value;
+    std::stringstream ss_token(token);
+    std::getline(ss_token, key, ':');
+    ss_token >> value;
+    values[key] = value;
+    std::cout << "Parsed emergency brake key: '" << key << "', value: " << value << std::endl;
+  }
+
+  // Handle emergency brake commands with highest priority
+  if (values.find("emergency_brake") != values.end()) {
+    bool emergency_brake = (values["emergency_brake"] != 0.0);
+    bool was_active = emergency_brake_active.exchange(emergency_brake);
+
+    if (was_active != emergency_brake) {
+      if (emergency_brake) {
+        std::cout << "EMERGENCY BRAKE ACTIVATED - All motors stopped!" << std::endl;
+        _backMotors->setSpeed(0);
+        _logger.logControlUpdate("emergency_brake_activated", 0, 0);
+      } else {
+        std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
+        _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
+      }
+    }
   }
 }

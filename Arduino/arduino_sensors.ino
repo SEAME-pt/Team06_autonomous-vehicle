@@ -82,12 +82,15 @@ void loop() {
         lastMeasurementTime = currentTime;
     }
 
-    // Update SRF08 sensor
+    // TEMPORARILY DISABLED: SRF08 sensor processing (sensor disconnected and causing interference)
+    // The 70ms delay in updateSRF08Sensor() was blocking the main loop and affecting speed sensor
+    /*
     if (currentTime - lastSRF08Update >= SRF08_UPDATE_INTERVAL) {
         updateSRF08Sensor();
         sendDistanceData();
         lastSRF08Update = currentTime;
     }
+    */
 
     delay(10);
 }
@@ -106,8 +109,9 @@ void sendSpeedData() {
     // Assume 2 interrupts per physical event (from working code)
     unsigned int pulsesInInterval = rawInterruptCount / 2; // Estimate physical events
 
-    // Update total pulses with the corrected count (physical events, not raw interrupts)
-    unsigned long correctedTotalPulses = totalPulses / 2; // Convert total interrupts to physical events
+    // FIXED: Don't divide total pulses - send the actual accumulated count
+    // This was causing middleware to receive same total repeatedly -> pulse_delta = 0
+    unsigned long correctedTotalPulses = totalPulses; // Send actual total, not divided
 
     // buffer[0-1]: Pulse count in this interval (16-bit, little endian)
     uint16_t pulsesDelta = (uint16_t)pulsesInInterval;

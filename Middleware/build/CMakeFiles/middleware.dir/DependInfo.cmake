@@ -17,9 +17,11 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/ControlLogger.cpp" "CMakeFiles/middleware.dir/src/ControlLogger.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/ControlLogger.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/Distance.cpp" "CMakeFiles/middleware.dir/src/Distance.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/Distance.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/FServo.cpp" "CMakeFiles/middleware.dir/src/FServo.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/FServo.cpp.o.d"
+  "/home/jetson/Team06_autonomous-vehicle/Middleware/src/LaneKeepingHandler.cpp" "CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/LaneKeepingHandler.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorHandler.cpp" "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/SensorHandler.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/SensorLogger.cpp" "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/SensorLogger.cpp.o.d"
   "/home/jetson/Team06_autonomous-vehicle/Middleware/src/Speed.cpp" "CMakeFiles/middleware.dir/src/Speed.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/Speed.cpp.o.d"
+  "/home/jetson/Team06_autonomous-vehicle/Middleware/src/TrafficSignHandler.cpp" "CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o" "gcc" "CMakeFiles/middleware.dir/src/TrafficSignHandler.cpp.o.d"
   )
 
 # Targets to which this target links.

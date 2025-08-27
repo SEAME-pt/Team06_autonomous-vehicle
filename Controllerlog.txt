@@ -1,0 +1,858 @@
+Controller application starting...
+Testing ZMQ connectivity to: tcp://127.0.0.1:5557
+Sending test message...
+Test message sent
+Creating control transmitter...
+ControlTransmitter initialized with address: tcp://127.0.0.1:5557
+Sent init message
+Initializing controller...
+Initializing controller...
+JoyFd 9
+Joystick: SHANWAN Android Gamepad aberto com sucesso!
+Controller connected
+Starting transmitter loop...
+Starting transmission loop...
+Controller select() returned: 1
+Controller event received, bytesRead: 8
+Event type: 129, number: 0, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 1, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 2, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 3, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 4, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 5, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 6, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 7, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 8, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 9, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 10, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 11, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 12, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 13, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 14, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 129, number: 15, value: 0
+Unknown event type: 129
+Controller event received, bytesRead: 8
+Event type: 130, number: 0, value: 0
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 1, value: 0
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 2, value: 0
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 3, value: 0
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 4, value: -32767
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 5, value: -32767
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 6, value: 0
+Unknown event type: 130
+Controller event received, bytesRead: 8
+Event type: 130, number: 7, value: 0
+Unknown event type: 130
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: -32767
+Axis 0 value: -1
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 2, number: 1, value: -1014
+Axis 1 value: -0.0309458
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: -2365
+Axis 0 value: -0.0721763
+Controller event received, bytesRead: 8
+Event type: 2, number: 1, value: 0
+Axis 1 value: 0
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: 0
+Axis 0 value: 0
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: 32767
+Axis 0 value: 1
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: 4391
+Axis 0 value: 0.134007
+Controller event received, bytesRead: 8
+Event type: 2, number: 0, value: 0
+Axis 0 value: 0
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 1
+Button 1 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 0
+Button 1 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 1
+Button 1 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 0
+Button 1 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 1
+Button 1 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 0
+Button 1 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 1
+Button 1 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 1, value: 0
+Button 1 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller select() returned: 0
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 1
+Button 0 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 0
+Button 0 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 1
+Button 0 pressed
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 0
+Button 0 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 1
+Button 0 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 0
+Button 0 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 1
+Button 0 pressed
+Controller event received, bytesRead: 8
+Event type: 1, number: 0, value: 0
+Button 0 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller select() returned: 0
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller select() returned: 0
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 1
+Button 3 pressed
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller select() returned: 0
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+X button pressed, sending stop command
+Controller event received, bytesRead: 8
+Event type: 1, number: 3, value: 0
+Button 3 released
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller select() returned: 0
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: ON
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 1
+Button 4 pressed
+Y button pressed, toggling AUTO mode: OFF
+Controller event received, bytesRead: 8
+Event type: 1, number: 4, value: 0
+Button 4 released

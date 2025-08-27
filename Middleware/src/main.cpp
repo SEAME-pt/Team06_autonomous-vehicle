@@ -9,6 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <thread>
 #include <zmq.hpp>
 
@@ -47,7 +48,7 @@ int main() {
     setupSignalHandlers();
 
       // Configuration
-  const std::string zmq_c_address = "tcp://100.93.45.188:5555"; // critical addr
+  const std::string zmq_c_address = "tcp://0.0.0.0:5555"; // critical addr
   const std::string zmq_nc_address =
       "tcp://100.93.45.188:5556"; // non-critical addr
     const std::string zmq_control_address =
@@ -56,6 +57,8 @@ int main() {
         "tcp://127.0.0.1:5558"; // lane keeping assistance system addr
     const std::string zmq_traffic_sign_address =
         "tcp://127.0.0.1:5559"; // traffic sign detection system addr
+    const std::string zmq_emergency_brake_address =
+        "tcp://127.0.0.1:5561"; // emergency brake addr
 
     // Initialize ZMQ context
     zmq::context_t zmq_context(1);

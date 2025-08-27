@@ -242,7 +242,7 @@ CMakeFiles/middleware.dir/src/SensorHandler.cpp.o: \
  /usr/include/c++/8/deque /usr/include/c++/8/bits/stl_deque.h \
  /usr/include/c++/8/bits/deque.tcc /usr/include/c++/8/bits/stl_queue.h \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/Distance.hpp \
- /home/jetson/Team06_autonomous-vehicle/Middleware/inc/IPublisher.hpp \
+ /home/jetson/Team06_autonomous-vehicle/Middleware/../zmq/inc/ZmqPublisher.hpp \
  /usr/local/include/zmq.hpp /usr/include/zmq.h /usr/include/c++/8/cassert \
  /usr/include/assert.h /usr/include/c++/8/algorithm \
  /home/jetson/Team06_autonomous-vehicle/Middleware/inc/SensorLogger.hpp \

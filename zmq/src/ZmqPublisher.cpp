@@ -8,7 +8,7 @@ ZmqPublisher::ZmqPublisher(const std::string &address, zmq::context_t &context,
   if (!test_mode) {
     try {
       // Set HWM to 1 to only keep latest message
-      int hwm = 1;
+      int hwm = 100;
       _socket.set(zmq::sockopt::sndhwm, hwm);
 
       // NOTE: Conflate option removed from publisher - it should only be used on subscribers
@@ -18,10 +18,11 @@ ZmqPublisher::ZmqPublisher(const std::string &address, zmq::context_t &context,
       int linger = 0;
       _socket.set(zmq::sockopt::linger, linger);
 
-      // Disable Nagle's algorithm for TCP connections
-      int tcp_nodelay = 1;
-      _socket.set(zmq::sockopt::ipv6,
-                  tcp_nodelay); // This option also disables Nagle's algorithm
+      // NOTE: ZMQ_TCP_NODELAY not available in this ZMQ version
+      // The immediate option below provides similar low-latency behavior
+
+      // Send messages immediately instead of batching
+      _socket.set(zmq::sockopt::immediate, 1);
 
       _socket.bind(address);
       _is_connected = true;

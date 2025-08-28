@@ -155,35 +155,32 @@ void Speed::calculateSpeed() {
 }
 
 void Speed::calculateOdo() {
-    // Calculate total distance from total pulses since startup
-    // Each revolution = pulsesPerRevolution pulses (18 pulses per revolution)
-    double total_revolutions = static_cast<double>(total_pulses) / pulsesPerRevolution;
-
-    // Calculate total distance using the same circumference as speed calculation
+    // Calculate incremental distance from pulse delta (same as speed calculation)ma
+    // Each pulse = wheelCircumference_mm / pulsesPerRevolution
     // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
     static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
-    double total_distance_mm = total_revolutions * wheelCircumference_mm;
+    static constexpr double mm_per_pulse = wheelCircumference_mm / pulsesPerRevolution;
 
-    // Convert to meters
-    double total_distance_m = total_distance_mm / 1000.0;
+    if (last_pulse_delta > 0) {
+        // Calculate incremental distance from this CAN message's pulse delta
+        double distance_mm = static_cast<double>(last_pulse_delta) * mm_per_pulse;
+        double distance_m = distance_mm / 1000.0; // mm to meters
 
-    // Convert to kilometers
-    double total_distance_km = total_distance_m / 1000.0;
+        // Add to existing odometer value (incremental update)
+        auto old_odo = _sensorData["odo"]->value.load();
+        uint32_t new_odo_value = old_odo + static_cast<uint32_t>(distance_m + 0.5); // Round to nearest meter
 
-    // Store as km * 1000 for precision (allows 1m resolution)
-    uint32_t odo_value = static_cast<uint32_t>(total_distance_km * 1000.0);
+        // Update odometer sensor data
+        _sensorData["odo"]->oldValue.store(old_odo);
+        _sensorData["odo"]->value.store(new_odo_value);
+        _sensorData["odo"]->timestamp = latest_timestamp;
 
-    // Update odometer sensor data
-    auto old_odo = _sensorData["odo"]->value.load();
-    _sensorData["odo"]->oldValue.store(old_odo);
-    _sensorData["odo"]->value.store(odo_value);
-    _sensorData["odo"]->timestamp = latest_timestamp;
-
-    // Mark as updated if value changed or this is the first calculation
-    if (old_odo != odo_value || old_odo == 0) {
-        _sensorData["odo"]->updated.store(true);
-        std::cout << "Odometer updated: " << (odo_value / 1000.0) << " km"
-                  << " (from " << total_pulses << " total pulses, " << total_revolutions << " revolutions)" << std::endl;
+        // Mark as updated if distance was added
+        if (distance_m > 0.5) { // Only update if we moved at least 0.5 meters
+            _sensorData["odo"]->updated.store(true);
+            std::cout << "Odometer updated: " << new_odo_value << " meters"
+                      << " (added " << distance_m << "m from " << last_pulse_delta << " pulses)" << std::endl;
+        }
     }
 }
 

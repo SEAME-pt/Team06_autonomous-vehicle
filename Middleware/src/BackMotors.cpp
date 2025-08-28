@@ -99,6 +99,9 @@ void BackMotors::setSpeed(int speed) {
     int pwmLeft  = static_cast<int>((std::abs(leftSpeed)  / 100.0 * 4095));
     int pwmRight = static_cast<int>((std::abs(rightSpeed) / 100.0 * 4095));
 
+    double _compLeft = 0.85;  // 5% mais força no motor esquerdo
+    double _compRight = 1.00; // motor direito normal
+
 	pwmLeft  = std::min(pwmLeft,  4095) * _compLeft;
     pwmRight = std::min(pwmRight, 4095) * _compRight;
 

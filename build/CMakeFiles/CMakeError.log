@@ -1,22 +1,22 @@
 Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
-Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-gSIH81
+Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-5XlxIX
 
-Run Build Command(s):/usr/bin/make -f Makefile cmTC_9958f/fast && /usr/bin/make  -f CMakeFiles/cmTC_9958f.dir/build.make CMakeFiles/cmTC_9958f.dir/build
-make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-gSIH81'
-Building C object CMakeFiles/cmTC_9958f.dir/src.c.o
-/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_9958f.dir/src.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-gSIH81/src.c
-Linking C executable cmTC_9958f
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_9958f.dir/link.txt --verbose=1
-/usr/bin/cc CMakeFiles/cmTC_9958f.dir/src.c.o -o cmTC_9958f 
-/usr/bin/ld: CMakeFiles/cmTC_9958f.dir/src.c.o: in function `main':
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_a51dd/fast && /usr/bin/make  -f CMakeFiles/cmTC_a51dd.dir/build.make CMakeFiles/cmTC_a51dd.dir/build
+make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-5XlxIX'
+Building C object CMakeFiles/cmTC_a51dd.dir/src.c.o
+/usr/bin/cc -DCMAKE_HAVE_LIBC_PTHREAD   -o CMakeFiles/cmTC_a51dd.dir/src.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-5XlxIX/src.c
+Linking C executable cmTC_a51dd
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_a51dd.dir/link.txt --verbose=1
+/usr/bin/cc CMakeFiles/cmTC_a51dd.dir/src.c.o -o cmTC_a51dd 
+/usr/bin/ld: CMakeFiles/cmTC_a51dd.dir/src.c.o: in function `main':
 src.c:(.text+0x48): undefined reference to `pthread_create'
 /usr/bin/ld: src.c:(.text+0x50): undefined reference to `pthread_detach'
 /usr/bin/ld: src.c:(.text+0x58): undefined reference to `pthread_cancel'
 /usr/bin/ld: src.c:(.text+0x64): undefined reference to `pthread_join'
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_9958f.dir/build.make:99: cmTC_9958f] Error 1
-make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-gSIH81'
-make: *** [Makefile:127: cmTC_9958f/fast] Error 2
+make[1]: *** [CMakeFiles/cmTC_a51dd.dir/build.make:99: cmTC_a51dd] Error 1
+make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-5XlxIX'
+make: *** [Makefile:127: cmTC_a51dd/fast] Error 2
 
 
 Source file was:
@@ -42,20 +42,20 @@ int main(void)
 
 
 Determining if the function pthread_create exists in the pthreads failed with the following output:
-Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-bDQzSY
+Change Dir: /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-Fr5sD1
 
-Run Build Command(s):/usr/bin/make -f Makefile cmTC_1a845/fast && /usr/bin/make  -f CMakeFiles/cmTC_1a845.dir/build.make CMakeFiles/cmTC_1a845.dir/build
-make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-bDQzSY'
-Building C object CMakeFiles/cmTC_1a845.dir/CheckFunctionExists.c.o
-/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_1a845.dir/CheckFunctionExists.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-bDQzSY/CheckFunctionExists.c
-Linking C executable cmTC_1a845
-/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1a845.dir/link.txt --verbose=1
-/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_1a845.dir/CheckFunctionExists.c.o -o cmTC_1a845  -lpthreads 
+Run Build Command(s):/usr/bin/make -f Makefile cmTC_43e5b/fast && /usr/bin/make  -f CMakeFiles/cmTC_43e5b.dir/build.make CMakeFiles/cmTC_43e5b.dir/build
+make[1]: Entering directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-Fr5sD1'
+Building C object CMakeFiles/cmTC_43e5b.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create -o CMakeFiles/cmTC_43e5b.dir/CheckFunctionExists.c.o -c /home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-Fr5sD1/CheckFunctionExists.c
+Linking C executable cmTC_43e5b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_43e5b.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create CMakeFiles/cmTC_43e5b.dir/CheckFunctionExists.c.o -o cmTC_43e5b  -lpthreads 
 /usr/bin/ld: cannot find -lpthreads
 collect2: error: ld returned 1 exit status
-make[1]: *** [CMakeFiles/cmTC_1a845.dir/build.make:99: cmTC_1a845] Error 1
-make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-bDQzSY'
-make: *** [Makefile:127: cmTC_1a845/fast] Error 2
+make[1]: *** [CMakeFiles/cmTC_43e5b.dir/build.make:99: cmTC_43e5b] Error 1
+make[1]: Leaving directory '/home/jetson/Team06_autonomous-vehicle/build/CMakeFiles/CMakeScratch/TryCompile-Fr5sD1'
+make: *** [Makefile:127: cmTC_43e5b/fast] Error 2
 
 
 

@@ -20,10 +20,8 @@ ZmqSubscriber::ZmqSubscriber(const std::string &address,
       int linger = 0;
       _socket.set(zmq::sockopt::linger, linger);
 
-      // Disable Nagle's algorithm for TCP connections
-      int tcp_nodelay = 1;
-      _socket.set(zmq::sockopt::ipv6,
-                  tcp_nodelay); // This option also disables Nagle's algorithm
+      // NOTE: ZMQ_TCP_NODELAY not available in this ZMQ version
+      // Conflate and immediate options provide low-latency behavior
 
       _socket.connect(address);
       _socket.set(zmq::sockopt::subscribe, ""); // Subscribe to all messages

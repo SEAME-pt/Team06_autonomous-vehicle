@@ -63,7 +63,7 @@ bool BackMotors::setMotorPwm(const int channel, int value) {
   }
 }
 
-void BackMotors::setSpeed(int speed) {
+/* void BackMotors::setSpeed(int speed) {
   int pwmValue;
   speed = std::max(-100, std::min(100, speed));
   pwmValue = static_cast<int>(std::abs(speed) / 100.0 * 4095);
@@ -89,6 +89,46 @@ void BackMotors::setSpeed(int speed) {
       setMotorPwm(channel, 0);
     }
   }
+} */
+
+void BackMotors::setSpeed(int speed) {
+    int leftSpeed = std::max(-100, std::min(100, speed));
+    int rightSpeed = std::max(-100, std::min(100, speed));
+
+    // Converte para PWM (0-4095) e aplica compensação
+    int pwmLeft  = static_cast<int>((std::abs(leftSpeed)  / 100.0 * 4095));
+    int pwmRight = static_cast<int>((std::abs(rightSpeed) / 100.0 * 4095));
+
+	pwmLeft  = std::min(pwmLeft,  4095) * _compLeft;
+    pwmRight = std::min(pwmRight, 4095) * _compRight;
+
+    if (leftSpeed > 0) { // forward
+        setMotorPwm(0, pwmLeft); // IN1
+        setMotorPwm(1, 0);       // IN2
+        setMotorPwm(2, pwmLeft); // ENA
+    } else if (leftSpeed < 0) { // backward
+        setMotorPwm(0, pwmLeft);
+        setMotorPwm(1, pwmLeft);
+        setMotorPwm(2, 0);
+    } else {
+        setMotorPwm(0, 0);
+        setMotorPwm(1, 0);
+        setMotorPwm(2, 0);
+    }
+
+    if (rightSpeed > 0) { // forward
+        setMotorPwm(5, pwmRight); // IN3
+        setMotorPwm(6, 0);        // IN4
+        setMotorPwm(7, pwmRight); // ENB
+    } else if (rightSpeed < 0) { // backward
+        setMotorPwm(5, 0);
+        setMotorPwm(6, pwmRight);
+        setMotorPwm(7, pwmRight);
+    } else {
+        setMotorPwm(5, 0);
+        setMotorPwm(6, 0);
+        setMotorPwm(7, 0);
+    }
 }
 
 void BackMotors::writeByteData(int fd, uint8_t reg, uint8_t value) {

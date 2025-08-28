@@ -33,6 +33,8 @@ public:
 class BackMotors : public IBackMotors {
 private:
   const int _motorAddr = 0x60;
+  double _compLeft = 1.00;  // 5% mais força no motor esquerdo
+  double _compRight = 1.00; // motor direito normal
 
 public:
   int _fdMotor;

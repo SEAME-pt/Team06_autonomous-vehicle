@@ -39,7 +39,6 @@ private:
     // Vehicle parameters for calculations
     static constexpr unsigned int pulsesPerRevolution = 18; // 18 holes in the disc
     static constexpr float wheelDiameter_mm = 67.0f; // Wheel diameter in millimeters
-    static constexpr float wheelCircumference_m = (wheelDiameter_mm / 1000.0f) * 3.14159f; // Circumference in meters
 
     // Thread safety for CAN message handling
     mutable std::mutex data_mutex;

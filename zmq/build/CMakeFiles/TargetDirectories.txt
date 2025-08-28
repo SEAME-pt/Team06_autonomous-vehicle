@@ -1,0 +1,3 @@
+/home/jetson/Team06_autonomous-vehicle/zmq/build/CMakeFiles/ZeroMQLib.dir
+/home/jetson/Team06_autonomous-vehicle/zmq/build/CMakeFiles/edit_cache.dir
+/home/jetson/Team06_autonomous-vehicle/zmq/build/CMakeFiles/rebuild_cache.dir

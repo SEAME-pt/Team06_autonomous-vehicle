@@ -10,7 +10,9 @@
 // Define the map of publishable traffic signs
 const std::unordered_map<std::string, std::string> TrafficSignHandler::publishable_signs = {
   {"SPEED_50", "50"},
-  {"SPEED_80", "80"}
+  {"SPEED_80", "80"},
+  {"STOP", "stop"},
+  {"CROSSWALK", "crosswalk"}
 };
 
 // TrafficSignHandler implementation

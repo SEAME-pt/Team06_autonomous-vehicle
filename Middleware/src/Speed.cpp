@@ -159,9 +159,13 @@ void Speed::calculateOdo() {
     // Each revolution = pulsesPerRevolution pulses (18 pulses per revolution)
     double total_revolutions = static_cast<double>(total_pulses) / pulsesPerRevolution;
 
-    // Calculate total distance in meters
-    // wheelCircumference_m = π * diameter = π * 67mm = 0.2105m
-    double total_distance_m = total_revolutions * wheelCircumference_m;
+    // Calculate total distance using the same circumference as speed calculation
+    // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
+    static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
+    double total_distance_mm = total_revolutions * wheelCircumference_mm;
+
+    // Convert to meters
+    double total_distance_m = total_distance_mm / 1000.0;
 
     // Convert to kilometers
     double total_distance_km = total_distance_m / 1000.0;
@@ -179,7 +183,7 @@ void Speed::calculateOdo() {
     if (old_odo != odo_value || old_odo == 0) {
         _sensorData["odo"]->updated.store(true);
         std::cout << "Odometer updated: " << (odo_value / 1000.0) << " km"
-                  << " (from " << total_pulses << " total pulses)" << std::endl;
+                  << " (from " << total_pulses << " total pulses, " << total_revolutions << " revolutions)" << std::endl;
     }
 }
 

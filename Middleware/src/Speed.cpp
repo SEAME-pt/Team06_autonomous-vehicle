@@ -113,20 +113,19 @@ void Speed::calculateSpeed() {
     double time_diff_seconds = duration.count();
 
     if (time_diff_seconds > 0 && last_pulse_delta > 0) {
-        // Calculate revolutions from pulse count
-        // Each revolution = pulsesPerRevolution pulses (18 pulses per revolution)
-        double revolutions = static_cast<double>(last_pulse_delta) / pulsesPerRevolution;
+        // Calculate distance traveled in mm directly from pulses
+        // Each pulse = wheelCircumference_mm / pulsesPerRevolution
+        // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
+        static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
+        static constexpr double mm_per_pulse = wheelCircumference_mm / pulsesPerRevolution;
 
-        // Calculate distance traveled in meters
-        // wheelCircumference_m = π * diameter = π * 67mm = 0.2105m
-        double distance_m = revolutions * wheelCircumference_m;
+        double distance_mm = static_cast<double>(last_pulse_delta) * mm_per_pulse;
 
-        // Calculate speed: distance/time in m/s, then convert to km/h
-        double speed_mps = distance_m / time_diff_seconds;
-        double speed_kmh = speed_mps * 3.6; // Convert m/s to km/h
+        // Calculate speed directly in mm/s
+        double speed_mms = distance_mm / time_diff_seconds;
 
-        // Store as rounded km/h (integer resolution)
-        uint32_t speed_value = static_cast<uint32_t>(speed_kmh + 0.5);
+        // Store as rounded mm/s (integer resolution)
+        uint32_t speed_value = static_cast<uint32_t>(speed_mms + 0.5);
 
         // Update speed sensor data
         auto old_speed = _sensorData["speed"]->value.load();
@@ -135,7 +134,7 @@ void Speed::calculateSpeed() {
         _sensorData["speed"]->timestamp = current_time;
         _sensorData["speed"]->updated.store(true);
 
-        std::cout << "Speed calculated: " << speed_value << " km/h"
+        std::cout << "Speed calculated: " << speed_value << " mm/s"
                   << " (from " << last_pulse_delta << " pulses in " << time_diff_seconds << "s)" << std::endl;
     } else {
         // No movement or invalid time difference

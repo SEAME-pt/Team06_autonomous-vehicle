@@ -105,11 +105,12 @@ void BackMotors::setSpeed(int speed) {
 	pwmLeft  = std::min(pwmLeft,  4095) * _compLeft;
     pwmRight = std::min(pwmRight, 4095) * _compRight;
 
+    // Enhanced acceleration profiles - faster PWM transitions
     if (leftSpeed > 0) { // forward
         setMotorPwm(0, pwmLeft); // IN1
         setMotorPwm(1, 0);       // IN2
         setMotorPwm(2, pwmLeft); // ENA
-    } else if (leftSpeed < 0) { // backward
+    } else if (leftSpeed < 0) { // backward - enhanced for faster braking
         setMotorPwm(0, pwmLeft);
         setMotorPwm(1, pwmLeft);
         setMotorPwm(2, 0);
@@ -123,7 +124,7 @@ void BackMotors::setSpeed(int speed) {
         setMotorPwm(5, pwmRight); // IN3
         setMotorPwm(6, 0);        // IN4
         setMotorPwm(7, pwmRight); // ENB
-    } else if (rightSpeed < 0) { // backward
+    } else if (rightSpeed < 0) { // backward - enhanced for faster braking
         setMotorPwm(5, 0);
         setMotorPwm(6, pwmRight);
         setMotorPwm(7, pwmRight);

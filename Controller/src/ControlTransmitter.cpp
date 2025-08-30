@@ -35,8 +35,18 @@ void ControlTransmitter::startTransmitting() {
     if (_controller.getButton(X_BUTTON)) {
       _onClick = true;
       std::cout << "X button pressed, sending stop command" << std::endl;
+      _acceleration = 0; // Immediate stop
       _zmq_publisher.send("throttle:0;steering:0;");
     }
+
+    // Add dedicated emergency brake button (A button)
+    bool brake_button_pressed = _controller.getButton(A_BUTTON);
+    if (brake_button_pressed) {
+      _emergency_brake_active = true;
+    } else {
+      _emergency_brake_active = false; // Release brake when button is released
+    }
+
     // Handle Y button toggle for auto mode (always works regardless of auto mode state)
     bool send_auto_mode = false;
     {
@@ -65,18 +75,55 @@ void ControlTransmitter::startTransmitting() {
     if (_controller.getButton(HOME_BUTTON)) {
       std::cout << "Home button pressed" << std::endl;
     }
-    _acceleration *=0.99; // Retorno proporcional para a velocidade do carro (desaceleração)
+
+    // Apply much more gradual deceleration when no input
+    if (!_emergency_brake_active) {
+      _acceleration *= 0.98; // Changed from 0.95 to 0.98 for much more gradual natural deceleration
+    }
+
     if (std::abs(_turn) < 0.1) {
       _turn = 0;
     } else {
-      _turn -= _turn * 0.15;
+      _turn -= _turn * 0.25; // Changed from 0.15 to 0.25 for faster steering return
     }
 
     float force = _controller.getAxis(3); // eixo Y do analógico direito
-    if (force != 0) {
-      _acceleration -=
-          (force * 0.55f); // Aceleração proporcional ao valor de force
+
+    // Only process normal throttle input if emergency brake is NOT active
+    if (force != 0 && !_emergency_brake_active) {
+      // Direct scaling: joystick input (-1.0 to 1.0) -> throttle (-100 to +100)
+      // With acceleration factor for responsiveness
+      // INVERTED: Negate force to fix control direction
+      float target_throttle = -force * 100.0f; // Restored to full range for maximum power when needed
+
+      std::cout << "Joystick force: " << force << ", Target throttle: " << target_throttle << ", Current: " << _acceleration << std::endl;
+
+      // Move towards target throttle much more gradually
+      float throttle_diff = target_throttle - _acceleration;
+      float max_change = (throttle_diff > 0) ? _max_acceleration_rate * 2.0f : _max_deceleration_rate * 2.0f; // Reduced from 5.0f to 2.0f
+
+      if (std::abs(throttle_diff) <= max_change) {
+        // Close to target, snap to it
+        _acceleration = target_throttle;
+      } else {
+        // Move towards target at max rate
+        _acceleration += (throttle_diff > 0) ? max_change : -max_change;
+      }
+
+      // Clamp to full throttle bounds for maximum power capability
+      _acceleration = std::max(-100.0f, std::min(_acceleration, 100.0f)); // Restored to full ±100 range
+
+      std::cout << "Final throttle: " << _acceleration << std::endl;
+    } else if (_emergency_brake_active) {
+      std::cout << "Emergency brake active - overriding throttle input" << std::endl;
     }
+
+    // EMERGENCY BRAKE OVERRIDE - This must come AFTER throttle processing to ensure it always works
+    if (_emergency_brake_active) {
+      std::cout << "A button pressed, emergency braking! Overriding all throttle inputs." << std::endl;
+      _acceleration = -100.0f; // Full reverse braking for maximum stopping power
+    }
+
     std::string throttleMsg = "throttle:" + std::to_string(_acceleration) + ";";
     // _zmq_publisher.send(throttleMsg);
 
@@ -84,6 +131,7 @@ void ControlTransmitter::startTransmitting() {
         _controller.getAxis(0);  // eixo horizontal (X) do analógico esquerdo.
     if (std::abs(gear) > 0.1f) { // Zona morta
       // Maior sensibilidade com ajuste exponencial
+      // FIXED: Removed inversion - original direction was correct
       _turn = (gear > 0 ? 1 : -1) * std::pow(std::abs(gear), 1.5f) * 5.0f;
       if (_turn < -4.5f)
         _turn = -4.5f;

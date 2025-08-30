@@ -1,2 +1,0 @@
-/usr/bin/ar qc libZeroMQLib.a CMakeFiles/ZeroMQLib.dir/src/ZmqPublisher.cpp.o CMakeFiles/ZeroMQLib.dir/src/ZmqSubscriber.cpp.o
-/usr/bin/ranlib libZeroMQLib.a

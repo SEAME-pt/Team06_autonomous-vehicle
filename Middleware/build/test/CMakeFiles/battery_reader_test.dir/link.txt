@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/battery_reader_test.dir/BatteryReaderTest.cpp.o -o battery_reader_test  ../lib/libgtest.a ../lib/libgtest_main.a ../libmiddleware.a ../zmq/libZeroMQLib.a -lpthread ../lib/libgtest.a -lpthread -lzmq 

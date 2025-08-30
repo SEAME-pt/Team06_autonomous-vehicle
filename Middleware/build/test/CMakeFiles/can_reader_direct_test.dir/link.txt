@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/can_reader_direct_test.dir/CanReaderDirectTest.cpp.o -o can_reader_direct_test  ../lib/libgtest.a ../lib/libgtest_main.a ../libmiddleware.a ../zmq/libZeroMQLib.a -lpthread ../lib/libgtest.a -lpthread -lzmq 

@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/back_motors_direct_test.dir/BackMotorsDirectTest.cpp.o -o back_motors_direct_test  ../lib/libgtest.a ../lib/libgtest_main.a ../libmiddleware.a ../zmq/libZeroMQLib.a -lpthread ../lib/libgtest.a -lpthread -lzmq 

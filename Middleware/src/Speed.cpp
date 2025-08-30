@@ -12,6 +12,9 @@ Speed::Speed() {
 
     latest_timestamp = std::chrono::steady_clock::now();
     last_measurement_time = latest_timestamp;
+
+    // Initialize odometer precision tracking
+    accumulated_distance_m = 0.0;
 }
 
 Speed::~Speed() {
@@ -155,7 +158,7 @@ void Speed::calculateSpeed() {
 }
 
 void Speed::calculateOdo() {
-    // Calculate incremental distance from pulse delta (same as speed calculation)ma
+    // Calculate incremental distance from pulse delta (same as speed calculation)
     // Each pulse = wheelCircumference_mm / pulsesPerRevolution
     // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
     static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
@@ -166,20 +169,23 @@ void Speed::calculateOdo() {
         double distance_mm = static_cast<double>(last_pulse_delta) * mm_per_pulse;
         double distance_m = distance_mm / 1000.0; // mm to meters
 
-        // Add to existing odometer value (incremental update)
+        // Add to accumulated distance with high precision
+        accumulated_distance_m += distance_m;
+
+        // Get current odometer value and calculate new value
         auto old_odo = _sensorData["odo"]->value.load();
-        uint32_t new_odo_value = old_odo + static_cast<uint32_t>(distance_m + 0.5); // Round to nearest meter
+        uint32_t new_odo_value = static_cast<uint32_t>(accumulated_distance_m + 0.5); // Round to nearest meter
 
         // Update odometer sensor data
         _sensorData["odo"]->oldValue.store(old_odo);
         _sensorData["odo"]->value.store(new_odo_value);
         _sensorData["odo"]->timestamp = latest_timestamp;
 
-        // Mark as updated if distance was added
-        if (distance_m > 0.5) { // Only update if we moved at least 0.5 meters
+        // Mark as updated if the displayed value changed OR if any meaningful distance was added
+        if (new_odo_value != old_odo || distance_mm > 1.0) { // Update if meter value changed or moved > 1mm
             _sensorData["odo"]->updated.store(true);
             std::cout << "Odometer updated: " << new_odo_value << " meters"
-                      << " (added " << distance_m << "m from " << last_pulse_delta << " pulses)" << std::endl;
+                      << " (added " << distance_m << "m from " << last_pulse_delta << " pulses, total: " << accumulated_distance_m << "m)" << std::endl;
         }
     }
 }

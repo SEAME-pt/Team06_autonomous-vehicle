@@ -30,6 +30,16 @@ unsigned int distance = 100; // Initialize with reasonable default (100cm)
 unsigned long lastSRF08Update = 0;
 const unsigned long SRF08_UPDATE_INTERVAL = 500;
 
+// SRF08 non-blocking state machine
+enum SRF08_State {
+    SRF08_IDLE,
+    SRF08_RANGING,
+    SRF08_READING
+};
+SRF08_State srf08State = SRF08_IDLE;
+unsigned long srf08CommandTime = 0;
+const unsigned long SRF08_RANGING_DELAY = 70; // 70ms for ranging to complete
+
 // Interrupt to count pulses (based on working code)
 void pulseISR() {
     unsigned long currentTime = millis();
@@ -82,15 +92,8 @@ void loop() {
         lastMeasurementTime = currentTime;
     }
 
-    // TEMPORARILY DISABLED: SRF08 sensor processing (sensor disconnected and causing interference)
-    // The 70ms delay in updateSRF08Sensor() was blocking the main loop and affecting speed sensor
-    /*
-    if (currentTime - lastSRF08Update >= SRF08_UPDATE_INTERVAL) {
-        updateSRF08Sensor();
-        sendDistanceData();
-        lastSRF08Update = currentTime;
-    }
-    */
+    // Non-blocking SRF08 sensor processing
+    updateSRF08NonBlocking();
 
     delay(10);
 }
@@ -151,41 +154,64 @@ void initSRF08() {
     delay(100);
 }
 
-void updateSRF08Sensor() {
-    // Start ranging command (0x51 = range in cm)
-    Wire.beginTransmission(SRF08_ADDRESS);
-    Wire.write(0x00);  // Command register
-    Wire.write(0x51);  // Range in cm
-    if (Wire.endTransmission() != 0) {
-        Serial.println("SRF08 command failed");
-        return;
-    }
+void updateSRF08NonBlocking() {
+    unsigned long currentTime = millis();
 
-    delay(70);  // Wait for ranging to complete
+    switch (srf08State) {
+        case SRF08_IDLE:
+            // Check if it's time to start a new measurement
+            if (currentTime - lastSRF08Update >= SRF08_UPDATE_INTERVAL) {
+                // Start ranging command (0x51 = range in cm)
+                Wire.beginTransmission(SRF08_ADDRESS);
+                Wire.write(0x00);  // Command register
+                Wire.write(0x51);  // Range in cm
+                if (Wire.endTransmission() == 0) {
+                    srf08State = SRF08_RANGING;
+                    srf08CommandTime = currentTime;
+                } else {
+                    Serial.println("SRF08 command failed");
+                    lastSRF08Update = currentTime; // Try again next interval
+                }
+            }
+            break;
 
-    // Read the result
-    Wire.beginTransmission(SRF08_ADDRESS);
-    Wire.write(0x02);  // Range high byte register
-    if (Wire.endTransmission() != 0) {
-        Serial.println("SRF08 read request failed");
-        return;
-    }
+        case SRF08_RANGING:
+            // Wait for ranging to complete (70ms)
+            if (currentTime - srf08CommandTime >= SRF08_RANGING_DELAY) {
+                srf08State = SRF08_READING;
+            }
+            break;
 
-    Wire.requestFrom(SRF08_ADDRESS, 2);
-    if (Wire.available() >= 2) {
-        uint8_t highByte = Wire.read();
-        uint8_t lowByte = Wire.read();
-        unsigned int newDistance = (highByte << 8) | lowByte;
+        case SRF08_READING:
+            // Read the result
+            Wire.beginTransmission(SRF08_ADDRESS);
+            Wire.write(0x02);  // Range high byte register
+            if (Wire.endTransmission() == 0) {
+                Wire.requestFrom(SRF08_ADDRESS, 2);
+                if (Wire.available() >= 2) {
+                    uint8_t highByte = Wire.read();
+                    uint8_t lowByte = Wire.read();
+                    unsigned int newDistance = (highByte << 8) | lowByte;
 
-        // Only update if we get a reasonable reading (not 0 and not max range)
-        if (newDistance > 0 && newDistance < 6000) {  // SRF08 max range is ~6m
-            distance = newDistance;
-        } else {
-            Serial.print("SRF08 invalid reading: ");
-            Serial.println(newDistance);
-        }
-    } else {
-        Serial.println("SRF08 no data available");
+                    // Only update if we get a reasonable reading (not 0 and not max range)
+                    if (newDistance > 0 && newDistance < 6000) {  // SRF08 max range is ~6m
+                        distance = newDistance;
+                        sendDistanceData();
+                    } else {
+                        Serial.print("SRF08 invalid reading: ");
+                        Serial.println(newDistance);
+                    }
+                } else {
+                    Serial.println("SRF08 no data available");
+                }
+            } else {
+                Serial.println("SRF08 read request failed");
+            }
+
+            // Reset state and update timer
+            srf08State = SRF08_IDLE;
+            lastSRF08Update = currentTime;
+            break;
     }
 }
 

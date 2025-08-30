@@ -12,7 +12,8 @@ const std::unordered_map<std::string, std::string> TrafficSignHandler::publishab
   {"SPEED_50", "50"},
   {"SPEED_80", "80"},
   {"STOP", "stop"},
-  {"CROSSWALK", "crosswalk"}
+  {"CROSSWALK", "crosswalk"},
+  {"YIELD", "yield"}
 };
 
 // TrafficSignHandler implementation

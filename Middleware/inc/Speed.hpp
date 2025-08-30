@@ -54,6 +54,9 @@ private:
     // Pulse tracking
     uint16_t last_pulse_delta = 0;
     uint32_t total_pulses = 0;
+
+    // Odometer precision tracking
+    double accumulated_distance_m = 0.0;
 };
 
 #endif

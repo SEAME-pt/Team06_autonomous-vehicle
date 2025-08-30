@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/zmq_publisher_test.dir/ZmqPublisherTest.cpp.o -o zmq_publisher_test  ../lib/libgtest.a ../lib/libgtest_main.a ../libmiddleware.a ../zmq/libZeroMQLib.a -lpthread ../lib/libgtest.a -lpthread -lzmq 

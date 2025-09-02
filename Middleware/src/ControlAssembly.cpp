@@ -19,11 +19,6 @@ ControlAssembly::ControlAssembly(const std::string &address,
   _autonomousSubscriber = std::make_unique<ZmqSubscriber>(autonomous_address, context);
   std::cout << "Autonomous control subscriber initialized with address: " << autonomous_address << std::endl;
 
-  // Initialize emergency brake subscriber
-  const std::string emergency_brake_address = "tcp://127.0.0.1:5561";
-  _emergencyBrakeSubscriber = std::make_unique<ZmqSubscriber>(emergency_brake_address, context);
-  std::cout << "Emergency brake subscriber initialized with address: " << emergency_brake_address << std::endl;
-
   // Initialize motors and servo
   try {
     _backMotors->open_i2c_bus();
@@ -69,12 +64,16 @@ void ControlAssembly::setSpeedDataAccessor(std::function<std::shared_ptr<SensorD
   std::cout << "Speed data accessor set for intelligent emergency braking" << std::endl;
 }
 
+void ControlAssembly::setEmergencyBrakeCallback(std::function<void(bool)> callback) {
+  emergency_brake_callback = callback;
+  std::cout << "Emergency brake callback set for ControlAssembly" << std::endl;
+}
+
 void ControlAssembly::start() {
   std::cout << "Starting ControlAssembly message receiver threads" << std::endl;
   stop_flag = false;
   _listenerThread = std::thread(&ControlAssembly::receiveMessages, this);
   _autonomousListenerThread = std::thread(&ControlAssembly::receiveAutonomousMessages, this);
-  _emergencyBrakeListenerThread = std::thread(&ControlAssembly::receiveEmergencyBrakeMessages, this);
 }
 
 void ControlAssembly::stop() {
@@ -87,10 +86,6 @@ void ControlAssembly::stop() {
     if (_autonomousListenerThread.joinable()) {
       _autonomousListenerThread.join();
       std::cout << "Autonomous control receiver thread joined" << std::endl;
-    }
-    if (_emergencyBrakeListenerThread.joinable()) {
-      _emergencyBrakeListenerThread.join();
-      std::cout << "Emergency brake receiver thread joined" << std::endl;
     }
   }
 }
@@ -140,27 +135,7 @@ void ControlAssembly::handleMessage(const std::string &message) {
     return;
   }
 
-  // Handle emergency brake commands with highest priority
-  if (values.find("emergency_brake") != values.end()) {
-    bool emergency_brake = (values["emergency_brake"] != 0.0);
-    bool was_active = emergency_brake_active.exchange(emergency_brake);
-
-    if (was_active != emergency_brake) {
-      if (emergency_brake) {
-        std::cout << "EMERGENCY BRAKE ACTIVATED - Intelligent braking engaged!" << std::endl;
-        performEmergencyBraking(); // Use intelligent braking
-        _logger.logControlUpdate("emergency_brake_activated", 0, 0);
-      } else {
-        std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
-        is_braking.store(false);
-        _backMotors->setSpeed(0); // Ensure we stop when deactivating
-        _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
-      }
-    }
-    return; // Emergency brake commands are handled immediately and exclusively
-  }
-
-  // Handle AUTO mode toggle commands with second priority
+  // Handle AUTO mode toggle commands with highest priority
   if (values.find("auto_mode") != values.end()) {
     bool new_auto_mode = (values["auto_mode"] != 0.0);
     bool was_auto_active = auto_mode_active.exchange(new_auto_mode);
@@ -311,87 +286,54 @@ void ControlAssembly::sendModeStatus(bool auto_mode_active) {
   }
 }
 
-void ControlAssembly::receiveEmergencyBrakeMessages() {
-  std::cout << "Emergency brake receiver thread started" << std::endl;
-  while (!stop_flag) {
-    std::string message = _emergencyBrakeSubscriber->receive();
+void ControlAssembly::handleEmergencyBrake(bool emergency_active) {
+  bool was_active = emergency_brake_active.exchange(emergency_active);
 
-    if (!message.empty()) {
-      // Minimal logging for emergency brake - speed is critical
-      handleEmergencyBrakeMessage(message);
-    }
-
-    // Continuous intelligent braking if emergency brake is active
-    if (emergency_brake_active.load()) {
-      performEmergencyBraking();
-    }
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Ultra-fast polling for emergency brake
-  }
-  std::cout << "Emergency brake receiver thread stopping" << std::endl;
-}
-
-void ControlAssembly::handleEmergencyBrakeMessage(const std::string &message) {
-  std::unordered_map<std::string, double> values;
-  std::stringstream ss(message);
-  std::string token;
-
-  while (std::getline(ss, token, ';')) {
-    if (token.empty())
-      continue;
-
-    std::string key;
-    double value;
-    std::stringstream ss_token(token);
-    std::getline(ss_token, key, ':');
-    ss_token >> value;
-    values[key] = value;
-  }
-
-  // Handle emergency brake commands with highest priority
-  if (values.find("emergency_brake") != values.end()) {
-    bool emergency_brake = (values["emergency_brake"] != 0.0);
-    bool was_active = emergency_brake_active.exchange(emergency_brake);
-
-    if (was_active != emergency_brake) {
-      if (emergency_brake) {
-        std::cout << "EMERGENCY BRAKE ACTIVATED - Intelligent braking engaged!" << std::endl;
-        performEmergencyBraking(); // Use intelligent braking
-        _logger.logControlUpdate("emergency_brake_activated", 0, 0);
-      } else {
-        std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
-        is_braking.store(false);
-        _backMotors->setSpeed(0); // Ensure we stop when deactivating
-        _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
-      }
+  if (was_active != emergency_active) {
+    if (emergency_active) {
+      std::cout << "EMERGENCY BRAKE ACTIVATED - Intelligent braking engaged!" << std::endl;
+      performEmergencyBraking(); // Use intelligent braking
+      _logger.logControlUpdate("emergency_brake_activated", 0, 0);
+    } else {
+      std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
+      is_braking.store(false);
+      _backMotors->setSpeed(0); // Ensure we stop when deactivating
+      _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
     }
   }
 }
+
+// void ControlAssembly::performEmergencyBraking() {
+//   // Get current speed for intelligent braking
+//   uint32_t current_speed_mms = 0; // Speed in mm/s
+//   if (speed_data_accessor) {
+//     auto speed_data = speed_data_accessor();
+//     if (speed_data) {
+//       current_speed_mms = speed_data->value.load();
+//     }
+//   }
+
+//   // Convert mm/s to a rough equivalent for motor control
+//   // Assuming motor speed range is roughly -100 to +100
+//   // and current speed indicates forward motion
+//   if (current_speed_mms > 10) { // Vehicle is moving forward (>10 mm/s ~=
+//   0.036 km/h)
+//     // Apply strong reverse braking until stopped
+//     std::cout << "EMERGENCY BRAKING: Applying reverse force (-100) to stop
+//     vehicle (current speed: "
+//               << current_speed_mms << " mm/s)" << std::endl;
+//     _backMotors->setSpeed(-100);
+//     is_braking.store(true);
+//   } else {
+//     // Vehicle is stopped or moving very slowly, just set to 0
+//     std::cout << "EMERGENCY BRAKING: Vehicle stopped, setting speed to 0
+//     (current speed: "
+//               << current_speed_mms << " mm/s)" << std::endl;
+//     _backMotors->setSpeed(0);
+//     is_braking.store(false);
+//   }
+// }
 
 void ControlAssembly::performEmergencyBraking() {
-  // Get current speed for intelligent braking
-  uint32_t current_speed_mms = 0; // Speed in mm/s
-  if (speed_data_accessor) {
-    auto speed_data = speed_data_accessor();
-    if (speed_data) {
-      current_speed_mms = speed_data->value.load();
-    }
+  _backMotors->emergencyBrake();
   }
-
-  // Convert mm/s to a rough equivalent for motor control
-  // Assuming motor speed range is roughly -100 to +100
-  // and current speed indicates forward motion
-  if (current_speed_mms > 10) { // Vehicle is moving forward (>10 mm/s ~= 0.036 km/h)
-    // Apply strong reverse braking until stopped
-    std::cout << "EMERGENCY BRAKING: Applying reverse force (-100) to stop vehicle (current speed: "
-              << current_speed_mms << " mm/s)" << std::endl;
-    _backMotors->setSpeed(-100);
-    is_braking.store(true);
-  } else {
-    // Vehicle is stopped or moving very slowly, just set to 0
-    std::cout << "EMERGENCY BRAKING: Vehicle stopped, setting speed to 0 (current speed: "
-              << current_speed_mms << " mm/s)" << std::endl;
-    _backMotors->setSpeed(0);
-    is_braking.store(false);
-  }
-}

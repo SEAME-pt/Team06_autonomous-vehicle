@@ -56,18 +56,11 @@ void SensorHandler::addSensors() {
   _sensors["speed"] = speed_sensor;
   _sensors["distance"] = distance_sensor;
 
-  // Set up speed data accessor for distance sensor collision detection
-  distance_sensor->setSpeedDataAccessor([speed_sensor]() -> std::shared_ptr<SensorData> {
-    auto speed_data_map = speed_sensor->getSensorData();
-    auto it = speed_data_map.find("speed");
-    return (it != speed_data_map.end()) ? it->second : nullptr;
-  });
-
     // Set up emergency brake publisher for distance sensor
   // Create a ZMQ publisher for emergency brake commands to ControlAssembly
   // Use a dedicated port to avoid conflicts with manual control messages
-  auto emergency_brake_publisher = std::make_shared<ZmqPublisher>("tcp://127.0.0.1:5561", zmq_context);
-  distance_sensor->setEmergencyBrakePublisher(emergency_brake_publisher);
+//   auto emergency_brake_publisher = std::make_shared<ZmqPublisher>("tcp://127.0.0.1:5561", zmq_context);
+//   distance_sensor->setEmergencyBrakePublisher(emergency_brake_publisher);
 
   // Start CAN sensors (this subscribes them to the bus)
   speed_sensor->start();

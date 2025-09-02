@@ -39,14 +39,6 @@ void ControlTransmitter::startTransmitting() {
       _zmq_publisher.send("throttle:0;steering:0;");
     }
 
-    // Add dedicated emergency brake button (A button)
-    bool brake_button_pressed = _controller.getButton(A_BUTTON);
-    if (brake_button_pressed) {
-      _emergency_brake_active = true;
-    } else {
-      _emergency_brake_active = false; // Release brake when button is released
-    }
-
     // Handle Y button toggle for auto mode (always works regardless of auto mode state)
     bool send_auto_mode = false;
     {
@@ -77,9 +69,7 @@ void ControlTransmitter::startTransmitting() {
     }
 
     // Apply much more gradual deceleration when no input
-    if (!_emergency_brake_active) {
-      _acceleration *= 0.98; // Changed from 0.95 to 0.98 for much more gradual natural deceleration
-    }
+    _acceleration *= 0.98; // Changed from 0.95 to 0.98 for much more gradual natural deceleration
 
     if (std::abs(_turn) < 0.1) {
       _turn = 0;
@@ -89,8 +79,8 @@ void ControlTransmitter::startTransmitting() {
 
     float force = _controller.getAxis(3); // eixo Y do analógico direito
 
-    // Only process normal throttle input if emergency brake is NOT active
-    if (force != 0 && !_emergency_brake_active) {
+    // Process normal throttle input
+    if (force != 0) {
       // Direct scaling: joystick input (-1.0 to 1.0) -> throttle (-100 to +100)
       // With acceleration factor for responsiveness
       // INVERTED: Negate force to fix control direction
@@ -114,14 +104,6 @@ void ControlTransmitter::startTransmitting() {
       _acceleration = std::max(-100.0f, std::min(_acceleration, 100.0f)); // Restored to full ±100 range
 
       std::cout << "Final throttle: " << _acceleration << std::endl;
-    } else if (_emergency_brake_active) {
-      std::cout << "Emergency brake active - overriding throttle input" << std::endl;
-    }
-
-    // EMERGENCY BRAKE OVERRIDE - This must come AFTER throttle processing to ensure it always works
-    if (_emergency_brake_active) {
-      std::cout << "A button pressed, emergency braking! Overriding all throttle inputs." << std::endl;
-      _acceleration = -100.0f; // Full reverse braking for maximum stopping power
     }
 
     std::string throttleMsg = "throttle:" + std::to_string(_acceleration) + ";";

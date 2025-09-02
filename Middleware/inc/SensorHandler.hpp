@@ -68,7 +68,7 @@ private:
 
   static constexpr int critical_update_interval_ms = 50;
   static constexpr int non_critical_update_interval_ms = 200;
-  static constexpr int sensor_read_interval_ms = 100;
+  static constexpr int sensor_read_interval_ms = 50;
 };
 
 #endif

@@ -135,6 +135,18 @@ void BackMotors::setSpeed(int speed) {
     }
 }
 
+void BackMotors::emergencyBrake() {
+    try {
+        // Set all PWM channels to maximum (4095) to lock the motors
+        for (int channel = 0; channel < 16; ++channel) {
+            setMotorPwm(channel, 4095);
+        }
+        std::cout << "Emergency brake activated - all motors locked!" << std::endl;
+    } catch (const std::exception &e) {
+        std::cerr << "Error in emergency brake: " << e.what() << std::endl;
+    }
+}
+
 void BackMotors::writeByteData(int fd, uint8_t reg, uint8_t value) {
   uint8_t buffer[2] = {reg, value};
   if (write(fd, buffer, 2) != 2) {

@@ -27,15 +27,9 @@ Distance::getSensorData() const {
   return _sensorData;
 }
 
-void Distance::setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor) {
-    // No longer needed with simplified distance-only logic
-    // speed_data_accessor = accessor;
-    std::cout << "Speed data accessor setting ignored - using simplified distance-only logic" << std::endl;
-}
-
-void Distance::setEmergencyBrakePublisher(std::shared_ptr<IPublisher> publisher) {
-    emergency_brake_publisher = publisher;
-    std::cout << "Emergency brake publisher set for Distance sensor" << std::endl;
+void Distance::setEmergencyBrakeCallback(std::function<void(bool)> callback) {
+    emergency_brake_callback = callback;
+    std::cout << "Emergency brake callback set for Distance sensor" << std::endl;
 }
 
 void Distance::start() {
@@ -99,22 +93,20 @@ void Distance::readSensor() {
     new_data_available.store(false);
 }
 
-void Distance::publishEmergencyBrake(bool emergency_active) {
-    if (!emergency_brake_publisher) {
-        return; // No publisher available
+void Distance::triggerEmergencyBrake(bool emergency_active) {
+    if (!emergency_brake_callback) {
+        return; // No callback available
     }
 
     bool was_active = emergency_brake_active.exchange(emergency_active);
 
-    // Only publish if state changed
+    // Only trigger if state changed
     if (was_active != emergency_active) {
-        std::string command = emergency_active ? "emergency_brake:1;" : "emergency_brake:0;";
-
         try {
-            emergency_brake_publisher->send(command);
-            std::cout << "Published emergency brake command: " << command << std::endl;
+            emergency_brake_callback(emergency_active);
+            std::cout << "Triggered emergency brake callback: " << (emergency_active ? "ACTIVATED" : "DEACTIVATED") << std::endl;
         } catch (const std::exception& e) {
-            std::cerr << "Error publishing emergency brake command: " << e.what() << std::endl;
+            std::cerr << "Error in emergency brake callback: " << e.what() << std::endl;
         }
     }
 }
@@ -125,16 +117,13 @@ void Distance::calculateCollisionRisk() {
 
     int new_risk_level = 0; // Default: safe
 
-    // Debug output for troubleshooting
-    std::cout << "DEBUG: distance=" << distance_cm << "cm" << std::endl;
-
     // Simple distance-based collision risk assessment
     if (distance_cm > 0 && distance_cm <= MAX_DISTANCE_CM) {
-        if (distance_cm < 15) {
+        if (distance_cm < 30) {
             // Emergency: Very close proximity
             new_risk_level = 2;
             std::cout << "EMERGENCY: Very close proximity! Distance: " << distance_cm << "cm" << std::endl;
-        } else if (distance_cm < 30) {
+        } else if (distance_cm < 50) {
             // Warning: Close proximity
             new_risk_level = 1;
             std::cout << "WARNING: Close proximity! Distance: " << distance_cm << "cm" << std::endl;
@@ -149,7 +138,7 @@ void Distance::calculateCollisionRisk() {
 
     // Handle emergency braking
     bool should_emergency_brake = (new_risk_level == 2);
-    publishEmergencyBrake(should_emergency_brake);
+    triggerEmergencyBrake(should_emergency_brake);
 
     std::lock_guard<std::mutex> lock(data_mutex);
     auto old_obs = _sensorData["obs"]->value.load();

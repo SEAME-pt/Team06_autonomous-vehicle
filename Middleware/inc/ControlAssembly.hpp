@@ -34,6 +34,9 @@ public:
   // Set speed data accessor for intelligent emergency braking
   void setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
 
+  // Set emergency brake callback for direct communication with Distance sensor
+  void setEmergencyBrakeCallback(std::function<void(bool)> callback);
+
   ZmqSubscriber zmq_subscriber;
 
 private:
@@ -41,14 +44,12 @@ private:
   void handleMessage(const std::string &message);
   void receiveAutonomousMessages();
   void handleAutonomousMessage(const std::string &message);
-  void receiveEmergencyBrakeMessages();
-  void handleEmergencyBrakeMessage(const std::string &message);
   void sendModeStatus(bool auto_mode_active);
   void performEmergencyBraking(); // Intelligent emergency braking method
+  void handleEmergencyBrake(bool emergency_active); // Handle emergency brake from callback
 
   std::thread _listenerThread;
   std::thread _autonomousListenerThread;
-  std::thread _emergencyBrakeListenerThread;
   std::atomic<bool> stop_flag;
   std::atomic<bool> emergency_brake_active;
   std::atomic<bool> auto_mode_active;
@@ -57,9 +58,11 @@ private:
   // Speed data accessor for intelligent braking
   std::function<std::shared_ptr<SensorData>()> speed_data_accessor;
 
+  // Emergency brake callback for direct communication
+  std::function<void(bool)> emergency_brake_callback;
+
   // ZMQ components
   std::unique_ptr<ZmqSubscriber> _autonomousSubscriber;
-  std::unique_ptr<ZmqSubscriber> _emergencyBrakeSubscriber;
   std::shared_ptr<ZmqPublisher> _clusterPublisher;
   zmq::context_t &_context;
 

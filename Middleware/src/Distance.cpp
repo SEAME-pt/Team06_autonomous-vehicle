@@ -95,6 +95,7 @@ void Distance::readSensor() {
 
 void Distance::triggerEmergencyBrake(bool emergency_active) {
     if (!emergency_brake_callback) {
+        std::cout << "No emergency brake callback available" << std::endl;
         return; // No callback available
     }
 
@@ -119,11 +120,11 @@ void Distance::calculateCollisionRisk() {
 
     // Simple distance-based collision risk assessment
     if (distance_cm > 0 && distance_cm <= MAX_DISTANCE_CM) {
-        if (distance_cm < 30) {
+        if (distance_cm < 20) {
             // Emergency: Very close proximity
             new_risk_level = 2;
             std::cout << "EMERGENCY: Very close proximity! Distance: " << distance_cm << "cm" << std::endl;
-        } else if (distance_cm < 50) {
+        } else if (distance_cm < 40) {
             // Warning: Close proximity
             new_risk_level = 1;
             std::cout << "WARNING: Close proximity! Distance: " << distance_cm << "cm" << std::endl;

@@ -6,7 +6,7 @@ ControlAssembly::ControlAssembly(const std::string &address,
                                  std::shared_ptr<IFServo> fServo,
                                  std::shared_ptr<ZmqPublisher> clusterPublisher)
     : zmq_subscriber(address, context), stop_flag(false), emergency_brake_active(false),
-      auto_mode_active(false), is_braking(false), _context(context),
+      auto_mode_active(false), _context(context),
       _backMotors(backMotors ? backMotors : std::make_shared<BackMotors>()),
       _fServo(fServo ? fServo : std::make_shared<FServo>()),
       _clusterPublisher(clusterPublisher),
@@ -169,14 +169,37 @@ void ControlAssembly::handleMessage(const std::string &message) {
       _fServo->set_steering(static_cast<int>(steering));
     }
 
-    // Apply throttle if present in the message, but only if emergency brake is NOT active
+    // Apply throttle if present in the message
     if (values.find("throttle") != values.end()) {
       throttle = values["throttle"];
 
       if (emergency_brake_active.load()) {
-        std::cout << "Emergency brake active - applying intelligent braking instead of throttle: " << throttle << std::endl;
-        performEmergencyBraking(); // Use intelligent braking instead of just setting to 0
-        throttle = 0; // Log as 0 for consistency
+        if (throttle < 0) {
+          // Check current speed before allowing reverse during emergency brake
+          uint32_t current_speed_mms = 0; // Speed in mm/s
+          if (speed_data_accessor) {
+            auto speed_data = speed_data_accessor();
+            if (speed_data) {
+              current_speed_mms = speed_data->value.load();
+            }
+          }
+
+          if (current_speed_mms == 0) {
+            // Vehicle is stopped, allow reverse to back away from obstruction
+            std::cout << "Emergency brake active - vehicle stopped (speed: " << current_speed_mms << " mm/s), allowing reverse throttle: " << throttle << std::endl;
+            _backMotors->setSpeed(throttle);
+          } else {
+            // Vehicle still moving, block reverse and continue emergency braking
+            std::cout << "Emergency brake active - vehicle still moving (speed: " << current_speed_mms << " mm/s), blocking reverse throttle: " << throttle << ", continuing emergency braking" << std::endl;
+            performEmergencyBraking();
+            throttle = 0; // Log as 0 for consistency
+          }
+        } else {
+          // Block positive throttle during emergency brake
+          std::cout << "Emergency brake active - blocking positive throttle: " << throttle << ", applying intelligent braking instead" << std::endl;
+          performEmergencyBraking(); // Use intelligent braking instead of positive throttle
+          throttle = 0; // Log as 0 for consistency
+        }
       } else {
         std::cout << "Setting throttle to: " << throttle << std::endl;
         _backMotors->setSpeed(throttle);
@@ -246,13 +269,14 @@ void ControlAssembly::handleAutonomousMessage(const std::string &message) {
     _fServo->set_steering(static_cast<int>(steering));
   }
 
-  // Apply autonomous throttle, but only if emergency brake is NOT active
+  // Apply autonomous throttle
   if (values.find("throttle") != values.end()) {
     throttle = values["throttle"];
 
     if (emergency_brake_active.load()) {
-      std::cout << "Emergency brake active - applying intelligent braking instead of autonomous throttle: " << throttle << std::endl;
-      performEmergencyBraking(); // Use intelligent braking instead of just setting to 0
+      // Block all throttle during emergency brake in autonomous mode
+      std::cout << "Emergency brake active - blocking all autonomous throttle: " << throttle << ", applying intelligent braking instead" << std::endl;
+      performEmergencyBraking(); // Use intelligent braking instead of any throttle
       throttle = 0; // Log as 0 for consistency
     } else {
       std::cout << "Setting autonomous throttle to: " << throttle << std::endl;
@@ -296,7 +320,6 @@ void ControlAssembly::handleEmergencyBrake(bool emergency_active) {
       _logger.logControlUpdate("emergency_brake_activated", 0, 0);
     } else {
       std::cout << "Emergency brake deactivated - Normal control resumed" << std::endl;
-      is_braking.store(false);
       _backMotors->setSpeed(0); // Ensure we stop when deactivating
       _logger.logControlUpdate("emergency_brake_deactivated", 0, 0);
     }
@@ -323,18 +346,15 @@ void ControlAssembly::handleEmergencyBrake(bool emergency_active) {
 //     vehicle (current speed: "
 //               << current_speed_mms << " mm/s)" << std::endl;
 //     _backMotors->setSpeed(-100);
-//     is_braking.store(true);
 //   } else {
 //     // Vehicle is stopped or moving very slowly, just set to 0
 //     std::cout << "EMERGENCY BRAKING: Vehicle stopped, setting speed to 0
 //     (current speed: "
 //               << current_speed_mms << " mm/s)" << std::endl;
 //     _backMotors->setSpeed(0);
-//     is_braking.store(false);
 //   }
 // }
 
 void ControlAssembly::performEmergencyBraking() {
-  std::cout << "Performing emergency braking -----------------------------" << std::endl;
   _backMotors->emergencyBrake();
   }

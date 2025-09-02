@@ -55,7 +55,6 @@ private:
   std::atomic<bool> stop_flag;
   std::atomic<bool> emergency_brake_active;
   std::atomic<bool> auto_mode_active;
-  std::atomic<bool> is_braking; // Track if we're actively braking
 
   // Speed data accessor for intelligent braking
   std::function<std::shared_ptr<SensorData>()> speed_data_accessor;

@@ -37,6 +37,9 @@ public:
   // Set emergency brake callback for direct communication with Distance sensor
   void setEmergencyBrakeCallback(std::function<void(bool)> callback);
 
+  // Handle emergency brake from callback (public so it can be called from Distance sensor)
+  void handleEmergencyBrake(bool emergency_active);
+
   ZmqSubscriber zmq_subscriber;
 
 private:
@@ -46,7 +49,6 @@ private:
   void handleAutonomousMessage(const std::string &message);
   void sendModeStatus(bool auto_mode_active);
   void performEmergencyBraking(); // Intelligent emergency braking method
-  void handleEmergencyBrake(bool emergency_active); // Handle emergency brake from callback
 
   std::thread _listenerThread;
   std::thread _autonomousListenerThread;

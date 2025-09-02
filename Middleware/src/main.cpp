@@ -57,8 +57,8 @@ int main() {
         "tcp://127.0.0.1:5558"; // lane keeping assistance system addr
     const std::string zmq_traffic_sign_address =
         "tcp://127.0.0.1:5559"; // traffic sign detection system addr
-    const std::string zmq_emergency_brake_address =
-        "tcp://127.0.0.1:5561"; // emergency brake addr
+    // const std::string zmq_emergency_brake_address =
+    //     "tcp://127.0.0.1:5561"; // emergency brake addr
 
     // Initialize ZMQ context
     zmq::context_t zmq_context(1);
@@ -87,6 +87,21 @@ int main() {
     // Share the non-critical publisher with other handlers
     traffic_sign_handler = std::make_unique<TrafficSignHandler>(
         zmq_traffic_sign_address, zmq_context, nc_publisher, false); // Production mode
+
+    // Wire emergency brake callback from Distance sensor to ControlAssembly
+    std::cout << "Wiring emergency brake callback..." << std::endl;
+    auto sensors = sensor_handler->getSensors();
+    auto distance_sensor = std::dynamic_pointer_cast<Distance>(sensors["distance"]);
+    if (distance_sensor) {
+        distance_sensor->setEmergencyBrakeCallback(
+            [control_assembly = control_assembly.get()](bool emergency_active) {
+                control_assembly->handleEmergencyBrake(emergency_active);
+            }
+        );
+        std::cout << "Emergency brake callback wired successfully" << std::endl;
+    } else {
+        std::cerr << "Warning: Distance sensor not found, emergency brake callback not wired" << std::endl;
+    }
 
     // Start components
     std::cout << "Starting sensor handler..." << std::endl;

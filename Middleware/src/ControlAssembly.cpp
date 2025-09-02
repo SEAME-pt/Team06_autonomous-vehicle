@@ -335,5 +335,6 @@ void ControlAssembly::handleEmergencyBrake(bool emergency_active) {
 // }
 
 void ControlAssembly::performEmergencyBraking() {
+  std::cout << "Performing emergency braking -----------------------------" << std::endl;
   _backMotors->emergencyBrake();
   }

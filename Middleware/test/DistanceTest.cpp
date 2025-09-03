@@ -319,8 +319,8 @@ TEST_F(DistanceTest, SpeedBasedThresholds_SafeAtHighSpeed) {
         this->emergencyBrakeCallback(active);
     });
 
-    // Test with 70cm distance - should be safe at high speed (threshold: 75cm)
-    uint8_t test_data[8] = {70, 0, 0, 0, 0, 0, 0, 0}; // 70 cm
+    // Test with 80cm distance - should be safe at high speed (threshold: 75cm)
+    uint8_t test_data[8] = {80, 0, 0, 0, 0, 0, 0, 0}; // 80 cm
     CanMessage test_message(0x101, test_data, 8);
 
     auto& bus = CanMessageBus::getInstance();

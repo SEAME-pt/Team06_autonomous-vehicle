@@ -30,10 +30,6 @@ void Distance::setEmergencyBrakeCallback(std::function<void(bool)> callback) {
             << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
-
-
-
-
 void Distance::start() {
   if (!subscribed.load()) {
     auto &bus = CanMessageBus::getInstance();

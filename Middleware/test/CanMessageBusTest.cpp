@@ -138,7 +138,7 @@ TEST_F(CanMessageBusTest, SensorUnsubscriptionWorks) {
     distance_sensor->stop();
 
     // Send another message
-    uint8_t test_data2[8] = {300, 1, 0, 0, 0, 0, 0, 0}; // 300 + 256 = 556 cm
+    uint8_t test_data2[8] = {44, 2, 0, 0, 0, 0, 0, 0}; // 556 cm (0x022C little endian)
     CanMessage test_message2(0x101, test_data2, 8);
     bus.injectTestMessage(test_message2);
 

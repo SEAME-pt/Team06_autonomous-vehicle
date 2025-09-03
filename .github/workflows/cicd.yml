@@ -106,13 +106,21 @@ jobs:
             -w /repo \
             jmoreiraseame/jetson-nano-ubuntu:bionic \
             /bin/bash -c "
-            # Install lcov if not available
-            apt-get update && apt-get install -y lcov || true
+            # Install required packages
+            apt-get update && apt-get install -y lcov bc || true
             # Check coverage percentage
             if [ -f coverage/coverage.info ]; then
-              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*%' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/')
+              # Extract coverage percentage from lcov summary
+              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*%' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/' | head -n1)
               echo \"Current coverage: \${COVERAGE_PERCENT}%\"
-              if (( \$(echo \"\$COVERAGE_PERCENT < 80\" | bc -l) )); then
+              # Check if we got a valid number
+              if [ -z \"\$COVERAGE_PERCENT\" ] || [ \"\$COVERAGE_PERCENT\" = \"\" ]; then
+                echo \"::error::Could not extract coverage percentage from report\"
+                lcov --summary coverage/coverage.info
+                exit 1
+              fi
+              # Use awk for floating point comparison (more reliable than bc)
+              if awk \"BEGIN {exit !(\$COVERAGE_PERCENT < 80)}\"; then
                 echo \"::error::Coverage is \${COVERAGE_PERCENT}%, but minimum required is 80%\"
                 exit 1
               else

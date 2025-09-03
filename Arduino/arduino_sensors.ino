@@ -15,7 +15,7 @@ mcp2515_can CAN(SPI_CS_PIN);
 
 // Speed sensor definitions
 const int ENCODER_PIN = 3;
-const unsigned long measurementInterval = 500; // Measurement interval in milliseconds (0.5s)
+const unsigned long measurementInterval = 50; // Measurement interval in milliseconds (0.5s)
 
 // Speed measurement variables (based on working code)
 volatile unsigned int interruptCount = 0; // Counter for interrupts
@@ -28,7 +28,7 @@ volatile unsigned long totalPulses = 0; // Total pulses since startup
 #define SRF08_ADDRESS 0x70
 unsigned int distance = 100; // Initialize with reasonable default (100cm)
 unsigned long lastSRF08Update = 0;
-const unsigned long SRF08_UPDATE_INTERVAL = 500;
+const unsigned long SRF08_UPDATE_INTERVAL = 50;
 
 // SRF08 non-blocking state machine
 enum SRF08_State {

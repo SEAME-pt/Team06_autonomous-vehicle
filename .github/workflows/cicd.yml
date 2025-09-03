@@ -111,7 +111,11 @@ jobs:
             # Check coverage percentage
             if [ -f coverage/coverage.info ]; then
               # Extract coverage percentage from lcov summary
-              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*%' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/' | head -n1)
+              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*:' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/' | head -n1)
+              # Alternative extraction method if the first one fails
+              if [ -z \"\$COVERAGE_PERCENT\" ]; then
+                COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines' | grep -o '[0-9.]*%' | sed 's/%//' | head -n1)
+              fi
               echo \"Current coverage: \${COVERAGE_PERCENT}%\"
               # Check if we got a valid number
               if [ -z \"\$COVERAGE_PERCENT\" ] || [ \"\$COVERAGE_PERCENT\" = \"\" ]; then

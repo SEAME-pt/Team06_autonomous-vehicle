@@ -77,9 +77,9 @@ void ControlLogger::logControlUpdate(const std::string &command,
       return;
     }
 
-    log_file << getTimestamp() << " - " << "Command: " << command
-             << ", Steering: " << steering << ", Throttle: " << throttle
-             << std::endl
+    log_file << getTimestamp() << " - "
+             << "Command: " << command << ", Steering: " << steering
+             << ", Throttle: " << throttle << std::endl
              << std::flush;
 
     // Debug output

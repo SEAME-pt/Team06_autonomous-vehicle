@@ -30,7 +30,8 @@ void Distance::setEmergencyBrakeCallback(std::function<void(bool)> callback) {
             << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
-void Distance::setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor) {
+void Distance::setSpeedDataAccessor(
+    std::function<std::shared_ptr<SensorData>()> accessor) {
   speed_data_accessor = accessor;
   std::cout << "Speed data accessor set for Distance sensor"
             << std::endl; // LCOV_EXCL_LINE - Debug logging
@@ -171,19 +172,22 @@ void Distance::calculateCollisionRisk(bool has_new_data) {
       // Emergency: Very close proximity (adjusted for speed)
       new_risk_level = 2;
       std::cout << "EMERGENCY: Very close proximity! Distance: " << distance_cm
-                << "cm (threshold: " << emergency_threshold_cm << "cm, speed multiplier: "
-                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
+                << "cm (threshold: " << emergency_threshold_cm
+                << "cm, speed multiplier: " << speed_multiplier << ")"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
     } else if (distance_cm < warning_threshold_cm) {
       // Warning: Close proximity (adjusted for speed)
       new_risk_level = 1;
       std::cout << "WARNING: Close proximity! Distance: " << distance_cm << "cm"
-                << " (threshold: " << warning_threshold_cm << "cm, speed multiplier: "
-                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
+                << " (threshold: " << warning_threshold_cm
+                << "cm, speed multiplier: " << speed_multiplier << ")"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
     } else {
       // Safe: Adequate distance
       std::cout << "Safe distance: " << distance_cm << "cm"
-                << " (threshold: " << warning_threshold_cm << "cm, speed multiplier: "
-                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
+                << " (threshold: " << warning_threshold_cm
+                << "cm, speed multiplier: " << speed_multiplier << ")"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
     }
   }
 

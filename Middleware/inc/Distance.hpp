@@ -33,11 +33,14 @@ public:
   void setEmergencyBrakeCallback(std::function<void(bool)> callback);
 
   // Set speed data accessor for speed-based distance thresholds
-  // The Distance sensor uses speed data to dynamically adjust collision detection thresholds:
-  // - Emergency distance: 20cm at low speeds (≤800mm/s) to 75cm at high speeds (≥2500mm/s)
+  // The Distance sensor uses speed data to dynamically adjust collision
+  // detection thresholds:
+  // - Emergency distance: 20cm at low speeds (≤800mm/s) to 75cm at high speeds
+  // (≥2500mm/s)
   // - Warning distance: 40cm at low speeds to 150cm at high speeds
   // - Linear interpolation between speed ranges for smooth transitions
-  void setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
+  void
+  setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
 
 private:
   void readSensor() override;

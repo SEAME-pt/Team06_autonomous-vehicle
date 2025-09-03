@@ -30,6 +30,37 @@ void Distance::setEmergencyBrakeCallback(std::function<void(bool)> callback) {
             << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
+void Distance::setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor) {
+  speed_data_accessor = accessor;
+  std::cout << "Speed data accessor set for Distance sensor"
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
+}
+
+double Distance::calculateSpeedMultiplier() const {
+  // Get current speed in mm/s
+  uint32_t current_speed_mms = 0;
+  if (speed_data_accessor) {
+    auto speed_data = speed_data_accessor();
+    if (speed_data) {
+      current_speed_mms = speed_data->value.load();
+    }
+  }
+
+  // Emergency distance: 20cm at 800mm/s and below, 75cm at 2500mm/s and higher
+  // Warning distance: 40cm at 800mm/s and below, 150cm at 2500mm/s and higher
+  // Calculate multiplier based on speed
+  if (current_speed_mms <= 800) {
+    return 1.0; // No multiplier needed for speeds up to 800 mm/s
+  } else if (current_speed_mms >= 2500) {
+    return 3.75; // Maximum multiplier for top speed (75/20 = 3.75)
+  } else {
+    // Linear interpolation between 1.0 and 3.75
+    // multiplier = 1.0 + (speed - 800) * (3.75 - 1.0) / (2500 - 800)
+    // multiplier = 1.0 + (speed - 800) * 2.75 / 1700
+    return 1.0 + (current_speed_mms - 800) * 2.75 / 1700.0;
+  }
+}
+
 void Distance::start() {
   if (!subscribed.load()) {
     auto &bus = CanMessageBus::getInstance();
@@ -126,22 +157,33 @@ void Distance::calculateCollisionRisk(bool has_new_data) {
 
   int new_risk_level = 0; // Default: safe
 
-  // Simple distance-based collision risk assessment
+  // Calculate speed-based multiplier for distance thresholds
+  double speed_multiplier = calculateSpeedMultiplier();
+
+  // Base thresholds: 20cm emergency, 40cm warning
+  // Apply speed multiplier to increase thresholds at higher speeds
+  double emergency_threshold_cm = 20.0 * speed_multiplier;
+  double warning_threshold_cm = 40.0 * speed_multiplier;
+
+  // Speed-based distance threshold collision risk assessment
   if (distance_cm > 0 && distance_cm <= MAX_DISTANCE_CM) {
-    if (distance_cm < 20) {
-      // Emergency: Very close proximity
+    if (distance_cm < emergency_threshold_cm) {
+      // Emergency: Very close proximity (adjusted for speed)
       new_risk_level = 2;
       std::cout << "EMERGENCY: Very close proximity! Distance: " << distance_cm
-                << "cm" << std::endl; // LCOV_EXCL_LINE - Debug logging
-    } else if (distance_cm < 40) {
-      // Warning: Close proximity
+                << "cm (threshold: " << emergency_threshold_cm << "cm, speed multiplier: "
+                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
+    } else if (distance_cm < warning_threshold_cm) {
+      // Warning: Close proximity (adjusted for speed)
       new_risk_level = 1;
       std::cout << "WARNING: Close proximity! Distance: " << distance_cm << "cm"
-                << std::endl; // LCOV_EXCL_LINE - Debug logging
+                << " (threshold: " << warning_threshold_cm << "cm, speed multiplier: "
+                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
     } else {
       // Safe: Adequate distance
       std::cout << "Safe distance: " << distance_cm << "cm"
-                << std::endl; // LCOV_EXCL_LINE - Debug logging
+                << " (threshold: " << warning_threshold_cm << "cm, speed multiplier: "
+                << speed_multiplier << ")" << std::endl; // LCOV_EXCL_LINE - Debug logging
     }
   }
 

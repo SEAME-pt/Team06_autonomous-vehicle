@@ -21,7 +21,7 @@ on:
   push:
     branches:
       - dev
-      - testing
+      - eb2
 
 jobs:
   # Lint job: Runs code quality checks

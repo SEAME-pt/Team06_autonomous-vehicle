@@ -17,7 +17,7 @@ The Middleware provides:
 ### Sensors
 - **`Battery`** - Battery level monitoring with charging detection
 - **`Speed`** - Speed sensor handling with odometer calculation
-- **`Distance`** - Distance sensor with collision detection and emergency brake triggering
+- **`Distance`** - Distance sensor with speed-based collision detection and emergency brake triggering
 - **`BackMotors`** - Motor control and feedback with PWM management
 - **`FServo`** - Front servo control interface for steering
 - **`CanReader`** - CAN bus communication with MCP2515 controller
@@ -69,6 +69,10 @@ The system implements a high-performance emergency brake system using direct cal
 
 ### Intelligent Control
 - **Speed-based Emergency Braking**: Emergency brake intensity based on current speed
+- **Speed-based Distance Thresholds**: Dynamic collision detection thresholds that scale with vehicle speed
+  - Emergency distance: 20cm at low speeds (≤800mm/s) to 75cm at high speeds (≥2500mm/s)
+  - Warning distance: 40cm at low speeds to 150cm at high speeds
+  - Linear interpolation between speed ranges for smooth transitions
 - **Autonomous Mode Support**: Handles both manual and autonomous driving modes
 - **Real-time Processing**: High-frequency sensor updates (50ms intervals)
 

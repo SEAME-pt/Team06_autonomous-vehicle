@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "Distance.hpp"
 #include "CanMessageBus.hpp"
+#include "ISensor.hpp"
 #include <memory>
 #include <chrono>
 #include <thread>
@@ -35,6 +36,14 @@ protected:
     void emergencyBrakeCallback(bool active) {
         emergency_brake_called = active;
     }
+
+    // Mock speed data for testing speed-based thresholds
+    class MockSpeedData : public SensorData {
+    public:
+        MockSpeedData(uint32_t speed_value) : SensorData("speed", true) {
+            value.store(speed_value);
+        }
+    };
 };
 
 TEST_F(DistanceTest, InitialState) {
@@ -217,6 +226,131 @@ TEST_F(DistanceTest, MultipleCanIds) {
 
     sensorData = distance->getSensorData();
     EXPECT_EQ(sensorData["obs"]->value.load(), 0); // 90 cm is safe (risk level 0)
+}
+
+// Speed-based distance threshold tests
+TEST_F(DistanceTest, SpeedBasedThresholds_LowSpeed) {
+    // Set up speed data accessor for low speed (400 mm/s)
+    auto mock_speed_data = std::make_shared<MockSpeedData>(400);
+    distance->setSpeedDataAccessor([mock_speed_data]() {
+        return std::static_pointer_cast<SensorData>(mock_speed_data);
+    });
+
+    // Set up emergency brake callback
+    distance->setEmergencyBrakeCallback([this](bool active) {
+        this->emergencyBrakeCallback(active);
+    });
+
+    // Test with 15cm distance - should trigger emergency at low speed (threshold: 20cm)
+    uint8_t test_data[8] = {15, 0, 0, 0, 0, 0, 0, 0}; // 15 cm
+    CanMessage test_message(0x101, test_data, 8);
+
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    distance->updateSensorData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Should trigger emergency brake at low speed
+    EXPECT_TRUE(emergency_brake_called.load());
+}
+
+TEST_F(DistanceTest, SpeedBasedThresholds_HighSpeed) {
+    // Set up speed data accessor for high speed (2500 mm/s)
+    auto mock_speed_data = std::make_shared<MockSpeedData>(2500);
+    distance->setSpeedDataAccessor([mock_speed_data]() {
+        return std::static_pointer_cast<SensorData>(mock_speed_data);
+    });
+
+    // Set up emergency brake callback
+    distance->setEmergencyBrakeCallback([this](bool active) {
+        this->emergencyBrakeCallback(active);
+    });
+
+    // Test with 50cm distance - should trigger emergency at high speed (threshold: 75cm)
+    uint8_t test_data[8] = {50, 0, 0, 0, 0, 0, 0, 0}; // 50 cm
+    CanMessage test_message(0x101, test_data, 8);
+
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    distance->updateSensorData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Should trigger emergency brake at high speed
+    EXPECT_TRUE(emergency_brake_called.load());
+}
+
+TEST_F(DistanceTest, SpeedBasedThresholds_MediumSpeed) {
+    // Set up speed data accessor for medium speed (1600 mm/s)
+    auto mock_speed_data = std::make_shared<MockSpeedData>(1600);
+    distance->setSpeedDataAccessor([mock_speed_data]() {
+        return std::static_pointer_cast<SensorData>(mock_speed_data);
+    });
+
+    // Set up emergency brake callback
+    distance->setEmergencyBrakeCallback([this](bool active) {
+        this->emergencyBrakeCallback(active);
+    });
+
+    // Test with 35cm distance - should trigger emergency at medium speed (threshold: ~39cm)
+    uint8_t test_data[8] = {35, 0, 0, 0, 0, 0, 0, 0}; // 35 cm
+    CanMessage test_message(0x101, test_data, 8);
+
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    distance->updateSensorData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Should trigger emergency brake at medium speed
+    EXPECT_TRUE(emergency_brake_called.load());
+}
+
+TEST_F(DistanceTest, SpeedBasedThresholds_SafeAtHighSpeed) {
+    // Set up speed data accessor for high speed (2500 mm/s)
+    auto mock_speed_data = std::make_shared<MockSpeedData>(2500);
+    distance->setSpeedDataAccessor([mock_speed_data]() {
+        return std::static_pointer_cast<SensorData>(mock_speed_data);
+    });
+
+    // Set up emergency brake callback
+    distance->setEmergencyBrakeCallback([this](bool active) {
+        this->emergencyBrakeCallback(active);
+    });
+
+    // Test with 70cm distance - should be safe at high speed (threshold: 75cm)
+    uint8_t test_data[8] = {70, 0, 0, 0, 0, 0, 0, 0}; // 70 cm
+    CanMessage test_message(0x101, test_data, 8);
+
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    distance->updateSensorData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Should NOT trigger emergency brake at high speed
+    EXPECT_FALSE(emergency_brake_called.load());
+}
+
+TEST_F(DistanceTest, SpeedBasedThresholds_NoSpeedData) {
+    // Don't set up speed data accessor - should use default thresholds
+    distance->setEmergencyBrakeCallback([this](bool active) {
+        this->emergencyBrakeCallback(active);
+    });
+
+    // Test with 15cm distance - should trigger emergency with default thresholds
+    uint8_t test_data[8] = {15, 0, 0, 0, 0, 0, 0, 0}; // 15 cm
+    CanMessage test_message(0x101, test_data, 8);
+
+    auto& bus = CanMessageBus::getInstance();
+    bus.injectTestMessage(test_message);
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    distance->updateSensorData();
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
+    // Should trigger emergency brake with default thresholds (no speed data = 0 speed = 1.0x multiplier)
+    EXPECT_TRUE(emergency_brake_called.load());
 }
 
 int main(int argc, char **argv) {

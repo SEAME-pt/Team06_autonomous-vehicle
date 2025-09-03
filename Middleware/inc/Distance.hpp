@@ -32,11 +32,19 @@ public:
   // Set emergency brake callback (replaces ZMQ publisher)
   void setEmergencyBrakeCallback(std::function<void(bool)> callback);
 
+  // Set speed data accessor for speed-based distance thresholds
+  // The Distance sensor uses speed data to dynamically adjust collision detection thresholds:
+  // - Emergency distance: 20cm at low speeds (≤800mm/s) to 75cm at high speeds (≥2500mm/s)
+  // - Warning distance: 40cm at low speeds to 150cm at high speeds
+  // - Linear interpolation between speed ranges for smooth transitions
+  void setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
+
 private:
   void readSensor() override;
   void checkUpdated() override;
   void calculateCollisionRisk(bool has_new_data);
   void triggerEmergencyBrake(bool emergency_active);
+  double calculateSpeedMultiplier() const;
 
   static constexpr uint16_t canId = 0x101;
   static constexpr uint16_t canId2 = 0x181;
@@ -57,8 +65,14 @@ private:
   // Emergency brake callback for direct communication (replaces ZMQ publisher)
   std::function<void(bool)> emergency_brake_callback;
 
-  // Simple distance-based collision detection parameters
-  static constexpr double MAX_DISTANCE_CM = 100.0; // Maximum sensor range
+  // Speed data accessor for speed-based distance thresholds
+  std::function<std::shared_ptr<SensorData>()> speed_data_accessor;
+
+  // Distance-based collision detection parameters with speed-based thresholds
+  static constexpr double MAX_DISTANCE_CM = 150.0; // Maximum sensor range
+  // Base thresholds (multiplied by speed factor):
+  // - Emergency: 20cm base (20cm-75cm range based on speed)
+  // - Warning: 40cm base (40cm-150cm range based on speed)
 
   // Current state
   std::atomic<uint16_t> current_distance_cm{0};

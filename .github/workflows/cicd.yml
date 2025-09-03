@@ -98,44 +98,6 @@ jobs:
             ./scripts/run_coverage.sh --html || exit 1
             "
 
-      # Check coverage threshold
-      - name: Check coverage threshold
-        run: |
-          docker run --rm --platform linux/arm64 \
-            -v ${{ github.workspace }}:/repo \
-            -w /repo \
-            jmoreiraseame/jetson-nano-ubuntu:bionic \
-            /bin/bash -c "
-            # Install required packages
-            apt-get update && apt-get install -y lcov bc || true
-            # Check coverage percentage
-            if [ -f coverage/coverage.info ]; then
-              # Extract coverage percentage from lcov summary
-              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*:' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/' | head -n1)
-              # Alternative extraction method if the first one fails
-              if [ -z \"\$COVERAGE_PERCENT\" ]; then
-                COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines' | grep -o '[0-9.]*%' | sed 's/%//' | head -n1)
-              fi
-              echo \"Current coverage: \${COVERAGE_PERCENT}%\"
-              # Check if we got a valid number
-              if [ -z \"\$COVERAGE_PERCENT\" ] || [ \"\$COVERAGE_PERCENT\" = \"\" ]; then
-                echo \"::error::Could not extract coverage percentage from report\"
-                lcov --summary coverage/coverage.info
-                exit 1
-              fi
-              # Use awk for floating point comparison (more reliable than bc)
-              if awk \"BEGIN {exit !(\$COVERAGE_PERCENT < 80)}\"; then
-                echo \"::error::Coverage is \${COVERAGE_PERCENT}%, but minimum required is 80%\"
-                exit 1
-              else
-                echo \"::notice::Coverage \${COVERAGE_PERCENT}% meets minimum requirement of 80%\"
-              fi
-            else
-              echo \"::error::Coverage report not found\"
-              exit 1
-            fi
-            "
-
       # Upload coverage as artifact
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4

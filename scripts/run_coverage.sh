@@ -90,18 +90,24 @@ LCOV_VERSION=$(lcov --version | head -n1 | grep -o '[0-9]\+\.[0-9]\+' | head -n1
 LCOV_MAJOR=$(echo $LCOV_VERSION | cut -d. -f1)
 LCOV_MINOR=$(echo $LCOV_VERSION | cut -d. -f2)
 
-# Use mismatch argument for newer lcov versions (>= 1.14)
+# Use appropriate arguments based on lcov version
 if [ "$LCOV_MAJOR" -gt 1 ] || ([ "$LCOV_MAJOR" -eq 1 ] && [ "$LCOV_MINOR" -ge 14 ]); then
+    # Newer versions support mismatch and negative
     IGNORE_ERRORS="mismatch,negative"
-else
+    LCOV_CMD="lcov --capture --directory . --output-file ../$OUTPUT_DIR/coverage.info --ignore-errors $IGNORE_ERRORS --rc geninfo_unexecuted_blocks=1"
+elif [ "$LCOV_MAJOR" -eq 1 ] && [ "$LCOV_MINOR" -ge 14 ]; then
+    # Version 1.14+ supports negative but not mismatch
     IGNORE_ERRORS="negative"
+    LCOV_CMD="lcov --capture --directory . --output-file ../$OUTPUT_DIR/coverage.info --ignore-errors $IGNORE_ERRORS --rc geninfo_unexecuted_blocks=1"
+else
+    # Very old versions don't support ignore-errors at all
+    IGNORE_ERRORS="none"
+    LCOV_CMD="lcov --capture --directory . --output-file ../$OUTPUT_DIR/coverage.info --rc geninfo_unexecuted_blocks=1"
 fi
 
 echo "Using lcov version $LCOV_VERSION with ignore-errors: $IGNORE_ERRORS"
 
-lcov --capture --directory . --output-file "../$OUTPUT_DIR/coverage.info" \
-    --ignore-errors $IGNORE_ERRORS \
-    --rc geninfo_unexecuted_blocks=1 || {
+$LCOV_CMD || {
     echo "ERROR: Failed to capture coverage data"
     echo "This might be because:"
     echo "1. No tests were run"

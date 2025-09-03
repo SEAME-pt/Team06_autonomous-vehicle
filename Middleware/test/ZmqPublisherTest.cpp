@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "IPublisher.hpp"
+#include "../../zmq/inc/ZmqPublisher.hpp"
 #include "ZmqSubscriber.hpp"
 #include <thread>
 #include <chrono>

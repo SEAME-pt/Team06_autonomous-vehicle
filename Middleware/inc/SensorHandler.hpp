@@ -63,7 +63,7 @@ private:
 
   std::shared_ptr<IPublisher> zmq_c_publisher;
   std::shared_ptr<IPublisher> zmq_nc_publisher;
-  zmq::context_t& zmq_context;
+  zmq::context_t &zmq_context;
   SensorLogger _logger;
 
   static constexpr int critical_update_interval_ms = 50;

@@ -1,4 +1,4 @@
-# Install script for directory: /home/jetson/Team06_autonomous-vehicle/Middleware
+# Install script for directory: /home/dimoj/Team06_autonomous-vehicle/Middleware
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,11 @@ endif()
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/usr/bin/objdump")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for each subdirectory.
+  include("/home/dimoj/Team06_autonomous-vehicle/Middleware/test/cmake_install.cmake")
+
 endif()
 

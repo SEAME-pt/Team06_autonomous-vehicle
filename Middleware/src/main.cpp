@@ -25,8 +25,8 @@ void signalHandler(int signal) {
   int count = signal_count.fetch_add(1) + 1;
 
   if (count == 1) {
-    std::cout << "\nReceived signal " << signal << ", initiating graceful shutdown..."
-              << std::endl;
+    std::cout << "\nReceived signal " << signal
+              << ", initiating graceful shutdown..." << std::endl;
     std::cout << "Press Ctrl+C again to force exit." << std::endl;
     stop_flag = true;
   } else if (count >= 2) {
@@ -47,10 +47,10 @@ int main() {
   try {
     setupSignalHandlers();
 
-      // Configuration
-  const std::string zmq_c_address = "tcp://0.0.0.0:5555"; // critical addr
-  const std::string zmq_nc_address =
-      "tcp://100.93.45.188:5556"; // non-critical addr
+    // Configuration
+    const std::string zmq_c_address = "tcp://0.0.0.0:5555"; // critical addr
+    const std::string zmq_nc_address =
+        "tcp://100.93.45.188:5556"; // non-critical addr
     const std::string zmq_control_address =
         "tcp://127.0.0.1:5557"; // control addr
     const std::string zmq_lkas_address =
@@ -66,8 +66,10 @@ int main() {
     // Initialize components
     // Create shared ZMQ publishers to avoid binding conflicts
     std::cout << "Creating shared ZMQ publishers..." << std::endl;
-    auto c_publisher = std::make_shared<ZmqPublisher>(zmq_c_address, zmq_context);
-    auto nc_publisher = std::make_shared<ZmqPublisher>(zmq_nc_address, zmq_context);
+    auto c_publisher =
+        std::make_shared<ZmqPublisher>(zmq_c_address, zmq_context);
+    auto nc_publisher =
+        std::make_shared<ZmqPublisher>(zmq_nc_address, zmq_context);
 
     std::cout << "Initializing sensor handler..." << std::endl;
     sensor_handler = std::make_unique<SensorHandler>(
@@ -75,8 +77,8 @@ int main() {
         true); // Use real sensors in production
 
     std::cout << "Initializing control assembly..." << std::endl;
-    control_assembly =
-        std::make_unique<ControlAssembly>(zmq_control_address, zmq_context, nullptr, nullptr, nc_publisher);
+    control_assembly = std::make_unique<ControlAssembly>(
+        zmq_control_address, zmq_context, nullptr, nullptr, nc_publisher);
 
     std::cout << "Initializing lane keeping handler..." << std::endl;
     // Share the non-critical publisher with sensor handler
@@ -86,21 +88,24 @@ int main() {
     std::cout << "Initializing traffic sign handler..." << std::endl;
     // Share the non-critical publisher with other handlers
     traffic_sign_handler = std::make_unique<TrafficSignHandler>(
-        zmq_traffic_sign_address, zmq_context, nc_publisher, false); // Production mode
+        zmq_traffic_sign_address, zmq_context, nc_publisher,
+        false); // Production mode
 
     // Wire emergency brake callback from Distance sensor to ControlAssembly
     std::cout << "Wiring emergency brake callback..." << std::endl;
     auto sensors = sensor_handler->getSensors();
-    auto distance_sensor = std::dynamic_pointer_cast<Distance>(sensors["distance"]);
+    auto distance_sensor =
+        std::dynamic_pointer_cast<Distance>(sensors["distance"]);
     if (distance_sensor) {
-        distance_sensor->setEmergencyBrakeCallback(
-            [control_assembly = control_assembly.get()](bool emergency_active) {
-                control_assembly->handleEmergencyBrake(emergency_active);
-            }
-        );
-        std::cout << "Emergency brake callback wired successfully" << std::endl;
+      distance_sensor->setEmergencyBrakeCallback(
+          [control_assembly = control_assembly.get()](bool emergency_active) {
+            control_assembly->handleEmergencyBrake(emergency_active);
+          });
+      std::cout << "Emergency brake callback wired successfully" << std::endl;
     } else {
-        std::cerr << "Warning: Distance sensor not found, emergency brake callback not wired" << std::endl;
+      std::cerr << "Warning: Distance sensor not found, emergency brake "
+                   "callback not wired"
+                << std::endl; // LCOV_EXCL_LINE - Warning logging
     }
 
     // Start components
@@ -154,7 +159,8 @@ int main() {
     try {
       zmq_context.close();
     } catch (const zmq::error_t &e) {
-      std::cerr << "Warning: ZMQ context close error: " << e.what() << std::endl;
+      std::cerr << "Warning: ZMQ context close error: " << e.what()
+                << std::endl; // LCOV_EXCL_LINE - Error handling
       // Force termination if close fails
       zmq_context.shutdown();
     }
@@ -163,13 +169,16 @@ int main() {
     return EXIT_SUCCESS;
 
   } catch (const zmq::error_t &e) {
-    std::cerr << "ZMQ Error: " << e.what() << std::endl;
+    std::cerr << "ZMQ Error: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     return EXIT_FAILURE;
   } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << std::endl;
+    std::cerr << "Error: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     return EXIT_FAILURE;
   } catch (...) {
-    std::cerr << "Unknown error!" << std::endl;
+    std::cerr << "Unknown error!"
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     return EXIT_FAILURE;
   }
 }

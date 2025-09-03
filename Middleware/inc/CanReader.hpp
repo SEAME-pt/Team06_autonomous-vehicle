@@ -2,17 +2,17 @@
 #define CANREADER_HPP
 
 #include "MockCanReader.hpp" // Include the interface definition
+#include <cstdint>
+#include <cstring>
 #include <fcntl.h>
 #include <iostream>
 #include <linux/spi/spidev.h>
 #include <map>
+#include <stdexcept>
 #include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
-#include <stdexcept>
-#include <cstring>
-#include <cstdint>
 
 // MCP2515 Register definitions
 // Control Registers

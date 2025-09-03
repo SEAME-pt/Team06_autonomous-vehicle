@@ -39,9 +39,9 @@ TEST_F(CanMessageBusTest, DistanceSensorReceivesMessages) {
 
     // Verify sensor received the message
     auto sensor_data = distance_sensor->getSensorData();
-    ASSERT_TRUE(sensor_data.find("distance") != sensor_data.end());
-    EXPECT_EQ(sensor_data["distance"]->value.load(), 100); // 100 cm
-    EXPECT_TRUE(sensor_data["distance"]->updated.load());
+    ASSERT_TRUE(sensor_data.find("obs") != sensor_data.end());
+    EXPECT_EQ(sensor_data["obs"]->value.load(), 0); // 100 cm is safe (risk level 0)
+    EXPECT_TRUE(sensor_data["obs"]->updated.load());
 
     distance_sensor->stop();
 }
@@ -106,8 +106,8 @@ TEST_F(CanMessageBusTest, MultipleSensorsReceiveDifferentMessages) {
     auto distance_data_result = distance_sensor->getSensorData();
     auto speed_data_result = speed_sensor->getSensorData();
 
-    EXPECT_EQ(distance_data_result["distance"]->value.load(), 150);
-    EXPECT_TRUE(distance_data_result["distance"]->updated.load());
+    EXPECT_EQ(distance_data_result["obs"]->value.load(), 0); // 150 cm is safe (risk level 0)
+    EXPECT_TRUE(distance_data_result["obs"]->updated.load());
 
     EXPECT_TRUE(speed_data_result["speed"]->updated.load());
     EXPECT_TRUE(speed_data_result["odo"]->updated.load());
@@ -132,7 +132,7 @@ TEST_F(CanMessageBusTest, SensorUnsubscriptionWorks) {
 
     // Verify first message received
     auto sensor_data = distance_sensor->getSensorData();
-    EXPECT_EQ(sensor_data["distance"]->value.load(), 200);
+    EXPECT_EQ(sensor_data["obs"]->value.load(), 0); // 200 cm is safe (risk level 0)
 
     // Stop the sensor (unsubscribe)
     distance_sensor->stop();
@@ -145,7 +145,7 @@ TEST_F(CanMessageBusTest, SensorUnsubscriptionWorks) {
     std::this_thread::sleep_for(std::chrono::milliseconds(50));
     distance_sensor->updateSensorData();
 
-    // Verify second message was NOT received (still 200)
+    // Verify second message was NOT received (still 0)
     sensor_data = distance_sensor->getSensorData();
-    EXPECT_EQ(sensor_data["distance"]->value.load(), 200); // Should still be 200
+    EXPECT_EQ(sensor_data["obs"]->value.load(), 0); // Should still be 0 (safe)
 }

@@ -127,6 +127,8 @@ The coverage report provides detailed information about:
 - Function coverage
 - Uncovered code regions
 
+**Coverage Requirements**: The project maintains a minimum code coverage of **80%**. The CI/CD pipeline will fail if coverage falls below this threshold.
+
 #### Accessing CI Coverage Reports
 
 Coverage reports from CI runs are available:

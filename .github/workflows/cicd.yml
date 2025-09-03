@@ -21,7 +21,7 @@ on:
   push:
     branches:
       - dev
-      - zm/cov
+      - testing
 
 jobs:
   # Lint job: Runs code quality checks
@@ -93,8 +93,35 @@ jobs:
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_tests.sh && \
             chmod +x /repo/scripts/run_coverage.sh && \
-            # Generate coverage reports
+            # Build with tests enabled and generate coverage reports
+            export CMAKE_FLAGS='-DBUILD_TESTS=ON -DCODE_COVERAGE=ON' && \
             ./scripts/run_coverage.sh --html || exit 1
+            "
+
+      # Check coverage threshold
+      - name: Check coverage threshold
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v ${{ github.workspace }}:/repo \
+            -w /repo \
+            jmoreiraseame/jetson-nano-ubuntu:bionic \
+            /bin/bash -c "
+            # Install lcov if not available
+            apt-get update && apt-get install -y lcov || true
+            # Check coverage percentage
+            if [ -f coverage/coverage.info ]; then
+              COVERAGE_PERCENT=\$(lcov --summary coverage/coverage.info 2>/dev/null | grep 'lines.*%' | sed 's/.*lines.*: \([0-9.]*\)%.*/\1/')
+              echo \"Current coverage: \${COVERAGE_PERCENT}%\"
+              if (( \$(echo \"\$COVERAGE_PERCENT < 80\" | bc -l) )); then
+                echo \"::error::Coverage is \${COVERAGE_PERCENT}%, but minimum required is 80%\"
+                exit 1
+              else
+                echo \"::notice::Coverage \${COVERAGE_PERCENT}% meets minimum requirement of 80%\"
+              fi
+            else
+              echo \"::error::Coverage report not found\"
+              exit 1
+            fi
             "
 
       # Upload coverage as artifact

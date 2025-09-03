@@ -39,7 +39,8 @@ void ControlTransmitter::startTransmitting() {
       _zmq_publisher.send("throttle:0;steering:0;");
     }
 
-    // Handle Y button toggle for auto mode (always works regardless of auto mode state)
+    // Handle Y button toggle for auto mode (always works regardless of auto
+    // mode state)
     bool send_auto_mode = false;
     {
       static bool y_button_prev_state = false;
@@ -48,7 +49,8 @@ void ControlTransmitter::startTransmitting() {
       // Toggle auto mode on Y button press (rising edge)
       if (y_button_current_state && !y_button_prev_state) {
         _auto_mode = !_auto_mode;
-        std::cout << "Y button pressed, toggling AUTO mode: " << (_auto_mode ? "ON" : "OFF") << std::endl;
+        std::cout << "Y button pressed, toggling AUTO mode: "
+                  << (_auto_mode ? "ON" : "OFF") << std::endl;
       }
 
       // Send auto mode status while Y button is pressed
@@ -69,12 +71,14 @@ void ControlTransmitter::startTransmitting() {
     }
 
     // Apply much more gradual deceleration when no input
-    _acceleration *= 0.98; // Changed from 0.95 to 0.98 for much more gradual natural deceleration
+    _acceleration *= 0.98; // Changed from 0.95 to 0.98 for much more gradual
+                           // natural deceleration
 
     if (std::abs(_turn) < 0.1) {
       _turn = 0;
     } else {
-      _turn -= _turn * 0.25; // Changed from 0.15 to 0.25 for faster steering return
+      _turn -=
+          _turn * 0.25; // Changed from 0.15 to 0.25 for faster steering return
     }
 
     float force = _controller.getAxis(3); // eixo Y do analógico direito
@@ -84,13 +88,20 @@ void ControlTransmitter::startTransmitting() {
       // Direct scaling: joystick input (-1.0 to 1.0) -> throttle (-100 to +100)
       // With acceleration factor for responsiveness
       // INVERTED: Negate force to fix control direction
-      float target_throttle = -force * 100.0f; // Restored to full range for maximum power when needed
+      float target_throttle =
+          -force *
+          100.0f; // Restored to full range for maximum power when needed
 
-      std::cout << "Joystick force: " << force << ", Target throttle: " << target_throttle << ", Current: " << _acceleration << std::endl;
+      std::cout << "Joystick force: " << force
+                << ", Target throttle: " << target_throttle
+                << ", Current: " << _acceleration << std::endl;
 
       // Move towards target throttle much more gradually
       float throttle_diff = target_throttle - _acceleration;
-      float max_change = (throttle_diff > 0) ? _max_acceleration_rate * 2.0f : _max_deceleration_rate * 2.0f; // Reduced from 5.0f to 2.0f
+      float max_change =
+          (throttle_diff > 0)
+              ? _max_acceleration_rate * 2.0f
+              : _max_deceleration_rate * 2.0f; // Reduced from 5.0f to 2.0f
 
       if (std::abs(throttle_diff) <= max_change) {
         // Close to target, snap to it
@@ -101,7 +112,9 @@ void ControlTransmitter::startTransmitting() {
       }
 
       // Clamp to full throttle bounds for maximum power capability
-      _acceleration = std::max(-100.0f, std::min(_acceleration, 100.0f)); // Restored to full ±100 range
+      _acceleration =
+          std::max(-100.0f, std::min(_acceleration,
+                                     100.0f)); // Restored to full ±100 range
 
       std::cout << "Final throttle: " << _acceleration << std::endl;
     }
@@ -128,7 +141,7 @@ void ControlTransmitter::startTransmitting() {
         -45, std::min(steeringAngle, 45)); // Limite entre -45 e 45 graus
     std::string steeringMsg = "steering:" + std::to_string(steeringAngle) + ";";
 
-        // Send manual control commands (middleware handles auto mode protection)
+    // Send manual control commands (middleware handles auto mode protection)
     std::string combinedMsg = throttleMsg + steeringMsg;
 
     // Include auto mode status while Y button is pressed

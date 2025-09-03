@@ -1,4 +1,4 @@
-# Install script for directory: /home/jetson/Team06_autonomous-vehicle/Controller
+# Install script for directory: /home/dimoj/Team06_autonomous-vehicle/Controller
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

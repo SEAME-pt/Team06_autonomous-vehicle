@@ -1,4 +1,4 @@
-# Install script for directory: /home/jetson/Team06_autonomous-vehicle/zmq
+# Install script for directory: /home/dimoj/Team06_autonomous-vehicle/zmq
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

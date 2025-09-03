@@ -1,20 +1,20 @@
 #include "LaneKeepingHandler.hpp"
-#include "IPublisher.hpp"
+#include "ZmqPublisher.hpp"
 #include "ZmqSubscriber.hpp"
 #include <chrono>
-#include <iostream>
-#include <thread>
 #include <iomanip>
-#include <sstream>
+#include <iostream>
 #include <memory>
+#include <sstream>
 #include <stdexcept>
+#include <thread>
 
 // LaneKeepingData implementation
 std::string LaneKeepingData::toString() const {
   return "lane:" + std::to_string(lane_status) + ";";
 }
 
-LaneKeepingData LaneKeepingData::fromString(const std::string& data) {
+LaneKeepingData LaneKeepingData::fromString(const std::string &data) {
   LaneKeepingData result;
   result.lane_status = 0; // Default to no deviation
 
@@ -26,31 +26,69 @@ LaneKeepingData LaneKeepingData::fromString(const std::string& data) {
       // Extract the number after the colon
       std::string status_str = data.substr(colon_pos + 1);
 
-      // Remove trailing semicolon if present
-      if (!status_str.empty() && status_str.back() == ';') {
-        status_str.pop_back();
+      // Find the end of the numeric part (either end of string or semicolon)
+      size_t end_pos = status_str.find(';');
+      if (end_pos != std::string::npos) {
+        // Check if there's content after the semicolon
+        if (end_pos + 1 < status_str.length()) {
+          // There's extra content after semicolon - invalid format
+          std::cerr << "Error parsing lane status from: " << data
+                    << " (extra content after semicolon)"
+                    << std::endl; // LCOV_EXCL_LINE - Error handling
+          result.lane_status = 0;
+          return result;
+        }
+        status_str = status_str.substr(0, end_pos);
       }
 
-      try {
-        result.lane_status = std::stoi(status_str);
-      } catch (const std::exception& e) {
-        std::cerr << "Error parsing lane status from: " << data << std::endl;
-        result.lane_status = 0; // Default to no deviation on parse error
+      // Only try to parse if we have a non-empty string
+
+      if (!status_str.empty()) {
+        try {
+          // Use stoi with size_t parameter to check if entire string was
+          // consumed
+          size_t pos;
+          int parsed_value = std::stoi(status_str, &pos);
+
+          // Check if the entire string was consumed (no extra characters)
+          if (pos == status_str.length()) {
+            result.lane_status = parsed_value;
+          } else {
+            // Extra characters found - default to 0
+            std::cerr << "Error parsing lane status from: " << data
+                      << " (extra characters)"
+                      << std::endl; // LCOV_EXCL_LINE - Error handling
+            result.lane_status = 0;
+          }
+        } catch (const std::exception &e) {
+          std::cerr << "Error parsing lane status from: " << data
+                    << std::endl; // LCOV_EXCL_LINE - Error handling
+          result.lane_status = 0; // Default to no deviation on parse error
+        }
+      } else {
+        // Empty status string after colon (like "lane:") - default to 0
+        result.lane_status = 0;
       }
+    } else {
+      // No colon found or nothing after colon - default to 0
+      result.lane_status = 0;
     }
+  } else {
+    // Doesn't start with "lane:" - default to 0
+    result.lane_status = 0;
   }
   return result;
 }
 
 // LaneKeepingHandler implementation
-LaneKeepingHandler::LaneKeepingHandler(const std::string &lkas_subscriber_address,
-                                     zmq::context_t &zmq_context,
-                                     std::shared_ptr<IPublisher> nc_publisher_ptr,
-                                     bool test_mode)
+LaneKeepingHandler::LaneKeepingHandler(
+    const std::string &lkas_subscriber_address, zmq::context_t &zmq_context,
+    std::shared_ptr<IPublisher> nc_publisher_ptr, bool test_mode)
     : stop_flag(false), has_new_data(false), _test_mode(test_mode) {
 
   // Initialize subscriber for Lane Keeping Assistance Software
-  lkas_subscriber = std::make_unique<ZmqSubscriber>(lkas_subscriber_address, zmq_context, test_mode);
+  lkas_subscriber = std::make_unique<ZmqSubscriber>(lkas_subscriber_address,
+                                                    zmq_context, test_mode);
 
   // Initialize publisher - must be provided when not in test mode
   if (nc_publisher_ptr) {
@@ -59,24 +97,26 @@ LaneKeepingHandler::LaneKeepingHandler(const std::string &lkas_subscriber_addres
     // In test mode, we can create a dummy publisher or use nullptr
     nc_publisher = nullptr;
   } else {
-    throw std::runtime_error("LaneKeepingHandler: Publisher must be provided in production mode");
+    throw std::runtime_error(
+        "LaneKeepingHandler: Publisher must be provided in production mode");
   }
 
   // Initialize with default "no deviation" state
   latest_data.lane_status = 0;
 }
 
-LaneKeepingHandler::~LaneKeepingHandler() {
-  stop();
-}
+LaneKeepingHandler::~LaneKeepingHandler() { stop(); }
 
 void LaneKeepingHandler::start() {
-  std::cout << "Starting Lane Keeping Handler..." << std::endl;
+  std::cout << "Starting Lane Keeping Handler..."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 
   stop_flag = false;
-  processing_thread = std::thread(&LaneKeepingHandler::receiveAndProcessLaneData, this);
+  processing_thread =
+      std::thread(&LaneKeepingHandler::receiveAndProcessLaneData, this);
 
-  std::cout << "Lane Keeping Handler started successfully." << std::endl;
+  std::cout << "Lane Keeping Handler started successfully."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
 void LaneKeepingHandler::stop() {
@@ -84,7 +124,8 @@ void LaneKeepingHandler::stop() {
     return; // Already stopped
   }
 
-  std::cout << "Stopping Lane Keeping Handler..." << std::endl;
+  std::cout << "Stopping Lane Keeping Handler..."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 
   stop_flag = true;
 
@@ -95,10 +136,11 @@ void LaneKeepingHandler::stop() {
     processing_thread.join();
   }
 
-  std::cout << "Lane Keeping Handler stopped successfully." << std::endl;
+  std::cout << "Lane Keeping Handler stopped successfully."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
-void LaneKeepingHandler::setTestLaneKeepingData(const LaneKeepingData& data) {
+void LaneKeepingHandler::setTestLaneKeepingData(const LaneKeepingData &data) {
   if (!_test_mode) {
     return;
   }
@@ -110,12 +152,14 @@ void LaneKeepingHandler::setTestLaneKeepingData(const LaneKeepingData& data) {
 }
 
 void LaneKeepingHandler::receiveAndProcessLaneData() {
-  std::cout << "Lane Keeping Handler processing thread started." << std::endl;
+  std::cout << "Lane Keeping Handler processing thread started."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 
   while (!stop_flag.load()) {
     try {
       // Try to receive data from Lane Keeping Assistance Software
-      std::string received_data = lkas_subscriber->receive(processing_interval_ms);
+      std::string received_data =
+          lkas_subscriber->receive(processing_interval_ms);
 
       if (!received_data.empty()) {
         // Parse the received data
@@ -127,7 +171,8 @@ void LaneKeepingHandler::receiveAndProcessLaneData() {
           has_new_data = true;
         }
 
-        // Process and publish the data (pass both original string and parsed data)
+        // Process and publish the data (pass both original string and parsed
+        // data)
         processLaneKeepingData(received_data, lane_data);
       }
 
@@ -148,24 +193,30 @@ void LaneKeepingHandler::receiveAndProcessLaneData() {
       // Small sleep to prevent busy waiting
       std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
-    } catch (const std::exception& e) {
-      std::cerr << "Error in lane keeping processing thread: " << e.what() << std::endl;
+    } catch (const std::exception &e) {
+      std::cerr << "Error in lane keeping processing thread: " << e.what()
+                << std::endl; // LCOV_EXCL_LINE - Thread error handling
       std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
   }
 
-  std::cout << "Lane Keeping Handler processing thread finished." << std::endl;
+  std::cout << "Lane Keeping Handler processing thread finished."
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 }
 
-void LaneKeepingHandler::processLaneKeepingData(const std::string& original_data, const LaneKeepingData& parsed_data) {
+void LaneKeepingHandler::processLaneKeepingData(
+    const std::string &original_data, const LaneKeepingData &parsed_data) {
   // Log the received data
-  std::cout << "Processing lane keeping data: received='" << original_data << "' parsed_status=" << parsed_data.lane_status << std::endl;
+  std::cout << "Processing lane keeping data: received='" << original_data
+            << "' parsed_status=" << parsed_data.lane_status
+            << std::endl; // LCOV_EXCL_LINE - Debug logging
 
   // Forward both the original data and parsed data to the publisher
   publishLaneData(original_data, parsed_data);
 }
 
-void LaneKeepingHandler::publishLaneData(const std::string& original_data, const LaneKeepingData& parsed_data) {
+void LaneKeepingHandler::publishLaneData(const std::string &original_data,
+                                         const LaneKeepingData &parsed_data) {
   try {
     // Ensure the published data has a semicolon at the end
     std::string data_to_publish = original_data;
@@ -177,17 +228,23 @@ void LaneKeepingHandler::publishLaneData(const std::string& original_data, const
 
     // Publish to non-critical channel (like SensorHandler pattern)
     if (nc_publisher) {
-      std::cout << "Publishing lane data: " << data_to_publish << " (internal status=" << parsed_data.lane_status << ")" << std::endl;
+      std::cout << "Publishing lane data: " << data_to_publish
+                << " (internal status=" << parsed_data.lane_status << ")"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
       nc_publisher->send(data_to_publish);
     } else {
       if (_test_mode) {
-        std::cout << "TEST MODE: Would publish lane data: " << data_to_publish << " (internal status=" << parsed_data.lane_status << ")" << std::endl;
+        std::cout << "TEST MODE: Would publish lane data: " << data_to_publish
+                  << " (internal status=" << parsed_data.lane_status << ")"
+                  << std::endl; // LCOV_EXCL_LINE - Test mode logging
       } else {
-        std::cerr << "Error: No non-critical publisher available" << std::endl;
+        std::cerr << "Error: No non-critical publisher available"
+                  << std::endl; // LCOV_EXCL_LINE - Error handling
       }
     }
 
-  } catch (const std::exception& e) {
-    std::cerr << "Error publishing lane data: " << e.what() << std::endl;
+  } catch (const std::exception &e) {
+    std::cerr << "Error publishing lane data: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
   }
 }

@@ -4,21 +4,22 @@
 #include "BackMotors.hpp"
 #include "ControlLogger.hpp"
 #include "FServo.hpp"
-#include "ZmqSubscriber.hpp"
-#include "ZmqPublisher.hpp"
 #include "ISensor.hpp" // Add for speed data access
+#include "ZmqPublisher.hpp"
+#include "ZmqSubscriber.hpp"
 #include <atomic>
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
+#include <functional> // Add for speed data accessor
 #include <iostream>
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <string>
 #include <thread>
 #include <unordered_map>
 #include <vector>
-#include <functional> // Add for speed data accessor
 
 class ControlAssembly {
 public:
@@ -32,12 +33,14 @@ public:
   void stop();
 
   // Set speed data accessor for intelligent emergency braking
-  void setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
+  void
+  setSpeedDataAccessor(std::function<std::shared_ptr<SensorData>()> accessor);
 
   // Set emergency brake callback for direct communication with Distance sensor
   void setEmergencyBrakeCallback(std::function<void(bool)> callback);
 
-  // Handle emergency brake from callback (public so it can be called from Distance sensor)
+  // Handle emergency brake from callback (public so it can be called from
+  // Distance sensor)
   void handleEmergencyBrake(bool emergency_active);
 
   ZmqSubscriber zmq_subscriber;
@@ -53,6 +56,7 @@ private:
   std::thread _listenerThread;
   std::thread _autonomousListenerThread;
   std::atomic<bool> stop_flag;
+  std::mutex _startStopMutex;
   std::atomic<bool> emergency_brake_active;
   std::atomic<bool> auto_mode_active;
 

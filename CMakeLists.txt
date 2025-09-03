@@ -21,5 +21,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Runs the cmake on all these directories
 add_subdirectory(zmq)
+# Pass BUILD_TESTS option to Middleware subdirectory
 add_subdirectory(Middleware)
 add_subdirectory(Controller)

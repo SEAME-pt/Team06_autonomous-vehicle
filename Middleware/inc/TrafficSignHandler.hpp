@@ -14,10 +14,11 @@ class ZmqSubscriber;
 
 class TrafficSignHandler {
 public:
-  explicit TrafficSignHandler(const std::string &traffic_sign_subscriber_address,
-                             zmq::context_t &zmq_context,
-                             std::shared_ptr<IPublisher> nc_publisher = nullptr,
-                             bool test_mode = false);
+  explicit TrafficSignHandler(
+      const std::string &traffic_sign_subscriber_address,
+      zmq::context_t &zmq_context,
+      std::shared_ptr<IPublisher> nc_publisher = nullptr,
+      bool test_mode = false);
   ~TrafficSignHandler();
 
   // Delete copy and move operations
@@ -30,11 +31,11 @@ public:
   void stop();
 
   // For testing - inject test data
-  void setTestTrafficSignData(const std::string& data);
+  void setTestTrafficSignData(const std::string &data);
 
 private:
   void receiveAndProcessTrafficSignData();
-  void processTrafficSignMessage(const std::string& data);
+  void processTrafficSignMessage(const std::string &data);
 
   std::atomic<bool> stop_flag;
   std::thread processing_thread;

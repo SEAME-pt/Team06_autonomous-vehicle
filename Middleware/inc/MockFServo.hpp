@@ -34,6 +34,23 @@ public:
     if (simulate_i2c_failure) {
       return false;
     }
+
+    // Simulate the real FServo::init_servo() register writes
+    // Reset PCA9685
+    writeByteData(fd_servo, 0x00, 0x06);
+
+    // Setup servo control
+    writeByteData(fd_servo, 0x00, 0x10);
+
+    // Set frequency (~50Hz)
+    writeByteData(fd_servo, 0xFE, 0x79);
+
+    // Configure MODE2
+    writeByteData(fd_servo, 0x01, 0x04);
+
+    // Enable auto-increment
+    writeByteData(fd_servo, 0x00, 0x20);
+
     initialized = true;
     return true;
   }

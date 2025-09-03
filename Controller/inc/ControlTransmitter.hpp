@@ -31,9 +31,11 @@ private:
   bool _emergency_brake_active = false; // Flag to track emergency brake state
 
   // New acceleration control parameters
-  float _max_acceleration_rate = 1.0f;    // Reduced from 2.0f for much gentler acceleration
-  float _max_deceleration_rate = 1.5f;    // Reduced from 3.0f for much gentler braking
-  float _brake_multiplier = 5.0f;         // Emergency brake force multiplier
+  float _max_acceleration_rate =
+      1.0f; // Reduced from 2.0f for much gentler acceleration
+  float _max_deceleration_rate =
+      1.5f;                       // Reduced from 3.0f for much gentler braking
+  float _brake_multiplier = 5.0f; // Emergency brake force multiplier
 };
 
 #endif

@@ -21,15 +21,15 @@ struct LaneKeepingData {
   std::string toString() const;
 
   // Create from received string
-  static LaneKeepingData fromString(const std::string& data);
+  static LaneKeepingData fromString(const std::string &data);
 };
 
 class LaneKeepingHandler {
 public:
-  explicit LaneKeepingHandler(const std::string &lkas_subscriber_address,
-                             zmq::context_t &zmq_context,
-                             std::shared_ptr<IPublisher> nc_publisher = nullptr,
-                             bool test_mode = false);
+  explicit LaneKeepingHandler(
+      const std::string &lkas_subscriber_address, zmq::context_t &zmq_context,
+      std::shared_ptr<IPublisher> nc_publisher = nullptr,
+      bool test_mode = false);
   ~LaneKeepingHandler();
 
   // Delete copy and move operations
@@ -42,12 +42,14 @@ public:
   void stop();
 
   // For testing - inject test data
-  void setTestLaneKeepingData(const LaneKeepingData& data);
+  void setTestLaneKeepingData(const LaneKeepingData &data);
 
 private:
   void receiveAndProcessLaneData();
-  void processLaneKeepingData(const std::string& original_data, const LaneKeepingData& parsed_data);
-  void publishLaneData(const std::string& original_data, const LaneKeepingData& parsed_data);
+  void processLaneKeepingData(const std::string &original_data,
+                              const LaneKeepingData &parsed_data);
+  void publishLaneData(const std::string &original_data,
+                       const LaneKeepingData &parsed_data);
 
   std::atomic<bool> stop_flag;
   std::thread processing_thread;

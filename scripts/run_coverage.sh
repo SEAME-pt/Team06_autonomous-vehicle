@@ -84,8 +84,23 @@ echo "====================================================="
 echo "Generating coverage reports..."
 echo "====================================================="
 echo "Capturing raw coverage data..."
+
+# Check lcov version to determine which ignore-errors arguments to use
+LCOV_VERSION=$(lcov --version | head -n1 | grep -o '[0-9]\+\.[0-9]\+' | head -n1)
+LCOV_MAJOR=$(echo $LCOV_VERSION | cut -d. -f1)
+LCOV_MINOR=$(echo $LCOV_VERSION | cut -d. -f2)
+
+# Use mismatch argument for newer lcov versions (>= 1.14)
+if [ "$LCOV_MAJOR" -gt 1 ] || ([ "$LCOV_MAJOR" -eq 1 ] && [ "$LCOV_MINOR" -ge 14 ]); then
+    IGNORE_ERRORS="mismatch,negative"
+else
+    IGNORE_ERRORS="negative"
+fi
+
+echo "Using lcov version $LCOV_VERSION with ignore-errors: $IGNORE_ERRORS"
+
 lcov --capture --directory . --output-file "../$OUTPUT_DIR/coverage.info" \
-    --ignore-errors mismatch,negative \
+    --ignore-errors $IGNORE_ERRORS \
     --rc geninfo_unexecuted_blocks=1 || {
     echo "ERROR: Failed to capture coverage data"
     echo "This might be because:"

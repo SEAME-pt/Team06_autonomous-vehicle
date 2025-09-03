@@ -17,7 +17,7 @@ The Middleware provides:
 ### Sensors
 - **`Battery`** - Battery level monitoring with charging detection
 - **`Speed`** - Speed sensor handling with odometer calculation
-- **`Distance`** - Distance sensor with speed-based collision detection and emergency brake triggering
+- **`Distance`** - Distance sensor with fixed-threshold collision detection and emergency brake triggering
 - **`BackMotors`** - Motor control and feedback with PWM management
 - **`FServo`** - Front servo control interface for steering
 - **`CanReader`** - CAN bus communication with MCP2515 controller
@@ -54,10 +54,25 @@ The Middleware provides:
 ### Emergency Brake Optimization
 The system implements a high-performance emergency brake system using direct callback communication instead of ZeroMQ messaging:
 
-- **Zero Latency**: Direct function calls instead of message passing
-- **Performance**: Emergency brake response time improved from ~1ms to ~0.01ms
+- **Low Latency**: Direct function calls instead of message passing
+- **Performance**: Emergency brake response time improved
 - **Type Safety**: Compile-time checking instead of runtime string parsing
 - **Resource Efficient**: No additional threads or network sockets
+
+### Distance Sensor Implementation
+The Distance sensor provides robust collision detection with the following features:
+
+- **CAN Message Processing**: Receives distance data via CAN bus from ultrasonic sensors
+- **Multi-ID Support**: Handles CAN IDs 0x101, 0x181, and 0x581 for hardware compatibility
+- **Distance Extraction**: Parses little-endian 16-bit distance values (in centimeters)
+- **Risk Assessment**: Three-level collision risk system:
+  - Level 0 (Safe): Distance > 25cm
+  - Level 1 (Warning): Distance 20-25cm
+  - Level 2 (Emergency): Distance < 20cm
+- **Emergency Brake Triggering**: Automatic emergency brake activation at emergency threshold that allows reverse throttle
+- **Thread Safety**: Atomic operations and mutex protection for concurrent access
+- **Data Validation**: Checks CAN message length and distance range (0-100cm)
+- **State Management**: Tracks emergency brake state to prevent duplicate triggers
 
 
 ### CAN Bus Integration
@@ -68,13 +83,13 @@ The system implements a high-performance emergency brake system using direct cal
 - **Statistics**: Message received/dispatched/dropped counters
 
 ### Intelligent Control
-- **Speed-based Emergency Braking**: Emergency brake intensity based on current speed
-- **Speed-based Distance Thresholds**: Dynamic collision detection thresholds that scale with vehicle speed
-  - Emergency distance: 20cm at low speeds (≤800mm/s) to 75cm at high speeds (≥2500mm/s)
-  - Warning distance: 40cm at low speeds to 150cm at high speeds
-  - Linear interpolation between speed ranges for smooth transitions
-- **Autonomous Mode Support**: Handles both manual and autonomous driving modes
-- **Real-time Processing**: High-frequency sensor updates (50ms intervals)
+- **Fixed-threshold Collision Detection**: Simple and reliable distance-based collision detection
+  - Emergency threshold: 20cm (immediate emergency brake activation)
+  - Warning threshold: 25cm (collision warning alert)
+  - Safe distance: >25cm (normal operation)
+- **Multi-CAN ID Support**: Handles multiple CAN IDs (0x101, 0x181, 0x581) for crystal frequency tolerance
+- **Emergency Brake Integration**: Direct callback-based emergency brake triggering for zero-latency response
+- **Real-time Processing**: High-frequency sensor updates with thread-safe data handling
 
 ## Dependencies
 
@@ -137,7 +152,7 @@ Middleware/
 The Middleware consists of:
 - **Static library** (`libmiddleware.a`) - Core functionality library
 - **Main executable** (`Middleware`) - Standalone application
-- **Comprehensive test suite** - 81.9% line coverage, 94.6% function coverage
+- **Comprehensive test suite** - 81.3% line coverage, 93.2% function coverage
 
 ## Testing
 
@@ -152,24 +167,12 @@ cd Middleware/build
 ctest
 ```
 
-### Run specific test categories:
-```bash
-# Sensor tests
-ctest -R "Test$"
-
-# Control tests
-ctest -R "Control"
-
-# Integration tests
-ctest -R "Handler"
-```
-
 ### Test Coverage
 The test suite achieves excellent coverage:
-- **100% line coverage** for Battery and Speed sensor components
-- **94.7% line coverage** for ControlAssembly component
-- **89.8% line coverage** for SensorHandler component
-- **All components** achieve at least 81.8% function coverage
+- **Overall line coverage**: 81.3% (998 of 1228 lines)
+- **Overall function coverage**: 93.2% (124 of 133 functions)
+- **Comprehensive component testing** across all sensor and control modules
+- **High-quality test coverage** ensuring system reliability and maintainability
 
 See `test/README.md` for detailed test documentation.
 

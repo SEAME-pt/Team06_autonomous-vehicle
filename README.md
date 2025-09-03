@@ -1,16 +1,15 @@
 # Team06 Autonomous Vehicle Project
 
-An autonomous vehicle system that combines instrument cluster display, lane detection, and object detection capabilities. The system provides both visual feedback through a modern digital dashboard and autonomous driving features.
+An autonomous vehicle system that combines instrument cluster display and integrated lane detection with object detection capabilities. The system provides both visual feedback through a modern digital dashboard and autonomous driving features.
 
 ## Project Overview
 
 The system integrates several key components:
 
 1. **Instrument Cluster** - Digital dashboard displaying vehicle telemetry and status
-2. **Lane Detection** - Real-time lane detection and tracking
-3. **Object Detection** - Detection and avoidance of obstacles
-4. **Controller** - Handles vehicle control inputs
-5. **Middleware** - Central data processing and distribution hub
+2. **Lane Detection with Object Detection** - Integrated real-time lane detection, tracking, and obstacle detection/avoidance
+3. **Controller** - Handles vehicle control inputs
+4. **Middleware** - Central data processing and distribution hub
 
 ## Architecture
 
@@ -20,11 +19,11 @@ The system integrates several key components:
 └─────────────┘     └────────────┘     └──────────────────┘
                          │
                          │
-              ┌─────────┴──────────┐
-              ▼                    ▼
-    ┌─────────────────┐  ┌─────────────────┐
-    │ Lane Detection  │  │ Object Detection│
-    └─────────────────┘  └─────────────────┘
+                         ▼
+              ┌─────────────────────────┐
+              │ Lane Detection with     │
+              │ Object Detection        │
+              └─────────────────────────┘
 ```
 
 - ZeroMQ-based communication between components
@@ -37,8 +36,7 @@ The system integrates several key components:
 - `/Middleware` - Central data hub and message broker
 - `/modules` - Core autonomous driving modules
   - `cluster-display` - Digital instrument cluster interface
-  - `lane-detection` - Lane detection and tracking
-  - `object-detection` - Object detection and avoidance
+  - `lane-detection` - Integrated lane detection and object detection/avoidance
 - `/scripts` - Build and test automation
   - `build.sh` - Main build script
   - `run_tests.sh` - Test execution script
@@ -127,7 +125,7 @@ The coverage report provides detailed information about:
 - Function coverage
 - Uncovered code regions
 
-**Coverage Requirements**: The project maintains a minimum code coverage of **80%**. The CI/CD pipeline will fail if coverage falls below this threshold.
+**Coverage Requirements**: The project maintains a minimum code coverage of **80%**. The CI/CD pipeline will fail if coverage falls below this threshold. Current coverage: **81.3% line coverage, 93.2% function coverage**.
 
 #### Accessing CI Coverage Reports
 
@@ -155,5 +153,4 @@ Each module maintains its own detailed documentation:
 - [Controller](Controller/README.md)
 - [Middleware](Middleware/README.md)
 - [Cluster Display](https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster/blob/main/README.md)
-- [Lane Detection](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md)
-- [Object Detection](https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance/blob/main/README.md)
+- [Lane Detection with Object Detection](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md)

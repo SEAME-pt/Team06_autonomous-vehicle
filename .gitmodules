@@ -4,6 +4,3 @@
 [submodule "modules/lane-detection"]
 	path = modules/lane-detection
 	url = https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection.git
-[submodule "modules/object-detection"]
-	path = modules/object-detection
-	url = https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance.git

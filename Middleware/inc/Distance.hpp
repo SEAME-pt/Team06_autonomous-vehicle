@@ -61,7 +61,7 @@ private:
   static constexpr double MAX_DISTANCE_CM = 100.0; // Maximum sensor range
   // Fixed thresholds:
   // - Emergency: 20cm
-  // - Warning: 40cm
+  // - Warning: 25cm
 
   // Current state
   std::atomic<uint16_t> current_distance_cm{0};

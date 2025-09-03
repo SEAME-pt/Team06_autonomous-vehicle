@@ -5,13 +5,22 @@
 This directory contains comprehensive unit tests for the Middleware component. The enhanced test suite now achieves **excellent code coverage** across all source files, demonstrating a robust and thorough testing strategy.
 
 **Coverage Highlights:**
-- **100% line coverage** for Battery, Speed, Distance, and ControlAssembly components
-- **95%+ line coverage** for SensorHandler, FServo, BackMotors, and BatteryReader components
-- **90%+ line coverage** for all remaining components including TrafficSignHandler and LaneKeepingHandler
-- **100% function coverage** for all critical components
+- **Overall line coverage**: 81.3% (998 of 1228 lines)
+- **Overall function coverage**: 93.2% (124 of 133 functions)
+- **Comprehensive component testing** across all sensor and control modules
+- **High-quality test coverage** ensuring system reliability and maintainability
 - Comprehensive edge case testing and error handling coverage
 - Integration tests for component interactions
 - Performance and stress tests for system reliability
+
+**Distance Sensor Test Coverage:**
+- **Complete CAN message handling** - Tests for multiple CAN IDs (0x101, 0x181, 0x581)
+- **Distance parsing validation** - Little-endian 16-bit value extraction
+- **Collision risk assessment** - All three risk levels (Safe, Warning, Emergency)
+- **Emergency brake triggering** - Callback mechanism and state management
+- **Thread safety verification** - Concurrent access and data consistency
+- **Error handling** - Invalid message lengths and out-of-range distances
+- **Edge case testing** - Boundary conditions and state transitions
 
 The tests are designed to verify both expected functionality and edge cases, ensuring the reliability and correctness of the Middleware component.
 
@@ -24,6 +33,7 @@ The tests are organized by class and functionality:
 - **BatteryReaderTest**: Tests for the BatteryReader class with mocked hardware
 - **BatteryReaderDirectTest**: Direct hardware interaction tests
 - **SpeedTest**: Tests for the Speed sensor class
+- **DistanceTest**: Comprehensive tests for the Distance sensor class including CAN message handling, collision detection, and emergency brake triggering
 
 ### Control Tests
 - **BackMotorsTest**: Tests for the BackMotors control class with mocked hardware

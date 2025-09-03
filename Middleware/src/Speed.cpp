@@ -142,8 +142,9 @@ void Speed::calculateSpeed() {
     _sensorData["speed"]->timestamp = current_time;
     _sensorData["speed"]->updated.store(true);
 
-    std::cout << "Speed calculated: " << speed_value << " mm/s" << " (from "
-              << last_pulse_delta << " pulses in " << time_diff_seconds << "s)"
+    std::cout << "Speed calculated: " << speed_value << " mm/s"
+              << " (from " << last_pulse_delta << " pulses in "
+              << time_diff_seconds << "s)"
               << std::endl; // LCOV_EXCL_LINE - Debug logging
   } else {
     // No movement or invalid time difference

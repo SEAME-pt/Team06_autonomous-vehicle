@@ -16,24 +16,7 @@ This repository contains all the core components for an autonomous vehicle syste
 
 ## Architecture
 
-```
-┌─────────────┐     ┌────────────┐     ┌──────────────────┐
-│ Controller  │────▶│ Middleware │────▶│ Cluster Display  │
-└─────────────┘     └────────────┘     └──────────────────┘
-                         │
-                         │
-                         ▼
-              ┌─────────────────────────┐
-              │ Lane Detection          │
-              │ (Lane Keeping Assist)   │
-              │                         │
-              │ Object Detection        │
-              │ (Traffic Signals)       │
-              │                         │
-              │ MPC & PID Controllers   │
-              │ (Autonomous Driving)    │
-              └─────────────────────────┘
-```
+![System Architecture](images/project-architecture.png)
 
 - ZeroMQ-based communication between components
 - Modular architecture with independent, replaceable components
@@ -45,10 +28,7 @@ This repository contains all the core components for an autonomous vehicle syste
 - `/Middleware` - Central data hub and message broker for all components
 - `/modules` - Core autonomous driving modules
   - `cluster-display` - Digital instrument cluster interface
-  - `lane-detection` - Lane Detection system (part of Lane Keeping Assisting System)
-  - `object-detection` - Object Detection system for traffic signals and road objects
-  - `mpc-controller` - Model Predictive Control for autonomous driving
-  - `pid-controller` - PID Controller for precise vehicle control
+  - `lane-detection` - Lane Detection system (includes MPC, PID and Object Detection inference)
 - `/scripts` - Build and test automation
   - `build.sh` - Main build script
   - `run_tests.sh` - Test execution script
@@ -56,8 +36,7 @@ This repository contains all the core components for an autonomous vehicle syste
   - `run_coverage.sh` - Coverage report generation
 - `/zmq` - ZeroMQ communication layer
 - `/CICD` - Continuous Integration configuration
-- `/Arduino` - Arduino-based hardware interfaces
-- `/lib` - Shared libraries and dependencies
+- `/Arduino` - Arduino code
 
 ## Building
 
@@ -167,4 +146,5 @@ Each module maintains its own detailed documentation:
 - [Controller](Controller/README.md) - Vehicle control input processing
 - [Middleware](Middleware/README.md) - Central data hub and message broker
 - [Cluster Display](https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster/blob/main/README.md) - Digital instrument cluster interface
-- [ADAS](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md) - Lane Detection, Object Detection, PID, MPC
+- [Lane Detection](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md) - Lane Detection, PID, MPC
+- [Object Detection](https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance/blob/yolo/README.md) - YOLO Traffic Sign Detection Architecture

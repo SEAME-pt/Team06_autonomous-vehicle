@@ -21,7 +21,6 @@ on:
   push:
     branches:
       - dev
-      - zm/cov
 
 jobs:
   # Lint job: Runs code quality checks
@@ -50,7 +49,7 @@ jobs:
             git config --global --add safe.directory /repo && \
             git config --global --add safe.directory /repo/modules/cluster-display && \
             git config --global --add safe.directory /repo/modules/lane-detection && \
-            git config --global --add safe.directory /repo/modules/object-detection && \
+
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_linters.sh && \
             ./scripts/run_linters.sh
@@ -89,11 +88,12 @@ jobs:
             git config --global --add safe.directory /repo && \
             git config --global --add safe.directory /repo/modules/cluster-display && \
             git config --global --add safe.directory /repo/modules/lane-detection && \
-            git config --global --add safe.directory /repo/modules/object-detection && \
+
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/run_tests.sh && \
             chmod +x /repo/scripts/run_coverage.sh && \
-            # Generate coverage reports
+            # Build with tests enabled and generate coverage reports
+            export CMAKE_FLAGS='-DBUILD_TESTS=ON -DCODE_COVERAGE=ON' && \
             ./scripts/run_coverage.sh --html || exit 1
             "
 
@@ -133,7 +133,7 @@ jobs:
             git config --global --add safe.directory /repo && \
             git config --global --add safe.directory /repo/modules/cluster-display && \
             git config --global --add safe.directory /repo/modules/lane-detection && \
-            git config --global --add safe.directory /repo/modules/object-detection && \
+
             git submodule update --init --recursive && \
             chmod +x /repo/scripts/build.sh && \
             export APP_VERSION='${{ env.APP_VERSION }}' && \

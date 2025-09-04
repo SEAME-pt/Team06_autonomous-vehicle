@@ -2,16 +2,19 @@
 #define SENSORHANDLER_HPP
 
 #include "Battery.hpp"
-#include "IPublisher.hpp"
+#include "CanMessageBus.hpp"
+#include "Distance.hpp"
 #include "ISensor.hpp"
 #include "SensorLogger.hpp"
 #include "Speed.hpp"
+#include "ZmqPublisher.hpp"
 #include <atomic>
 #include <condition_variable>
 #include <memory>
 #include <mutex>
 #include <thread>
 #include <unordered_map>
+#include <zmq.hpp>
 
 class SensorHandler {
 public:
@@ -60,11 +63,12 @@ private:
 
   std::shared_ptr<IPublisher> zmq_c_publisher;
   std::shared_ptr<IPublisher> zmq_nc_publisher;
+  zmq::context_t &zmq_context;
   SensorLogger _logger;
 
   static constexpr int critical_update_interval_ms = 50;
   static constexpr int non_critical_update_interval_ms = 200;
-  static constexpr int sensor_read_interval_ms = 100;
+  static constexpr int sensor_read_interval_ms = 50;
 };
 
 #endif

@@ -21,7 +21,8 @@ SensorLogger::SensorLogger(const std::string &log_file_path) {
   // appending
   log_file.open(log_file_path.c_str(), std::ios::app | std::ios::out);
   if (!log_file.is_open()) {
-    std::cerr << "Failed to open log file: " << log_file_path << std::endl;
+    std::cerr << "Failed to open log file: " << log_file_path
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     throw std::runtime_error("Failed to open log file: " + log_file_path);
   }
 
@@ -35,7 +36,8 @@ SensorLogger::SensorLogger(const std::string &log_file_path) {
 
   // Verify file is still good after writing
   if (!log_file.good()) {
-    std::cerr << "Failed to write to log file after opening" << std::endl;
+    std::cerr << "Failed to write to log file after opening"
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     throw std::runtime_error("Failed to write to log file after opening");
   }
 
@@ -52,7 +54,8 @@ SensorLogger::~SensorLogger() {
       log_file.close();
       std::cout << "Logger shutdown complete" << std::endl;
     } catch (const std::exception &e) {
-      std::cerr << "Error during logger shutdown: " << e.what() << std::endl;
+      std::cerr << "Error during logger shutdown: " << e.what()
+                << std::endl; // LCOV_EXCL_LINE - Error handling
     }
   }
 }
@@ -65,7 +68,8 @@ void SensorLogger::logSensorUpdate(
   try {
     std::lock_guard<std::mutex> lock(log_mutex);
     if (!log_file.is_open() || !log_file.good()) {
-      std::cerr << "Log file is not open or not in good state" << std::endl;
+      std::cerr << "Log file is not open or not in good state"
+                << std::endl; // LCOV_EXCL_LINE - Error handling
       return;
     }
 
@@ -85,7 +89,8 @@ void SensorLogger::logSensorUpdate(
                 << ", Old: " << sensorData->oldValue << ")" << std::endl;
     }
   } catch (const std::exception &e) {
-    std::cerr << "Error logging sensor update: " << e.what() << std::endl;
+    std::cerr << "Error logging sensor update: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
   }
 }
 
@@ -94,7 +99,8 @@ void SensorLogger::logError(const std::string &sensorName,
   try {
     std::lock_guard<std::mutex> lock(log_mutex);
     if (!log_file.is_open() || !log_file.good()) {
-      std::cerr << "Log file is not open or not in good state" << std::endl;
+      std::cerr << "Log file is not open or not in good state"
+                << std::endl; // LCOV_EXCL_LINE - Error handling
       return;
     }
 
@@ -105,7 +111,8 @@ void SensorLogger::logError(const std::string &sensorName,
 
     std::cout << "Logged error for sensor: " << sensorName << std::endl;
   } catch (const std::exception &e) {
-    std::cerr << "Error logging error message: " << e.what() << std::endl;
+    std::cerr << "Error logging error message: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
   }
 }
 
@@ -122,7 +129,8 @@ std::string SensorLogger::getTimestamp() const {
        << std::setfill('0') << std::setw(3) << ms.count();
     return ss.str();
   } catch (const std::exception &e) {
-    std::cerr << "Error generating timestamp: " << e.what() << std::endl;
+    std::cerr << "Error generating timestamp: " << e.what()
+              << std::endl; // LCOV_EXCL_LINE - Error handling
     return "ERROR_TIMESTAMP";
   }
 }

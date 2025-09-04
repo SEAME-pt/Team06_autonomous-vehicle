@@ -62,8 +62,11 @@ add_executable(Middleware "${PROJECT_SOURCE_DIR}/src/main.cpp")
 # Link against both the middleware library and the ZeroMQ libraries
 target_link_libraries(Middleware middleware ${ZMQ_LIB} ${ZMQ_LIBRARIES} Threads::Threads)
 
-# Option to enable testing
-option(BUILD_TESTS "Build tests" ON)
+# Use BUILD_TESTS option from parent CMakeLists.txt
+# If not defined, default to OFF for production builds
+if(NOT DEFINED BUILD_TESTS)
+    set(BUILD_TESTS OFF)
+endif()
 
 if(BUILD_TESTS)
     enable_testing()

@@ -2,15 +2,20 @@
 #define CANREADER_HPP
 
 #include "MockCanReader.hpp" // Include the interface definition
+#include <cstdint>
+#include <cstring>
 #include <fcntl.h>
 #include <iostream>
 #include <linux/spi/spidev.h>
 #include <map>
+#include <stdexcept>
 #include <stdint.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+// MCP2515 Register definitions
+// Control Registers
 #define CANSTAT 0x0E
 #define CANCTRL 0x0F
 #define BFPCTRL 0x0C
@@ -30,6 +35,15 @@
 #define RXB0SIDL 0x62
 #define RXB0DLC 0x65
 #define RXB0D0 0x66
+
+// Transmit Registers
+#define TXB0CTRL 0x30
+#define TXB0SIDH 0x31
+#define TXB0SIDL 0x32
+#define TXB0EID8 0x33
+#define TXB0EID0 0x34
+#define TXB0DLC 0x35
+#define TXB0D0 0x36
 
 // Receive Filters
 #define RXF0SIDH 0x00
@@ -60,6 +74,29 @@
 #define CAN_RTS_TXB0 0x81
 #define CAN_RD_STATUS 0xA0
 #define CAN_BIT_MODIFY 0x05
+#define CAN_READ_RX 0x90
+
+// Operating Modes
+#define MODE_NORMAL 0x00
+#define MODE_SLEEP 0x20
+#define MODE_LOOPBACK 0x40
+#define MODE_LISTENONLY 0x60
+#define MODE_CONFIG 0x80
+
+// Interrupt Flags
+#define RX0IF 0x01
+#define RX1IF 0x02
+#define TX0IF 0x04
+#define TX1IF 0x08
+#define TX2IF 0x10
+#define ERRIF 0x20
+#define WAKIF 0x40
+#define MERRF 0x80
+
+// Receive Buffer Operating Modes
+#define RXM_FILTER_ANY 0x60
+#define RXM_FILTER_STD 0x20
+#define RXM_FILTER_EXT 0x40
 
 class CanReader : public ICanReader {
 public:

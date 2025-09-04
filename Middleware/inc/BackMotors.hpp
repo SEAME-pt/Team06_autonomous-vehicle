@@ -25,6 +25,7 @@ public:
   virtual bool init_motors() = 0;
   virtual bool setMotorPwm(const int channel, int value) = 0;
   virtual void setSpeed(int speed) = 0;
+  virtual void emergencyBrake() = 0;
   virtual void writeByteData(int fd, uint8_t reg, uint8_t value) = 0;
   virtual uint8_t readByteData(int fd, uint8_t reg) = 0;
   virtual int getFdMotor() = 0;
@@ -42,6 +43,7 @@ public:
   bool init_motors() override;
   bool setMotorPwm(const int channel, int value) override;
   void setSpeed(int speed) override;
+  void emergencyBrake() override;
 
   void writeByteData(int fd, uint8_t reg, uint8_t value) override;
   uint8_t readByteData(int fd, uint8_t reg) override;

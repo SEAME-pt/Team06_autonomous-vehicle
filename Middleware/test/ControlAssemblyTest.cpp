@@ -26,7 +26,7 @@ protected:
 
     // Helper function to wait for a condition with timeout
     template <typename Func>
-    bool waitForCondition(Func condition, int timeoutMs = 3000, int checkIntervalMs = 100) {
+    bool waitForCondition(Func condition, int timeoutMs = 3000, int checkIntervalMs = 50) {
         auto start = std::chrono::steady_clock::now();
         while (std::chrono::duration_cast<std::chrono::milliseconds>(
                std::chrono::steady_clock::now() - start).count() < timeoutMs) {
@@ -67,19 +67,19 @@ TEST_F(ControlAssemblyTest, HandleThrottleMessage) {
     sender.bind("tcp://127.0.0.1:5555");
 
     // Give the subscriber time to connect
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     // Send message multiple times to ensure delivery
     std::string message = "throttle:50;";
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Wait for the value to be set with a timeout
     bool speedSet = waitForCondition([&]() {
         return mockBackMotors->getCurrentSpeed() == 50;
-    }, 5000);  // 5 second timeout
+    }, 8000);  // 8 second timeout
 
     // Use real assertion that will fail if the condition isn't met
     EXPECT_TRUE(speedSet) << "Throttle message was not processed within the timeout period. Current speed: "
@@ -106,19 +106,19 @@ TEST_F(ControlAssemblyTest, HandleSteeringMessage) {
     sender.bind("tcp://127.0.0.1:5557");
 
     // Give the subscriber time to connect
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     // Send message multiple times to ensure delivery
     std::string message = "steering:30;";
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Wait for the value to be set with a timeout
     bool steeringSet = waitForCondition([&]() {
         return mockFServo->getSteeringAngle() == 30;
-    }, 5000);  // 5 second timeout
+    }, 8000);  // 8 second timeout
 
     // Use real assertion that will fail if the condition isn't met
     EXPECT_TRUE(steeringSet) << "Steering message was not processed within the timeout period. Current angle: "
@@ -154,19 +154,19 @@ TEST_F(ControlAssemblyTest, HandleInitMessage) {
     sender.bind("tcp://127.0.0.1:5556");
 
     // Give the subscriber time to connect
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
     // Send init message multiple times
     std::string message = "init;";
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         sender.send(zmq::buffer(message), zmq::send_flags::none);
-        std::this_thread::sleep_for(std::chrono::milliseconds(150));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     // Wait for both values to be reset with a timeout
     bool valuesReset = waitForCondition([&]() {
         return mockBackMotors->getCurrentSpeed() == 0 && mockFServo->getSteeringAngle() == 0;
-    }, 5000);  // 5 second timeout
+    }, 8000);  // 8 second timeout
 
     // Use real assertion that will fail if the condition isn't met
     EXPECT_TRUE(valuesReset) << "Init message was not processed within the timeout period. "

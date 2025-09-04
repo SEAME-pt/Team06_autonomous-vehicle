@@ -2,6 +2,7 @@
 
 BatteryReader::BatteryReader(bool test_mode) : test_mode(test_mode) {
   if (!test_mode) {
+    // LCOV_EXCL_START - Hardware I2C initialization, not testable in unit tests
     try {
       std::string i2c_device = "/dev/i2c-" + std::to_string(i2c_bus);
       i2c_fd = open(i2c_device.c_str(), O_RDWR);
@@ -14,13 +15,14 @@ BatteryReader::BatteryReader(bool test_mode) : test_mode(test_mode) {
         throw std::runtime_error("Failed to set I2C slave address: " +
                                  std::to_string(adc_address));
       }
-    } catch (...) {
-      if (i2c_fd >= 0) {
-        close(i2c_fd);
-        i2c_fd = -1;
+    } catch (...) {      // LCOV_EXCL_LINE - Hardware error handling
+      if (i2c_fd >= 0) { // LCOV_EXCL_LINE - Hardware cleanup in error path
+        close(i2c_fd);   // LCOV_EXCL_LINE - Hardware cleanup in error path
+        i2c_fd = -1;     // LCOV_EXCL_LINE - Hardware error handling
       }
-      throw;
+      throw; // LCOV_EXCL_LINE - Hardware error handling
     }
+    // LCOV_EXCL_STOP
   } else {
     // Initialize with default test values
     test_adc_values[0x01] = 0;    // Shunt register
@@ -44,6 +46,7 @@ int BatteryReader::read_adc(uint8_t reg) {
     return 0; // Default value for unknown registers in test mode
   }
 
+  // LCOV_EXCL_START - Hardware I2C read, not testable in unit tests
   uint8_t data[2];
 
   if (write(i2c_fd, &reg, 1) != 1) {
@@ -58,6 +61,7 @@ int BatteryReader::read_adc(uint8_t reg) {
       (data[0] << 8) | data[1]; // Combine the two bytes read into a raw value
   return (raw_value >> 3) & 0x1FFF; // Remove the 3 least significant bits
                                     // (status) & return the remaining 13 bits
+  // LCOV_EXCL_STOP
 }
 
 int BatteryReader::read_charge() {

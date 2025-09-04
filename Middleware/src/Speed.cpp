@@ -1,7 +1,8 @@
 #include "Speed.hpp"
+#include <chrono>
+#include <iostream>
 
-Speed::Speed(std::shared_ptr<ICanReader> canReader)
-    : can(canReader ? canReader : std::make_shared<CanReader>()) {
+Speed::Speed() {
   _name = "speed";
   _sensorData["speed"] = std::make_shared<SensorData>("speed", true);
   _sensorData["speed"]->value.store(0);
@@ -9,95 +10,208 @@ Speed::Speed(std::shared_ptr<ICanReader> canReader)
   _sensorData["odo"] = std::make_shared<SensorData>("odo", false);
   _sensorData["odo"]->value.store(0);
 
-  // Initialize CanReader if we created it
-  if (!canReader && can) {
-    auto reader = std::dynamic_pointer_cast<CanReader>(can);
-    if (reader) {
-      if (!reader->initialize()) {
-        throw std::runtime_error("Failed to initialize CanReader");
-      }
-    }
-  }
+  latest_timestamp = std::chrono::steady_clock::now();
+  last_measurement_time = latest_timestamp;
+
+  // Initialize odometer precision tracking
+  accumulated_distance_m = 0.0;
 }
 
-Speed::~Speed() {}
+Speed::~Speed() { stop(); }
 
 const std::string &Speed::getName() const { return _name; }
 
 std::unordered_map<std::string, std::shared_ptr<SensorData>>
 Speed::getSensorData() const {
+  std::lock_guard<std::mutex> lock(data_mutex);
   return _sensorData;
+}
+
+void Speed::start() {
+  if (!subscribed.load()) {
+    auto &bus = CanMessageBus::getInstance();
+
+    std::vector<uint16_t> canIds = {canId, canId2, canId3};
+    bus.subscribeToMultipleIds(shared_from_this(), canIds);
+    subscribed.store(true);
+  }
+}
+
+void Speed::stop() {
+  if (subscribed.load()) {
+    auto &bus = CanMessageBus::getInstance();
+    bus.unsubscribe(canId);
+    subscribed.store(false);
+    std::cout << "Speed unsubscribed from CAN ID: 0x" << std::hex << canId
+              << std::dec << std::endl; // LCOV_EXCL_LINE - Debug logging
+  }
 }
 
 void Speed::updateSensorData() {
   readSensor();
-
-  // We want to preserve any "updated" flags set in readSensor or calculateOdo
-  // Store the current update flags before calling checkUpdated
-  bool speedUpdated = _sensorData["speed"]->updated.load();
-  bool odoUpdated = _sensorData["odo"]->updated.load();
-
-  // Call checkUpdated to handle other sensor data
   checkUpdated();
+}
 
-  // Restore the update flags if they were set to true
-  if (speedUpdated) {
-    _sensorData["speed"]->updated.store(true);
+void Speed::onCanMessage(const CanMessage &message) {
+  // Accept messages from multiple CAN IDs (due to crystal frequency
+  // differences)
+  if (message.id != canId && message.id != canId2 && message.id != canId3) {
+    return; // Should not happen, but safety check
   }
-  if (odoUpdated) {
-    _sensorData["odo"]->updated.store(true);
+
+  std::lock_guard<std::mutex> lock(data_mutex);
+
+  // Store the latest message data
+  std::memcpy(latest_data, message.data, std::min(message.length, (uint8_t)8));
+  latest_length = message.length;
+  latest_timestamp = message.timestamp;
+  new_data_available.store(true);
+
+  std::cout << "Speed received CAN message with " << (int)message.length
+            << " bytes" << std::endl; // LCOV_EXCL_LINE - Debug logging
+}
+
+void Speed::readSensor() {
+  if (!new_data_available.load()) {
+    return; // No new data
+  }
+
+  std::lock_guard<std::mutex> lock(data_mutex);
+
+  if (latest_length >= 6) {
+    // Extract pulse data from CAN message (Arduino format)
+    // buffer[0-1]: Pulse count in this interval (16-bit, little endian)
+    uint16_t pulse_delta = latest_data[0] | (latest_data[1] << 8);
+
+    // buffer[2-5]: Total pulse count since startup (32-bit, little endian)
+    uint32_t new_total_pulses = latest_data[2] | (latest_data[3] << 8) |
+                                (latest_data[4] << 16) | (latest_data[5] << 24);
+
+    // Validate pulse data
+    if (new_total_pulses < total_pulses) {
+      std::cout
+          << "Warning: Total pulse count decreased (possible Arduino reset)"
+          << std::endl; // LCOV_EXCL_LINE - Debug logging
+    }
+
+    last_pulse_delta = pulse_delta;
+    total_pulses = new_total_pulses;
+
+    // Calculate speed and odometer
+    calculateSpeed();
+    calculateOdo();
+
+    std::cout << "Speed updated with " << pulse_delta
+              << " pulses (total: " << total_pulses << ")"
+              << std::endl; // LCOV_EXCL_LINE - Debug logging
+  } else {
+    std::cerr << "Speed: Invalid CAN message length: " << (int)latest_length
+              << std::endl; // LCOV_EXCL_LINE - Error handling
+  }
+
+  new_data_available.store(false);
+}
+
+void Speed::calculateSpeed() {
+  // Calculate time difference since last measurement
+  auto current_time = latest_timestamp;
+  auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(
+      current_time - last_measurement_time);
+  double time_diff_seconds = duration.count();
+
+  if (time_diff_seconds > 0 && last_pulse_delta > 0) {
+    // Calculate distance traveled in mm directly from pulses
+    // Each pulse = wheelCircumference_mm / pulsesPerRevolution
+    // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
+    static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
+    static constexpr double mm_per_pulse =
+        wheelCircumference_mm / pulsesPerRevolution;
+
+    double distance_mm = static_cast<double>(last_pulse_delta) * mm_per_pulse;
+
+    // Calculate speed directly in mm/s
+    double speed_mms = distance_mm / time_diff_seconds;
+
+    // Store as rounded mm/s (integer resolution)
+    uint32_t speed_value = static_cast<uint32_t>(speed_mms + 0.5);
+
+    // Update speed sensor data
+    auto old_speed = _sensorData["speed"]->value.load();
+    _sensorData["speed"]->oldValue.store(old_speed);
+    _sensorData["speed"]->value.store(speed_value);
+    _sensorData["speed"]->timestamp = current_time;
+    _sensorData["speed"]->updated.store(true);
+
+    std::cout << "Speed calculated: " << speed_value << " mm/s"
+              << " (from " << last_pulse_delta << " pulses in "
+              << time_diff_seconds << "s)"
+              << std::endl; // LCOV_EXCL_LINE - Debug logging
+  } else {
+    // No movement or invalid time difference
+    auto old_speed = _sensorData["speed"]->value.load();
+    _sensorData["speed"]->oldValue.store(old_speed);
+    _sensorData["speed"]->value.store(0);
+    _sensorData["speed"]->timestamp = current_time;
+    _sensorData["speed"]->updated.store(true);
+
+    if (time_diff_seconds <= 0) {
+      std::cout << "Speed: Invalid time difference: " << time_diff_seconds
+                << "s" << std::endl; // LCOV_EXCL_LINE - Debug logging
+    } else {
+      std::cout << "Speed: No movement detected (0 pulses)"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
+    }
+  }
+
+  last_measurement_time = current_time;
+}
+
+void Speed::calculateOdo() {
+  // Calculate incremental distance from pulse delta (same as speed calculation)
+  // Each pulse = wheelCircumference_mm / pulsesPerRevolution
+  // wheelCircumference_mm = π * diameter = π * 67mm ≈ 210.5mm
+  static constexpr double wheelCircumference_mm = wheelDiameter_mm * 3.14159;
+  static constexpr double mm_per_pulse =
+      wheelCircumference_mm / pulsesPerRevolution;
+
+  if (last_pulse_delta > 0) {
+    // Calculate incremental distance from this CAN message's pulse delta
+    double distance_mm = static_cast<double>(last_pulse_delta) * mm_per_pulse;
+    double distance_m = distance_mm / 1000.0; // mm to meters
+
+    // Add to accumulated distance with high precision
+    accumulated_distance_m += distance_m;
+
+    // Get current odometer value and calculate new value
+    auto old_odo = _sensorData["odo"]->value.load();
+    uint32_t new_odo_value = static_cast<uint32_t>(
+        accumulated_distance_m + 0.5); // Round to nearest meter
+
+    // Update odometer sensor data
+    _sensorData["odo"]->oldValue.store(old_odo);
+    _sensorData["odo"]->value.store(new_odo_value);
+    _sensorData["odo"]->timestamp = latest_timestamp;
+
+    // Mark as updated if the displayed value changed OR if any meaningful
+    // distance was added
+    if (new_odo_value != old_odo ||
+        distance_mm > 1.0) { // Update if meter value changed or moved > 1mm
+      _sensorData["odo"]->updated.store(true);
+      std::cout << "Odometer updated: " << new_odo_value << " meters"
+                << " (added " << distance_m << "m from " << last_pulse_delta
+                << " pulses, total: " << accumulated_distance_m << "m)"
+                << std::endl; // LCOV_EXCL_LINE - Debug logging
+    }
   }
 }
 
 void Speed::checkUpdated() {
+  std::lock_guard<std::mutex> lock(data_mutex);
   for (const auto &[name, sensor] : _sensorData) {
     if (sensor->oldValue.load() != sensor->value.load()) {
       sensor->updated.store(true);
-    } else {
-      sensor->updated.store(false);
     }
-  }
-}
-
-void Speed::readSensor() {
-  if (can->Receive(buffer, length)) {
-    if (can->getId() == canId) {
-      auto speed_value = _sensorData["speed"]->value.load();
-      _sensorData["speed"]->oldValue.store(speed_value);
-      _sensorData["speed"]->value.store(buffer[0] | (buffer[1] << 8));
-      _sensorData["speed"]->timestamp = std::chrono::steady_clock::now();
-
-      // Always mark speed as updated when we receive valid CAN data
-      // This way even if the value hasn't changed, we still consider it updated
-      _sensorData["speed"]->updated.store(true);
-
-      calculateOdo();
-      // sensorData.data["rpm"] = (buffer[2] | (buffer[3] << 8));
-    } else {
-      std::cerr << "Invalid CAN ID: " << std::hex << can->getId() << std::endl;
-    }
-  }
-}
-
-void Speed::calculateOdo() {
-  auto odo_value = _sensorData["odo"]->value.load();
-  _sensorData["odo"]->oldValue.store(odo_value);
-  auto oldTimestamp = _sensorData["odo"]->timestamp;
-  _sensorData["odo"]->timestamp = std::chrono::steady_clock::now();
-
-  // Calculate time difference in seconds
-  auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(
-      _sensorData["odo"]->timestamp - oldTimestamp);
-  double time_diff_seconds = duration.count();
-
-  // Calculate distance: speed (km/h) * time (s) * (5/18) for m/s conversion
-  auto speed = _sensorData["speed"]->value.load();
-  auto new_odo =
-      static_cast<unsigned int>(speed * (5.0 / 18.0) * time_diff_seconds);
-  _sensorData["odo"]->value.store(odo_value + new_odo);
-
-  // Always mark odo as updated when we recalculate it with new data
-  if (new_odo > 0) {
-    _sensorData["odo"]->updated.store(true);
+    // Note: We don't set updated to false here because readSensor()
+    // handles the updated flag based on new CAN data availability
   }
 }

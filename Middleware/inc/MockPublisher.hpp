@@ -1,7 +1,8 @@
 #ifndef MOCKPUBLISHER_HPP
 #define MOCKPUBLISHER_HPP
 
-#include "IPublisher.hpp"
+#include "ZmqPublisher.hpp"
+#include "zmq.hpp"
 #include <mutex>
 #include <vector>
 

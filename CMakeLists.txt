@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Jetson VERSION 1.0)
 
 # Option to control test building
-option(BUILD_TESTS "Build test binaries" ON)
+option(BUILD_TESTS "Build test binaries" OFF)
 
 # Specify the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -21,5 +21,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Runs the cmake on all these directories
 add_subdirectory(zmq)
+# Pass BUILD_TESTS option to Middleware subdirectory
 add_subdirectory(Middleware)
 add_subdirectory(Controller)

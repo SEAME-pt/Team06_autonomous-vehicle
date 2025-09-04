@@ -1,16 +1,18 @@
 # Team06 Autonomous Vehicle Project
 
-An autonomous vehicle system that combines instrument cluster display, lane detection, and object detection capabilities. The system provides both visual feedback through a modern digital dashboard and autonomous driving features.
+An autonomous vehicle system that combines instrument cluster display with comprehensive autonomous driving capabilities. The system provides both visual feedback through a modern digital dashboard and advanced autonomous driving features including lane keeping assistance, traffic signal detection, and vehicle control.
 
 ## Project Overview
 
-The system integrates several key components:
+This repository contains all the core components for an autonomous vehicle system:
 
 1. **Instrument Cluster** - Digital dashboard displaying vehicle telemetry and status
-2. **Lane Detection** - Real-time lane detection and tracking
-3. **Object Detection** - Detection and avoidance of obstacles
-4. **Controller** - Handles vehicle control inputs
-5. **Middleware** - Central data processing and distribution hub
+2. **Lane Detection** - Part of the Lane Keeping Assisting System that detects and shows lane deviations
+3. **Object Detection** - Identifies traffic signals
+4. **MPC (Model Predictive Control)** - Advanced control algorithm used in autonomous driving for optimal path planning
+5. **PID Controller** - Proportional-Integral-Derivative controller used in autonomous driving for precise vehicle control
+6. **Controller** - Handles vehicle control inputs and user interactions
+7. **Middleware** - Central data processing and distribution hub
 
 ## Architecture
 
@@ -20,11 +22,17 @@ The system integrates several key components:
 └─────────────┘     └────────────┘     └──────────────────┘
                          │
                          │
-              ┌─────────┴──────────┐
-              ▼                    ▼
-    ┌─────────────────┐  ┌─────────────────┐
-    │ Lane Detection  │  │ Object Detection│
-    └─────────────────┘  └─────────────────┘
+                         ▼
+              ┌─────────────────────────┐
+              │ Lane Detection          │
+              │ (Lane Keeping Assist)   │
+              │                         │
+              │ Object Detection        │
+              │ (Traffic Signals)       │
+              │                         │
+              │ MPC & PID Controllers   │
+              │ (Autonomous Driving)    │
+              └─────────────────────────┘
 ```
 
 - ZeroMQ-based communication between components
@@ -33,12 +41,14 @@ The system integrates several key components:
 
 ## Project Structure
 
-- `/Controller` - Vehicle control input processing
-- `/Middleware` - Central data hub and message broker
+- `/Controller` - Vehicle control input processing and user interface
+- `/Middleware` - Central data hub and message broker for all components
 - `/modules` - Core autonomous driving modules
   - `cluster-display` - Digital instrument cluster interface
-  - `lane-detection` - Lane detection and tracking
-  - `object-detection` - Object detection and avoidance
+  - `lane-detection` - Lane Detection system (part of Lane Keeping Assisting System)
+  - `object-detection` - Object Detection system for traffic signals and road objects
+  - `mpc-controller` - Model Predictive Control for autonomous driving
+  - `pid-controller` - PID Controller for precise vehicle control
 - `/scripts` - Build and test automation
   - `build.sh` - Main build script
   - `run_tests.sh` - Test execution script
@@ -46,6 +56,8 @@ The system integrates several key components:
   - `run_coverage.sh` - Coverage report generation
 - `/zmq` - ZeroMQ communication layer
 - `/CICD` - Continuous Integration configuration
+- `/Arduino` - Arduino-based hardware interfaces
+- `/lib` - Shared libraries and dependencies
 
 ## Building
 
@@ -127,6 +139,8 @@ The coverage report provides detailed information about:
 - Function coverage
 - Uncovered code regions
 
+**Coverage Requirements**: The project maintains a minimum code coverage of **80%**. The CI/CD pipeline will fail if coverage falls below this threshold. Current coverage: **81.3% line coverage, 93.2% function coverage**.
+
 #### Accessing CI Coverage Reports
 
 Coverage reports from CI runs are available:
@@ -150,8 +164,7 @@ See [CICD Documentation](CICD/README.md) for details.
 ## Module Documentation
 
 Each module maintains its own detailed documentation:
-- [Controller](Controller/README.md)
-- [Middleware](Middleware/README.md)
-- [Cluster Display](https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster/blob/main/README.md)
-- [Lane Detection](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md)
-- [Object Detection](https://github.com/SEAME-pt/Team06_ADS_Object-Detection-and-Avoidance/blob/main/README.md)
+- [Controller](Controller/README.md) - Vehicle control input processing
+- [Middleware](Middleware/README.md) - Central data hub and message broker
+- [Cluster Display](https://github.com/SEAME-pt/Team06_DES_Instrument-Cluster/blob/main/README.md) - Digital instrument cluster interface
+- [ADAS](https://github.com/SEAME-pt/Team06_ADS_Autonomous-Lane-Detection/blob/main/README.md) - Lane Detection, Object Detection, PID, MPC

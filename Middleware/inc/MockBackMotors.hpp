@@ -77,6 +77,14 @@ public:
     }
   }
 
+  void emergencyBrake() override {
+    // Emergency brake implementation - immediately stop all motors
+    current_speed = 0;
+    for (int channel = 0; channel < 9; ++channel) {
+      setMotorPwm(channel, 0);
+    }
+  }
+
   void writeByteData(int fd, uint8_t reg, uint8_t value) override {
     if (simulate_i2c_failure) {
       throw std::runtime_error("Simulated I2C write failure");
